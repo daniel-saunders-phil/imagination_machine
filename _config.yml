@@ -23,7 +23,7 @@ title: imagination_machine
 description: >- # this means to ignore newlines until "baseurl:"
   Code blog run by Daniel Saunders. Focused on cultural evolution, game theory, &
   Bayesian stats.
-baseurl: "imagination_machine" # the subpath of your site, e.g. /blog
+baseurl: "/imagination_machine" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 #twitter_username: 
 github_username:  daniel-saunders-phil
@@ -32,12 +32,6 @@ github_username:  daniel-saunders-phil
 theme: minima
 plugins:
   - jekyll-feed
-
-defualts:
-  - scope:
-      path: "assets"
-    values:
-      image: true
 
 # Exclude from processing.
 # The following items will not be processed, by default.

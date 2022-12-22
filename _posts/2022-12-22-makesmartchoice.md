@@ -107,11 +107,7 @@ for i in range(4):
         ax[i][j].plot(proportion_per_year.iloc[i*4+j].values,'o',markersize=2)
 ```
 
-
-    
-![png](/assets/output_6_0.png)
-    
-
+![png](\imagination_machine\assets\output_6_0.png)
 
 Here's what the data looks like for each of the 16 topics. Each dot represents the proportion of formal methods papers in a topic for a given year, starting at 2000 through 2020.
 
@@ -149,7 +145,7 @@ for i in range(50):
 
 
     
-![png](/assets/output_10_0.png)
+![png](\imagination_machine\assets\output_10_0.png)
     
 
 
@@ -175,7 +171,7 @@ for i in range(50):
 
 
     
-![png](/assets/output_12_0.png)
+![png](\imagination_machine\assets\output_12_0.png)
     
 
 
@@ -221,7 +217,7 @@ az.plot_trace(trace_no_pool);
 
 
     
-![png](/assets/output_16_0.png)
+![png](\imagination_machine\assets\output_16_0.png)
     
 
 
@@ -234,7 +230,7 @@ az.plot_forest(trace_no_pool,var_names='b',combined=True,hdi_prob=0.95,quartiles
 
 
     
-![png](/assets/output_18_0.png)
+![png](\imagination_machine\assets\output_18_0.png)
     
 
 
@@ -272,7 +268,7 @@ for i in range(4):
 
 
     
-![png](/assets/output_22_0.png)
+![png](\imagination_machine\assets\output_22_0.png)
     
 
 
@@ -306,7 +302,7 @@ for i in range(4):
 
 
     
-![png](/assets/output_24_0.png)
+![png](\imagination_machine\assets\output_24_0.png)
     
 
 
@@ -354,7 +350,7 @@ for i in range(4):
 
 
     
-![png](/assets/output_28_0.png)
+![png](\imagination_machine\assets\output_28_0.png)
     
 
 
@@ -407,7 +403,7 @@ az.plot_forest([trace_partial_pool,trace_no_pool],var_names='b',combined=True,hd
 
 
     
-![png](/assets/output_32_0.png)
+![png](\imagination_machine\assets\output_32_0.png)
     
 
 
@@ -424,7 +420,7 @@ az.plot_forest([trace_partial_pool,trace_no_pool],var_names='a',combined=True,hd
 
 
     
-![png](/assets/output_34_0.png)
+![png](\imagination_machine\assets\output_34_0.png)
     
 
 
@@ -458,7 +454,7 @@ for i in range(4):
 
 
     
-![png](/assets/output_37_0.png)
+![png](\imagination_machine\assets\output_37_0.png)
     
 
 
@@ -486,7 +482,7 @@ for i in range(4):
 
 
     
-![png](/assets/output_39_0.png)
+![png](\imagination_machine\assets\output_39_0.png)
     
 
 
@@ -511,7 +507,7 @@ plt.ylim([0,1]);
 
 
     
-![png](/assets/output_41_0.png)
+![png](\imagination_machine\assets\output_41_0.png)
     
 
 
@@ -554,7 +550,7 @@ print("new slope:",b_means_pp[cluster])
 
 
     
-![png](/assets/output_44_1.png)
+![png](\imagination_machine\assets\output_44_1.png)
     
 
 

@@ -367,7 +367,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div class="cell" data-outputid="6b02e48b-8fef-4232-cf7b-53762b9e231e" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>post_pred_no_pool <span class="op">=</span> az.from_json(<span class="st">"post_pred_no_pool"</span>)</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>f,ax <span class="op">=</span> plt.subplots(<span class="dv">4</span>,<span class="dv">4</span>,sharex<span class="op">=</span><span class="va">True</span>,sharey<span class="op">=</span><span class="va">True</span>,figsize<span class="op">=</span>(<span class="dv">12</span>,<span class="dv">10</span>))</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>f,ax <span class="op">=</span> plt.subplots(<span class="dv">4</span>,<span class="dv">4</span>,sharex<span class="op">=</span><span class="va">True</span>,sharey<span class="op">=</span><span class="va">True</span>,figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">6</span>))</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">50</span>):</span>
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    predictions <span class="op">=</span> np.array(post_pred_no_pool.posterior_predictive.y[<span class="dv">0</span>][k].T)</span>
@@ -383,7 +383,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
 <span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>        ax[i][j].plot(proportion_per_year.iloc[i<span class="op">*</span><span class="dv">4</span><span class="op">+</span>j].values,<span class="st">'-'</span>,markersize<span class="op">=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="index_files/figure-html/cell-11-output-1.png" width="948" height="783"></p>
+<p><img src="index_files/figure-html/cell-11-output-1.png" width="653" height="488"></p>
 </div>
 </div>
 <p>This plot displays the predicted proportion of formal papers in each year. Uncertainty is represented by the spread of the dots and their opacity.</p>
@@ -396,7 +396,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>a_means <span class="op">=</span> np.array(a_means)</span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>b_means <span class="op">=</span> np.array(b_means)</span>
 <span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>f,ax <span class="op">=</span> plt.subplots(<span class="dv">4</span>,<span class="dv">4</span>,sharex<span class="op">=</span><span class="va">True</span>,sharey<span class="op">=</span><span class="va">True</span>,figsize<span class="op">=</span>(<span class="dv">12</span>,<span class="dv">10</span>))</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>f,ax <span class="op">=</span> plt.subplots(<span class="dv">4</span>,<span class="dv">4</span>,sharex<span class="op">=</span><span class="va">True</span>,sharey<span class="op">=</span><span class="va">True</span>,figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">6</span>))</span>
 <span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>x_pred <span class="op">=</span> np.arange(<span class="dv">21</span>)</span>
 <span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a></span>
@@ -408,7 +408,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>        ax[i][j].plot(p)</span>
 <span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>        ax[i][j].plot(proportion_per_year.iloc[i<span class="op">*</span><span class="dv">4</span><span class="op">+</span>j].values,<span class="st">'o'</span>,markersize<span class="op">=</span><span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="index_files/figure-html/cell-12-output-1.png" width="948" height="789"></p>
+<p><img src="index_files/figure-html/cell-12-output-1.png" width="664" height="488"></p>
 </div>
 </div>
 <p>A second way of visualizing the model is to strip away the uncertainty and plot the best performing logistic curves for each community. These are what the model thinks the likely trend is in each place.</p>
@@ -423,7 +423,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell" data-outputid="0974fc6a-bf00-44b1-e356-7b3adb3fae05" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># prior simulation</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>f,ax <span class="op">=</span> plt.subplots(<span class="dv">4</span>,<span class="dv">4</span>,sharex<span class="op">=</span><span class="va">True</span>,sharey<span class="op">=</span><span class="va">True</span>,figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">10</span>))</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>f,ax <span class="op">=</span> plt.subplots(<span class="dv">4</span>,<span class="dv">4</span>,sharex<span class="op">=</span><span class="va">True</span>,sharey<span class="op">=</span><span class="va">True</span>,figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">6</span>))</span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>hamu <span class="op">=</span> stats.norm(<span class="dv">0</span>,<span class="dv">2</span>).rvs(<span class="dv">16</span>)</span>
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>hasig <span class="op">=</span> stats.expon(scale<span class="op">=</span><span class="dv">2</span>).rvs(<span class="dv">16</span>)</span>
@@ -449,7 +449,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>            ax[i][j].plot(p)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="index_files/figure-html/cell-13-output-1.png" width="811" height="783"></p>
+<p><img src="index_files/figure-html/cell-13-output-1.png" width="653" height="489"></p>
 </div>
 </div>
 </section>
@@ -510,7 +510,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div class="cell" data-outputid="7b42f1dd-9b66-4572-fcea-a59a855f8cc2" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>post_pred_partial_pool <span class="op">=</span> az.from_json(<span class="st">"post_pred_partial_pool"</span>)</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>f,ax <span class="op">=</span> plt.subplots(<span class="dv">4</span>,<span class="dv">4</span>,sharex<span class="op">=</span><span class="va">True</span>,sharey<span class="op">=</span><span class="va">True</span>,figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">10</span>))</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>f,ax <span class="op">=</span> plt.subplots(<span class="dv">4</span>,<span class="dv">4</span>,sharex<span class="op">=</span><span class="va">True</span>,sharey<span class="op">=</span><span class="va">True</span>,figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">6</span>))</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">50</span>):</span>
 <span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    predictions <span class="op">=</span> np.array(post_pred_partial_pool.posterior_predictive.y[<span class="dv">0</span>][k].T)</span>
@@ -526,7 +526,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
 <span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>        ax[i][j].plot(proportion_per_year.iloc[i<span class="op">*</span><span class="dv">4</span><span class="op">+</span>j].values,<span class="st">'-'</span>,markersize<span class="op">=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="index_files/figure-html/cell-18-output-1.png" width="801" height="783"></p>
+<p><img src="index_files/figure-html/cell-18-output-1.png" width="653" height="488"></p>
 </div>
 </div>
 <p>One thing to notice that there is less initial uncertainty in many of these plots. This highlights on the advantages of multi-level models - less uncertainty in the intercepts means more plausible estimates of the slope.</p>
@@ -536,7 +536,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>a_means_pp <span class="op">=</span> np.array(a_means_pp)</span>
 <span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>b_means_pp <span class="op">=</span> np.array(b_means_pp)</span>
 <span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>f,ax <span class="op">=</span> plt.subplots(<span class="dv">4</span>,<span class="dv">4</span>,sharex<span class="op">=</span><span class="va">True</span>,sharey<span class="op">=</span><span class="va">True</span>,figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">10</span>))</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>f,ax <span class="op">=</span> plt.subplots(<span class="dv">4</span>,<span class="dv">4</span>,sharex<span class="op">=</span><span class="va">True</span>,sharey<span class="op">=</span><span class="va">True</span>,figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">6</span>))</span>
 <span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>x_pred <span class="op">=</span> np.arange(<span class="dv">21</span>)</span>
 <span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a></span>
@@ -548,7 +548,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>        ax[i][j].plot(p)</span>
 <span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>        ax[i][j].plot(proportion_per_year.iloc[i<span class="op">*</span><span class="dv">4</span><span class="op">+</span>j].values,<span class="st">'o'</span>,markersize<span class="op">=</span><span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="index_files/figure-html/cell-19-output-1.png" width="801" height="789"></p>
+<p><img src="index_files/figure-html/cell-19-output-1.png" width="664" height="488"></p>
 </div>
 </div>
 <p>There are small divergences in the trend lines. I’ll zoom in one difference in the last section.</p>

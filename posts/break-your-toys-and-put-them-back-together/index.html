@@ -124,7 +124,7 @@ div.csl-indent {
 <link rel="stylesheet" href="../../styles.css">
 </head>
 
-<body class="nav-fixed fullcontent">
+<body class="nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -194,7 +194,23 @@ div.csl-indent {
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#sometimes-you-just-need-to-integrate" id="toc-sometimes-you-just-need-to-integrate" class="nav-link active" data-scroll-target="#sometimes-you-just-need-to-integrate">Sometimes you just need to integrate</a>
+  <ul class="collapse">
+  <li><a href="#fitting" id="toc-fitting" class="nav-link" data-scroll-target="#fitting">Fitting</a></li>
+  </ul></li>
+  <li><a href="#the-founder-effect" id="toc-the-founder-effect" class="nav-link" data-scroll-target="#the-founder-effect">The Founder Effect</a>
+  <ul class="collapse">
+  <li><a href="#a-surprisingly-compact-expression" id="toc-a-surprisingly-compact-expression" class="nav-link" data-scroll-target="#a-surprisingly-compact-expression">A surprisingly compact expression</a></li>
+  <li><a href="#fitting-the-founder-model" id="toc-fitting-the-founder-model" class="nav-link" data-scroll-target="#fitting-the-founder-model">Fitting the founder model</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
 <main class="content quarto-banner-title-block" id="quarto-document-content">
 
@@ -377,7 +393,7 @@ div.csl-indent {
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> val <span class="kw">in</span> pp[:,:]:</span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    plt.plot(short_label,val,<span class="st">'o'</span>,alpha<span class="op">=</span><span class="fl">0.3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="index_files/figure-html/cell-5-output-1.png" width="595" height="412"></p>
+<p><img src="index_files/figure-html/cell-5-output-1.png" width="595" height="411"></p>
 </div>
 </div>
 <div class="cell" data-vscode="{&quot;languageId&quot;:&quot;python&quot;}" data-execution_count="5">
@@ -401,7 +417,7 @@ div.csl-indent {
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>post_pred_m0 <span class="op">=</span> pm.sample_posterior_predictive(model<span class="op">=</span>m0,trace<span class="op">=</span>trace0,progressbar<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>predictions <span class="op">=</span> post_pred_m0.posterior_predictive[<span class="st">'Y'</span>].values.reshape((<span class="dv">8000</span>,<span class="dv">10</span>))</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">5</span>))</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">9</span>,<span class="dv">5</span>))</span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> index <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(label_id)):</span>
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    ax.text(np.log(N)[index], tools[index], label_id[index], size<span class="op">=</span><span class="dv">12</span>)</span>
@@ -417,7 +433,7 @@ div.csl-indent {
 <pre><code>Sampling: [Y]</code></pre>
 </div>
 <div class="cell-output cell-output-display">
-<p><img src="index_files/figure-html/cell-8-output-2.png" width="667" height="429"></p>
+<p><img src="index_files/figure-html/cell-8-output-2.png" width="738" height="429"></p>
 </div>
 </div>
 <p>When it comes to fitting toy mechanistic models we have to be careful. They break more easily than linear regression. Frankly, I think that’s a good thing. If your model fits every dataset, you cannot learn from it. However! If a toy model breaks for opaque reasons, then it is also hard to learn from. In our case, it’s not initially easy to tell whether the demographic theory of technology is bunk or whether there are some simple features of the Oceanic societies that we have to add before the model works well.</p>
@@ -454,10 +470,10 @@ div.csl-indent {
 <span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Tonga"</span>:[<span class="fl">0.7</span>,<span class="op">-</span><span class="fl">0.8</span>],</span>
 <span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Hawaii"</span>:[<span class="fl">0.7</span>,<span class="fl">0.8</span>],</span>
 <span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Chuuk"</span>:[<span class="op">-</span><span class="fl">0.1</span>,<span class="fl">0.4</span>]}</span>
-<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">8</span>))</span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">9</span>,<span class="dv">6</span>))</span>
 <span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>nx.draw_networkx(G,node_color<span class="op">=</span>node_color,cmap<span class="op">=</span><span class="st">"plasma"</span>,pos<span class="op">=</span>pos,with_labels<span class="op">=</span><span class="va">True</span>,node_size<span class="op">=</span><span class="dv">2500</span>,alpha<span class="op">=</span><span class="fl">0.8</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="index_files/figure-html/cell-9-output-1.png" width="614" height="611"></p>
+<p><img src="index_files/figure-html/cell-9-output-1.png" width="689" height="463"></p>
 </div>
 </div>
 <p>We’ll need a new model where the level of technical skill is dependent on two factors: the demographic model for the settled society plus the level of technology present in the founder society at the time of founding. We’ll need to break the development time into two periods. In the first period, the founder society is innovating with its population size. In the second period, the ancestor society settles on the new island and now that island starts innovating autonomously with its population size. The dividing line between the two periods is just the difference in their development time.</p>

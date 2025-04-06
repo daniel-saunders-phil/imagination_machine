@@ -1,1 +1,18 @@
 /* css styles */
+
+/* About page styling */
+#quarto-document-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* Ensure text is left-aligned */
+#quarto-document-content p {
+  text-align: left;
+}
+
+/* Add some spacing between paragraphs */
+#quarto-document-content p {
+  margin-bottom: 1.5em;
+}

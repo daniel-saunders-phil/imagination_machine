@@ -2,14 +2,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.433">
+<meta name="generator" content="quarto-1.6.43">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Daniel Saunders">
 <meta name="dcterms.date" content="2023-07-19">
 
-<title>imagination machine - If none of the above, then what?</title>
+<title>If none of the above, then what? – imagination machine</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -26,6 +26,7 @@ ul.task-list li input[type="checkbox"] {
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
+  margin-bottom: 0em;
 }
 .hanging-indent div.csl-entry {
   margin-left:2em;
@@ -56,17 +57,23 @@ div.csl-indent {
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-d4d76bf8491c20bad77d141916dc28e1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-ecf2179c34b220c19ee4584b87bd6d7b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
   "collapse-after": 3,
   "panel-placement": "end",
   "type": "overlay",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -75,14 +82,42 @@ div.csl-indent {
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
     "search-submit-button-title": "Submit",
     "search-label": "Search"
   }
 }</script>
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../styles.css">
 </head>
@@ -90,38 +125,38 @@ div.csl-indent {
 <body class="nav-fixed">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg navbar-dark ">
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container">
+      <div class="navbar-brand-container mx-auto">
     <a class="navbar-brand" href="../../index.html">
     <span class="navbar-title">imagination machine</span>
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../about.html" rel="" target="">
- <span class="menu-text">About</span></a>
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/" rel="" target=""><i class="bi bi-github" role="img">
+    <a class="nav-link" href="https://github.com/"> <i class="bi bi-github" role="img">
 </i> 
- <span class="menu-text"></span></a>
+<span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="https://twitter.com" rel="" target=""><i class="bi bi-twitter" role="img">
+    <a class="nav-link" href="https://twitter.com"> <i class="bi bi-twitter" role="img">
 </i> 
- <span class="menu-text"></span></a>
+<span class="menu-text"></span></a>
   </li>  
 </ul>
+          </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
 </div>
-          </div> <!-- /navcollapse -->
       </div> <!-- /container-fluid -->
     </nav>
 </header>
@@ -181,6 +216,7 @@ div.csl-indent {
 
 
 
+
 <p>A couple days ago, Richard McElreath had a lovely <a href="https://elevanth.org/blog/2023/07/17/none-of-the-above/">blog post</a> on why the Bayes factor isn’t the cure to what ails us. No p-values or No confidence intervals, either. No metric of any kind can replace the need for clear model-first thinking as the justification for scientific claims. A common reaction to Richard’s post is to ask the obvious question, “if none of the above, then what?” The question underscores just how difficult it is to imagine another kind of science.</p>
 <p>A casual aquaintance with the p-value wars of the last decade leaves one with the impression that we are searching for some metric which we can stamp on a scientific paper to let everyone know we did a good job. If not the p-value, then surely something else: a cross-validation score, a low AIC score, a big effect size, a big likelihood ratio. Maybe a good paper is the one that has <code>(N = 1,000,000,000)</code> in the abstract! There is a pretense to these conversations: if we just tweak our metric correctly, we can also tweak the publication pipeline and stabilize science. Bayesians in Richard’s camp are asking a provocative question - what if the pretense is wrong? How could we justify a scientific claim in the absence of any of the metrics?</p>
 <p>It turns out the answer is not mysticism. A humble cycle of model-building and fitting is usually all we need. The metrics listed above have their proper place. It’s just that they are rarely what is called for. A model-first approach makes it obvious when they are useful and how to deploy them. The philosophical arguments for this approach have been spelled out before <span class="citation" data-cites="gelman2013a">(<a href="#ref-gelman2013a" role="doc-biblioref">Gelman and Shalizi 2013</a>)</span>. But it is still quite hard to imagine what it looks like from these abstract methodological descriptions. The rest of this post provides a compact and easy to follow example of the full model-first workflow. The promise is that, by the end, we won’t have needed a metric to assess our model and you won’t miss them. We’ll learn something important without ever reaching for them.</p>
@@ -194,13 +230,17 @@ div.csl-indent {
 <li><p>First, the skill might be hard to learn. Observing the best person gives you a clue about what skillful performance looks like. But a clue is not usually enough. These sorts of errors arise from the inherent difficult of a skill and are represented by the parameter <span class="math inline">\(a\)</span>.</p></li>
 <li><p>Second, there might be individual-level variability in how well folks can copy skills. Some people might have greater perception, memory, or intelligence and achieve a skillfulness pretty close to the best. Others do much worse. A few people might even innovate on the best design and achieve a higher level of skillfulness. Individual-level variability is represented by parameter <span class="math inline">\(b\)</span>.</p></li>
 </ul>
-<p>To combine these three processes (imitation, inherent difficulty, variability), people sample their new skill level from a probability distribution with a mean value set at <span class="math inline">\(z - a\)</span> and the spread of the distribution is given by <span class="math inline">\(b\)</span>. To put it less mathematically, people aim to learn from the best, fail to imitate them exactly, fall back to toward the average and then disperse from there. Many probability distributions work fine for achieving the same results. Henrich selected the right-skewed Gumbel distribution depicted in <a href="#fig-skill-distribution">Figure&nbsp;1</a>. Here I assume the best individual has skillfulness <span class="math inline">\(z = 15\)</span>, while <span class="math inline">\(a = 5\)</span> and <span class="math inline">\(b = 1\)</span>. The Gumbel distribution allows individuals to occassionally discover large improvements on the skill when they draw from the region greater than 15, marked by red on the plot.</p>
+<p>To combine these three processes (imitation, inherent difficulty, variability), people sample their new skill level from a probability distribution with a mean value set at <span class="math inline">\(z - a\)</span> and the spread of the distribution is given by <span class="math inline">\(b\)</span>. To put it less mathematically, people aim to learn from the best, fail to imitate them exactly, fall back to toward the average and then disperse from there. Many probability distributions work fine for achieving the same results. Henrich selected the right-skewed Gumbel distribution depicted in <a href="#fig-skill-distribution" class="quarto-xref">Figure&nbsp;1</a>. Here I assume the best individual has skillfulness <span class="math inline">\(z = 15\)</span>, while <span class="math inline">\(a = 5\)</span> and <span class="math inline">\(b = 1\)</span>. The Gumbel distribution allows individuals to occassionally discover large improvements on the skill when they draw from the region greater than 15, marked by red on the plot.</p>
 <div class="cell" data-execution_count="2">
 <div class="cell-output cell-output-display">
-<div id="fig-skill-distribution" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="index_files/figure-html/fig-skill-distribution-output-1.png" width="606" height="356" class="figure-img"></p>
-<figcaption class="figure-caption">Figure&nbsp;1: Illustration of learning mechanism in the treadmill model</figcaption>
+<div id="fig-skill-distribution" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-skill-distribution-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-skill-distribution-output-1.png" width="606" height="356" class="figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-skill-distribution-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Illustration of learning mechanism in the treadmill model
+</figcaption>
 </figure>
 </div>
 </div>
@@ -208,13 +248,17 @@ div.csl-indent {
 <p>Over many time steps, people repeat the learning process, gettting better or worse each time. Population size turns out to matter because it increases the odds some lucky individual will exceed the most skillful individual in the current generation. In the next generation, this exceptional student will become the teacher. When this happens consistently, it can pull the average skill level up over time. However, if people rarely exceed the best, then inherent difficultly in transmission will pull the average skill level down. Henrich shows that the expected change in skillfulness from one time step to the next is:</p>
 <p><span class="math display">\[ z' = -a + b*(\gamma + \ln(n)) \]</span></p>
 <p>where <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span> are as defined above, <span class="math inline">\(\gamma\)</span> is the Euler-Gamma constant (0.5772…) and <span class="math inline">\(\ln(n)\)</span> is the natural log of the population size. We’ll call this <em>treadmill model</em> of innovation. If you don’t keep walking forward, you’re sliding backward.</p>
-<p>Simulations depicted in <a href="#fig-four-societies">Figure&nbsp;2</a> show four different population sizes working on learning problems with the same <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span> parameters and their expected level of skillfullness. They repeat the learning process for 30 iterations. Two of them experience cumulative evolution, one of them is in a steady state and one experiences skill decay.</p>
+<p>Simulations depicted in <a href="#fig-four-societies" class="quarto-xref">Figure&nbsp;2</a> show four different population sizes working on learning problems with the same <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span> parameters and their expected level of skillfullness. They repeat the learning process for 30 iterations. Two of them experience cumulative evolution, one of them is in a steady state and one experiences skill decay.</p>
 <div class="cell" data-execution_count="3">
 <div class="cell-output cell-output-display">
-<div id="fig-four-societies" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="index_files/figure-html/fig-four-societies-output-1.png" width="603" height="363" class="figure-img"></p>
-<figcaption class="figure-caption">Figure&nbsp;2: Cumulative social learning is sensitive to population size</figcaption>
+<div id="fig-four-societies" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-four-societies-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-four-societies-output-1.png" width="603" height="363" class="figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-four-societies-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Cumulative social learning is sensitive to population size
+</figcaption>
 </figure>
 </div>
 </div>
@@ -241,10 +285,14 @@ div.csl-indent {
 <p>At this point, we have everything we need. I fit the model behind the scenes. Then I sampled predictions from our newly fit model.</p>
 <div class="cell" data-execution_count="4">
 <div class="cell-output cell-output-display">
-<div id="fig-bespoke-predictions-1" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="index_files/figure-html/fig-bespoke-predictions-1-output-1.png" width="614" height="356" class="figure-img"></p>
-<figcaption class="figure-caption">Figure&nbsp;3: Model-based predictions by population size</figcaption>
+<div id="fig-bespoke-predictions-1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-bespoke-predictions-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-bespoke-predictions-1-output-1.png" width="614" height="356" class="figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-bespoke-predictions-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: Model-based predictions by population size
+</figcaption>
 </figure>
 </div>
 </div>
@@ -252,7 +300,7 @@ div.csl-indent {
 </section>
 <section id="criticize-your-model" class="level1">
 <h1>Criticize your model</h1>
-<p>The results illustrate the major strengths of our modeling strategy. <a href="#fig-bespoke-predictions-1">Figure&nbsp;3</a> depicts 100 predictions generated from the fitted model. The parameters are estimated with uncertainty so the predictions also come with uncertainity. Each prediction is a transparent blue circle. Regions with darker colours are places where the predictions overlap, suggesting that model is more certain that true value should fall in that region. <a href="#fig-bespoke-predictions-1">Figure&nbsp;3</a> makes clear that the model does a fairly good job of explaining 6 of the societies. However, the model struggles to explain why Hawaii and Chuuk have as many tools as they do. Similarly, the model struggles to explain why Manus and Trobriand have so few tools, given their moderate population sizes.</p>
+<p>The results illustrate the major strengths of our modeling strategy. <a href="#fig-bespoke-predictions-1" class="quarto-xref">Figure&nbsp;3</a> depicts 100 predictions generated from the fitted model. The parameters are estimated with uncertainty so the predictions also come with uncertainity. Each prediction is a transparent blue circle. Regions with darker colours are places where the predictions overlap, suggesting that model is more certain that true value should fall in that region. <a href="#fig-bespoke-predictions-1" class="quarto-xref">Figure&nbsp;3</a> makes clear that the model does a fairly good job of explaining 6 of the societies. However, the model struggles to explain why Hawaii and Chuuk have as many tools as they do. Similarly, the model struggles to explain why Manus and Trobriand have so few tools, given their moderate population sizes.</p>
 <p>Normally, at this point in a scientific paper, we’d start reporting our favoured p-value / confidence interval / Bayes factor / whatever. This would, somehow, tell us whether our treadmill model is better than some null model. Maybe in this case the null model simply assumes there is no correlation between population size and technological complexity. It would probably turn out that our treadmill model performs much better than the null model or the null model would be a poor fit to the data. But a boxing match against the null model isn’t worth watching. At best, we learn something fairly minor. At worst, it encourages us to claim success, submit to the journal, and stop asking further questions that could revise and improve our theoretical model.</p>
 <p>Lingering on these results for a minute tells us a story. Hawaii and Chuuk are very young islands compared to the rest. Estimates suggest Hawaii was settled by its indigenous population around 800 years ago. Chuuk, 600. The model gives us small predicted values because there hasn’t been enough time to develop a large toolkit through population-size driven innovation alone. If we pushed the parameters around to enable fast growth for these two islands, we’d overshoot the other societies.</p>
 <p>We know that all models are wrong and only some are useful. The hard question is to figure out which ways of being wrong matter and which ones don’t. The treadmill model is simple. We are clearly ignoring other factors that might contribute to innovation. The results tell that whatever is missing clearly <em>matters</em> for explaining the four anomolous societies.</p>
@@ -268,7 +316,7 @@ div.csl-indent {
 </section>
 
 
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
 <div id="ref-burley2012" class="csl-entry" role="listitem">
 Burley, David, Marshall I. Weisler, and Jian-xin Zhao. 2012. <span>“High <span>Precision U</span>/<span>Th Dating</span> of <span>First Polynesian Settlement</span>.”</span> Edited by Karen Hardy. <em>PLoS ONE</em> 7 (11): e48769. <a href="https://doi.org/10.1371/journal.pone.0048769">https://doi.org/10.1371/journal.pone.0048769</a>.
 </div>
@@ -345,18 +393,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -388,11 +425,48 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
-  function tippyHover(el, contentFn) {
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -402,8 +476,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -415,7 +498,129 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -459,6 +664,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -484,6 +690,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -544,6 +776,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
+
 
 
 

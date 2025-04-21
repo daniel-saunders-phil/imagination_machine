@@ -45,15 +45,16 @@ Let's suppose that the true, data-generating process is a tanh function with par
 
 If I didn't know those parameters values but I searched a 2D grid of parameter values and assessed the log-likelihood at each point for the simulated dataset shown below, I would end up with a likelihood surface. Likelihood surfaces are nice to study because they play a controlling role in the inferences regardless of whether the MMM is Bayesian or not.
 
-```{python}
-warnings.filterwarnings('ignore')
 
+```{python}
 import numpy as np
 import matplotlib.pyplot as plt
 import warnings
 from scipy import stats
 
 np.random.seed(42)
+
+warnings.filterwarnings('ignore')
 ```
 
 ```{python}
@@ -225,7 +226,7 @@ plt.plot(b_points,c_points,'o',color="yellow",label="region of nearly equivalent
 plt.legend()
 
 plt.plot(b,c,'o')
-plt.annotate("true parameter value", (b,c), xytext=(10,10), textcoords='offset points', fontsize=8)
+plt.annotate("true parameter value", (b,c), xytext=(10,10), textcoords='offset points', fontsize=8);
 ```
 
 This has a few big consequences for data science teams.

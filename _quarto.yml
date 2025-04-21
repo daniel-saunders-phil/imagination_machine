@@ -1,0 +1,25 @@
+project:
+  type: website
+
+website:
+  title: "Imagination Machine"
+  site-url: https://daniel-saunders-phil.github.io/imagination_machine/
+  navbar:
+    right:
+      - about.qmd
+      - icon: github
+        href: https://github.com/daniel-saunders-phil
+  page-footer:
+    right: "Built with [Quarto](https://quarto.org/)"
+    left: "&copy; 2024, Daniel Saunders"
+
+format:
+  html:
+    theme: simplex
+    css: styles.css
+    toc: true
+    code-fold: true
+    code-tools: true
+
+execute:
+  freeze: auto 

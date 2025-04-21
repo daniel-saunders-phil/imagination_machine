@@ -1,0 +1,16 @@
+/.quarto/
+/_site/
+/_freeze/
+.DS_Store
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+/.jupyter/
+/.ipynb_checkpoints/
+*.html
+!.github/workflows/*.html
+*.pdf
+*.docx
+*.pptx
+*.epub

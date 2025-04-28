@@ -1,9 +1,7 @@
 ---
 title: "Imagination Machine"
 listing:
-  contents: 
-    - "posts/*/*.qmd"
-    - "posts/*/index.html"
+  contents: "posts/*/*.qmd"
   sort: "date desc"
   type: default
   categories: true

@@ -1,5 +1,6 @@
 project:
   type: website
+  output-dir: _site
 
 website:
   title: "Imagination Machine"
@@ -22,4 +23,4 @@ format:
     code-tools: true
 
 execute:
-  freeze: auto
+  freeze: true

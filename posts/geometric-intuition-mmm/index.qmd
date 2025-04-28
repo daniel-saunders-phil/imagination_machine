@@ -35,7 +35,6 @@ The plan for the rest of this post is to explore how we estimate the parameters 
 >
 > For sure, but adstock is a linear function. If you smear two small quantities out over time and then add them together, it's the same as smearing one big quantity. All the really tricky stuff arises from the non-linearity introduced by saturation functions.
 
-
 # MMMs have will have correlated parameter estimates, even under ideal conditions.
 
 Let's suppose that the true, data-generating process is a tanh function with parameters:

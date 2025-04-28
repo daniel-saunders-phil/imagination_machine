@@ -22,4 +22,7 @@ format:
     code-tools: true
 
 execute:
-  freeze: auto 
+  freeze: auto
+
+listing:
+  contents: "posts/*/*.qmd"

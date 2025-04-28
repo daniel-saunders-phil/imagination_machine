@@ -23,6 +23,3 @@ format:
 
 execute:
   freeze: auto
-
-listing:
-  contents: "posts/*/*.qmd"

@@ -28,3 +28,8 @@ format:
 
 execute:
   freeze: true
+
+publish:
+  - id: gh-pages
+    site-url: https://daniel-saunders-phil.github.io/imagination_machine/
+    url-path: /imagination_machine/

@@ -15,16 +15,16 @@ image: "image.png"
 
 *MMMs are just fancy linear regressions.*
 
-At my work, it is a common refrain. It is a meant as sarcastic reminder - don't go crazy, don't convince yourself you are doing something more complicated than you are. This is all still pretty ordinary statistics. I think it undersells some of the more delicate aspects of media mix models (MMMs). MMMs are really *non-linear regressions*. The intuitions that data scientists develop by studying the theory of linear statistics models can be misleading. MMMs are ungodly creatures. They follow their own set of rules. In this post, I want to draw a few sketches to give you some new intuitions about the behaviour of MMMs.
+At my work, it is a common refrain. It is meant as a sarcastic reminder - don't go crazy, don't convince yourself you are doing something more complicated than you are. This is all still pretty ordinary statistics. I think it undersells some of the more delicate aspects of media mix models (MMMs). MMMs are really *non-linear regressions*. The intuitions that data scientists develop by studying the theory of linear statistical models can be misleading. MMMs are ungodly creatures. They follow their own set of rules. In this post, I want to draw a few sketches to give you some new intuitions about the behaviour of MMMs.
 
 
-If you have two inputs that you want to add together and pass through a linear function, it doesn't matter what order you do things in. Add and then pass to the function; pass and then add. Both yield the same result.
+If you have two inputs that you want to add together and pass through a linear function, it doesn't matter what order you do things in. Add and then pass; pass and then add. Both yield the same result.
 
 $$f(a+b) = f(a) + f(b)$$
 
-Saturation functions are non-linear. It's easy to see why. Suppose the function saturates at $0.5$. If you pass two large quantities that both return something close to $0.5$, then adding them up will be $\approx(1)$. If, instead, you add the two large quantities and then pass to the saturation function, you get back $\approx(0.5)$.
+Saturation functions are non-linear. It's easy to see why. Suppose the function saturates at $0.5$. If you pass two large quantities that both return something close to $0.5$, then adding them up will be $\approx 1$. If, instead, you add the two large quantities and then pass to the saturation function, you get back $\approx 0.5$.
 
-A common choice of saturation function is the tanh.
+[A common choice](https://www.pymc-marketing.io/en/stable/api/generated/pymc_marketing.mmm.transformers.tanh_saturation.html#pymc_marketing.mmm.transformers.tanh_saturation) of saturation function is the tanh.
 
 $$ b * \text{tanh}(\frac{x}{bc})$$
 
@@ -37,7 +37,7 @@ The plan for the rest of this post is to explore how we estimate the parameters 
 >
 > For sure, but adstock is a linear function. If you smear two small quantities out over time and then add them together, it's the same as smearing one big quantity. All the really tricky stuff arises from the non-linearity introduced by saturation functions.
 
-# MMMs have will have correlated parameter estimates, even under ideal conditions.
+# MMMs will have correlated parameter estimates, even under ideal conditions.
 
 Let's suppose that the true, data-generating process is a tanh function with parameters:
 
@@ -158,7 +158,7 @@ likelihood_surface = stats.norm(loc=mu,scale=0.05).logpdf(ys).sum(axis=0)
 
 ax[1].contour(B,L,likelihood_surface,levels=40)
 ax[1].plot(b,lam,'o')
-ax[1].annotate("true parameter value", (b,c), xytext=(10,10), textcoords='offset points', fontsize=8)
+ax[1].annotate("true parameter value", (b,lam), xytext=(10,10), textcoords='offset points', fontsize=8)
 ax[1].set_xlabel("b (saturation point)")
 ax[1].set_ylabel("lam (spend to get halfway to saturation)")
 f.suptitle("Michaelis-Menten");
@@ -206,7 +206,7 @@ ax[1].set_ylabel("c (customer acquisition cost)")
 f.suptitle("Underspending");
 ```
 
-It's the same basic banana-shape but a lot sketching to the right. This indicates that the data is not terribly informative for the parameter value of the saturation point. How could it be? If you have never spent close to the saturation point, you will never find out when diminishing returns kicks in. This data can indicate a window of parameters that are plausible but it will never, in practice, converge to a single point. Below, I've highlighted a region of the surface where the value is within 1.5 logs of the global max.
+It's the same basic banana-shape but a lot stretching to the right. This indicates that the data is not terribly informative for the parameter value of the saturation point. How could it be? If you have never spent close to the saturation point, you will never find out when diminishing returns kicks in. This data can indicate a window of parameters that are plausible but it will never, in practice, converge to a single point. Below, I've highlighted a region of the surface where the value is within 1.5 logs of the global max.
 
 ```{python}
 plt.figure(figsize=(8,4))
@@ -279,15 +279,15 @@ If all our spending is near the saturation point, then we'll have a pretty good 
 
 The region of nearly identical likelihood is just as bad for overspending. I've highlighted all the points that fall with in half a log of a max. These long tails of nearly equivalent likelihood can be quite problematic for summarizing the results of our model. In linear regression, the curvature around the maximum likelihood point is symmetrical. Here that's not the case. The curvature is heavily asymmetrical. So if you are estimating posterior distributions, the mean of that posterior will not be particularly close to the max. The mean would be somewhere in the middle of that yellow band. 
 
-Reporting a mean like that to the marketing team could be quite misleading. It suggests the channel is very cheap. Maybe 50 cents of marketing material to convert the first customer. You don't have a ton of options. Giving them a full distribution isn't that helpful either. The distribution will say "customers could be free, very cheap or pretty expensive." I suspect you'll get questions about how we can trust models that are so uncertain and so on. There is a better way though - that statistically defensible, improves the stability of estimators and samplers, and will align with the marketing departments expectations.
+Reporting a mean like that to the marketing team could be quite misleading. It suggests the channel is very cheap. Maybe 50 cents of marketing material to convert the first customer. You don't have a ton of options. Giving them a full distribution isn't that helpful either. The distribution will say "customers could be free, very cheap or pretty expensive." I suspect you'll get questions about how we can trust models that are so uncertain and so on. There is a better way though - that is statistically defensible, improves the stability of estimators and samplers, and will align with the marketing departments expectations.
 
 # Gentle priors, gentle penalties
 
-We should appreciate that the cases where we overspend or underspend are probably the typical case. Marketer are managing finite budgets and put themselves at consider risk if they suddenly start spending a lot more on cable tv ads "just to try it." Instead, in my experience, marketing teams then to follow a tradition built out of some trial and error, some folklore and so past marketing research. This means that industry datasets tend to have underexplored the saturation curve. 
+We should appreciate that the cases where we overspend or underspend are probably the typical case. Marketers are managing finite budgets and put themselves at considerable risk if they suddenly start spending a lot more on cable tv ads "just to try it." Instead, in my experience, marketing teams tend to follow a tradition built out of some trial and error, some folklore and some past marketing research. This means that industry datasets tend to have underexplored the saturation curve. 
 
-While our data cannot distinguish between some parameter values, our powerful minds can. Some of these parameter values are obviously implausible. Customers aren't free. You cannot regularly persuade more than one person to buy something with a single impression. The folk wisdom of business suggest that marketing drives 5%-20% of sales. The saturation point cannot be larger than the entire potential customer base of your product. Statements like this allow us to slowly narrow the range of parameter values. Customer acquisition parameters can only go so low. Saturation points can only go so high.
+While our data cannot distinguish between some parameter values, our powerful minds can. Some of these parameter values are obviously implausible. Customers aren't free. You cannot regularly persuade more than one person to buy something with a single impression. The folk wisdom of business suggests that marketing drives 5%-20% of sales. The saturation point cannot be larger than the entire potential customer base of your product. Statements like this allow us to slowly narrow the range of parameter values. Customer acquisition parameters can only go so low. Saturation points can only go so high.
 
-We'd like to encode that information into the model. But we want to be as gentle as possible. The data should still do the talking. It's just that a little bit of extra info can do a long way.
+We'd like to encode that information into the model. But we want to be as gentle as possible. The data should still do the talking. It's just that a little bit of extra info can go a long way.
 
 Consider the case of the customer acquisition cost. An appropriate prior might be the inverse Gamma distribution.
 
@@ -308,7 +308,7 @@ ax.set_title('Inverse Gamma Distribution');
 
 This prior trims off the super low acquisition costs and allows you to pick a best guess. But it has a nice long tail so it is consistent the scenario where the marketing channels are very ineffective. If the data drives the estimates up there, the model will listen. 
 
-Here is what the log likelihood surface looks like if add the prior. The region of near equivalence begins to become more symmetrical. The peak of the surface moves away from the super low, implausible parameter values. In this way, prior serve as guardrails - in the absence of data-driven information, the prior can control the behaviour of the model. However, the prior clearly isn't overpowering the data. The structure of the likelihood surface is almost exactly as it was before we added the prior.
+Here is what the log likelihood surface looks like if we add the prior. The region of near equivalence begins to become more symmetrical. The peak of the surface moves away from the super low, implausible parameter values. In this way, priors serve as guardrails - in the absence of data-driven information, the prior can control the behaviour of the model. However, the prior clearly isn't overpowering the data. The structure of the likelihood surface is almost exactly as it was before we added the prior.
 
 ```{python}
 f, ax = plt.subplots(1,2,figsize=(7,4),tight_layout=True)
@@ -339,9 +339,9 @@ ax[1].set_ylabel("c (customer acquisition cost)")
 f.suptitle("With prior to cap off low c values");
 ```
 
-A similar lesson could be extended for the underspend case. Pruning very large saturation points will have the same effect. In this case, a Gamma distribution might be a nice choice because it has thin tails for the high values and doesn't eliminate small $b$ values.
+A similar lesson could be extended for the underspend case. Pruning very large saturation points will have the same effect. In this case, a Gamma distribution might be a nice choice because it has thin tails when sigma is small and doesn't eliminate small $b$ values.
 
-There is no need to wait until you discover a channel has over spend or under spend. In practice, you won't know when you are in one regime or another. Develop some gentle, default priors in collaboration with the marketing team and apply them all channels. In the good cases, it won't hurt. In the bad cases, it can really help.
+There is no need to wait until you discover a channel has over spend or under spend. In practice, you won't know when you are in one regime or another. Develop some gentle, default priors in collaboration with the marketing team and apply them to all channels. In the good cases, it won't hurt. In the bad cases, it can really help.
 
 
 > **This is all Bayesian stuff, how does this apply to frequentist or ML frameworks?**

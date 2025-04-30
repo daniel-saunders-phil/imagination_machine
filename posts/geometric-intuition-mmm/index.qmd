@@ -60,7 +60,7 @@ warnings.filterwarnings('ignore')
 def saturation(x,b,c):
     return b * np.tanh(x / (b*c))
 
-f, ax = plt.subplots(1,2,figsize=(12,4))
+f, ax = plt.subplots(1,2,figsize=(7,4),tight_layout=True)
 
 x = np.linspace(0,1)
 
@@ -112,8 +112,7 @@ ax[1].annotate("true parameter value", (b,c), xytext=(10,10), textcoords='offset
 ax[1].set_xlabel("b (saturation point)")
 ax[1].set_ylabel("c (customer acquisition cost)")
 ax[1].set_title("Likelihood surface")
-f.suptitle("Standard tanh")
-plt.colorbar(mappable=ax[1].collections[0], ax=ax[1], label='Log Likelihood');
+f.suptitle("Standard tanh");
 ```
 
 For the tanh function, the likelihood surface is banana-shaped. There is a region of approximately equal likelihood defined by combinations of $b$ and $c$ values. If your marketing channel is very effective at acquiring customers but saturates quickly, that explains the data. But if the marketing channel saturates slowly and is more expensive, that model also does a pretty good job. 
@@ -126,7 +125,7 @@ The correlations between parameters are not limited to this parameterization of 
 def menten(x,b,lam):
     return (b * x) / (lam + x)
 
-f, ax = plt.subplots(1,2,figsize=(12,4))
+f, ax = plt.subplots(1,2,figsize=(7,4),tight_layout=True)
 
 x = np.linspace(0,1)
 
@@ -160,8 +159,7 @@ ax[1].plot(b,lam,'o')
 ax[1].annotate("true parameter value", (b,c), xytext=(10,10), textcoords='offset points', fontsize=8)
 ax[1].set_xlabel("b (saturation point)")
 ax[1].set_ylabel("lam (spend to get halfway to saturation)")
-f.suptitle("Michaelis-Menten")
-plt.colorbar(mappable=ax[1].collections[0], ax=ax[1], label='Log Likelihood');
+f.suptitle("Michaelis-Menten");
 ```
 
 This is also a region of similar likelihood across pairs of parameters values.
@@ -171,7 +169,7 @@ This is also a region of similar likelihood across pairs of parameters values.
 Let's suppose that your marketing department has been consistently and historically under-spending on a certain channel. At some point, popular wisdom took hold and the no one thinks cable tv ads are very effective. So the marketing team throws a few bucks toward cable each year and otherwise focuses on digital. Your observed data and resulting likelihood surface would look like:
 
 ```{python}
-f, ax = plt.subplots(1,2,figsize=(12,4))
+f, ax = plt.subplots(1,2,figsize=(7,4),tight_layout=True)
 
 x = np.linspace(0,1)
 
@@ -203,7 +201,7 @@ ax[1].plot(b,c,'o')
 ax[1].annotate("true parameter value", (b,c), xytext=(10,10), textcoords='offset points', fontsize=8)
 ax[1].set_xlabel("b (saturation point)")
 ax[1].set_ylabel("c (customer acquisition cost)")
-plt.colorbar(mappable=ax[1].collections[0], ax=ax[1], label='Log Likelihood');
+f.suptitle("Underspending");
 ```
 
 It's the same basic banana-shape but a lot sketching to the right. This indicates that the data is not terribly informative for the parameter value of the saturation point. How could it be? If you have never spent close to the saturation point, you will never find out when diminishing returns kicks in. This data can indicate a window of parameters that are plausible but it will never, in practice, converge to a single point. Below, I've highlighted a region of the surface where the value is within 1.5 logs of the global max.
@@ -236,7 +234,7 @@ This has a few big consequences for data science teams.
 Similar lessons apply for channels that the marketing team has historically overspent on. 
 
 ```{python}
-f, ax = plt.subplots(1,2,figsize=(12,4))
+f, ax = plt.subplots(1,2,figsize=(7,4),tight_layout=True)
 
 x = np.linspace(0,1)
 
@@ -272,7 +270,7 @@ ax[1].plot(b,c,'o')
 ax[1].annotate("true parameter value", (b,c), xytext=(10,10), textcoords='offset points', fontsize=8)
 ax[1].set_xlabel("b (saturation point)")
 ax[1].set_ylabel("c (customer acquisition cost)")
-plt.colorbar(mappable=ax[1].collections[0], ax=ax[1], label='Log Likelihood');
+f.suptitle("Overspending");
 ```
 
 If all our spending is near the saturation point, then we'll have a pretty good idea of what that point is. But we won't know how we got there: a fast saturation channel that spikes quickly and levels off or a smooth, gradual incline.
@@ -311,7 +309,7 @@ This prior trims off the super low acquisition costs and allows you to pick a be
 Here is what the log likelihood surface looks like if add the prior. The region of near equivalence begins to become more symmetrical. The peak of the surface moves away from the super low, implausible parameter values. In this way, prior serve as guardrails - in the absence of data-driven information, the prior can control the behaviour of the model. However, the prior clearly isn't overpowering the data. The structure of the likelihood surface is almost exactly as it was before we added the prior.
 
 ```{python}
-f, ax = plt.subplots(1,2,figsize=(12,4))
+f, ax = plt.subplots(1,2,figsize=(7,4),tight_layout=True)
 
 ax[0].plot(x,mu,color='tab:blue')
 ax[0].plot(x[25:],y,'o',color="tab:cyan")
@@ -336,7 +334,7 @@ ax[1].plot(b,c,'o')
 ax[1].annotate("true parameter value", (b,c), xytext=(10,10), textcoords='offset points', fontsize=8)
 ax[1].set_xlabel("b (saturation point)")
 ax[1].set_ylabel("c (customer acquisition cost)")
-plt.colorbar(mappable=ax[1].collections[0], ax=ax[1], label='Log Likelihood');
+f.suptitle("With prior to cap off low c values");
 ```
 
 A similar lesson could be extended for the underspend case. Pruning very large saturation points will have the same effect. In this case, a Gamma distribution might be a nice choice because it has thin tails for the high values and doesn't eliminate small $b$ values.
@@ -361,4 +359,3 @@ I won't sketch these ideas out here. But in future blog posts, I also want to ex
 
 - Hamiltonian Monte Carlo techniques should use dense mass matrix adaptations on MMMs.
 - MMMs can have multi-modal likelihood surfaces once complexity of the model increases even a little bit.
-

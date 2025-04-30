@@ -1,6 +1,10 @@
 project:
   type: website
   output-dir: _site
+  render:
+    - "*.qmd"
+    - "!excluded/*.qmd"  # Files in the excluded directory won't be rendered
+    - "!draft-*.qmd"     # Files starting with draft- won't be rendered
 
 website:
   title: "Imagination Machine"
@@ -16,7 +20,7 @@ website:
 
 format:
   html:
-    theme: simplex
+    theme: solar
     css: styles.css
     toc: true
     code-fold: true

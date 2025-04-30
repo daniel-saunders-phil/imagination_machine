@@ -8,6 +8,7 @@
 
 <meta name="author" content="Daniel Saunders">
 <meta name="dcterms.date" content="2023-09-13">
+<meta name="description" content="More science, even less p-values.">
 
 <title>Imagination Machine - Break your toys and glue them back together</title>
 <style>
@@ -187,6 +188,11 @@ div.csl-indent {
 <div class="quarto-title-block"><div><h1 class="title">Break your toys and glue them back together</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
 </div>
 
+<div>
+  <div class="description">
+    More science, even less p-values.
+  </div>
+</div>
 
 
 <div class="quarto-title-meta">
@@ -810,303 +816,304 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> Break your toys and glue them back together</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> Daniel Saunders</span></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> 2023-09-13</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="an">bibliography:</span><span class="co"> dissertation_bibliography.bib</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">  freeze: true</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">  echo: false</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="an">jupyter:</span><span class="co"> python3</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="an">image:</span><span class="co"> image.png</span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">    code-fold: false</span></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>To me, the most interesting question in the social sciences is what statistical practice will look like in 20 years. Criticisms of null hypothesis significance testing has become mainstream. Even if p-values still dominant the publication landscape, many of other approaches to analysis are making it into major journals. At the same time, the software that lets people build more customizable, interesting models has been getting faster and more accessible. Sometimes it feels like our biggest challenge is that we don't quite know what to do with all this power. As a community we need more examples of what another statistical practice might look like.</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>I previously <span class="co">[</span><span class="ot">wrote</span><span class="co">](https://daniel-saunders-phil.github.io/imagination_machine/posts/if-none-of-the-above-then-what/)</span> about a case where I took a toy mechanistic model and fit it to the small dataset with 10 islands in Oceania. What's cool about this sort of analysis is that you don't need to substitute out your mechanistic model for a linear regression when performing data analysis. That sort of substitution can introduce all sorts of complications in reasoning from one model to another. The approach where you fit a mechanistic model is much clearer and, when the model inevitably fails, the failures take on a importance within the framework of the theory. </span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>This post is a sequel. I'm going to continue working with that case study and show a small bit about how to iteratively tailor a toy mechanistic model to the messiness of the world.</span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="fu"># Sometimes you just need to integrate</span></span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>The demographic theory of technology is a toy model that relates population size to the advancement of technical skills. In many areas of social science, model-based thinking is valued for its ability to rigourly connect individual-level behavioural thinking to population outcomes. For full details, you'll need to read part 1. To summarize though, we have two parameters, $a$ represents the inherit difficulty of learning a skill. This is shared by all individuals. $b$ represents the individual variability in learning - different people are better or worse at imitating. We have a population with $n$ people. The population-level process is a differential equation. This equation tells us how the level of technical skill, denoted by $z'$, changes at each point in time.</span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>$$ z' = -a + b*(\gamma + \ln(n)) $$</span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>Differential equations tell us how to get from one point in time to the next or the growth rate in technology over time. But knowing how to step through time doesn't give us the full story. We need to be able to predict how many tools each island society should have, given their population size and a length of time. Each society might have been innovating for different lengths of time which means population size doesn't totally determine the outcome.</span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>Fortunately, in this case, we can just integrate the equation with respect to time. One you specify $a,b,n$, the growth rate is a constant. It doesn't matter how many tools you already have, you'll grow by the same amount in the next period. To know the number of tools have 30 time-steps, we just multiply the growth rate by 30. The technical skill on an island at a certain point in time is just:</span>
-<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>$$ z = (-a + b*(\gamma + \ln(n)))*T $$</span>
-<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>In the previous post, I suggested we'd need a differential equation solver to fit our model. That turned out to be erroneous. We can now fit our model much more quickly and the extra analytical rigour will allow us to derive a new model later down the road.</span>
-<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a><span class="fu">## Fitting</span></span>
-<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>We'll import the same data.</span>
-<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pymc <span class="im">as</span> pm</span>
-<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> arviz <span class="im">as</span> az</span>
-<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> networkx <span class="im">as</span> nx</span>
-<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pytensor.tensor <span class="im">as</span> pt</span>
-<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy <span class="im">import</span> stats</span>
-<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a>seed <span class="op">=</span> np.random.seed(<span class="dv">123</span>)</span>
-<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
-<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a>    dk <span class="op">=</span> pd.read_csv(<span class="st">"Kline"</span>,sep<span class="op">=</span><span class="st">";"</span>)</span>
-<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> <span class="pp">FileNotFoundError</span>:</span>
-<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a>    dk <span class="op">=</span> pd.read_csv(<span class="st">"https://raw.githubusercontent.com/pymc-devs/pymc-resources/main/Rethinking_2/Data/Kline"</span>,sep<span class="op">=</span><span class="st">";"</span>)</span>
-<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a>times <span class="op">=</span> [<span class="dv">3000</span>,<span class="dv">3000</span>,<span class="dv">3000</span>,<span class="dv">3500</span>,<span class="dv">3000</span>,<span class="dv">3350</span>,<span class="dv">600</span>,<span class="dv">3350</span>,<span class="dv">2845</span>,<span class="dv">800</span>]</span>
-<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a>dk[<span class="st">'initial_settlement (BP)'</span>] <span class="op">=</span> times</span>
-<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a>dk</span>
-<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a>Rename our variables to T for time, N for population size, and tools for the total tools present in a society.</span>
-<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-68"><a href="#cb5-68" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a>T <span class="op">=</span> dk[<span class="st">'initial_settlement (BP)'</span>].values</span>
-<span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> dk.population.values</span>
-<span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a>tools <span class="op">=</span> dk.total_tools.values</span>
-<span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-74"><a href="#cb5-74" aria-hidden="true" tabindex="-1"></a>The model can be expressed compactly with:</span>
-<span id="cb5-75"><a href="#cb5-75" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-78"><a href="#cb5-78" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb5-79"><a href="#cb5-79" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pm.Model() <span class="im">as</span> m0:</span>
-<span id="cb5-80"><a href="#cb5-80" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb5-81"><a href="#cb5-81" aria-hidden="true" tabindex="-1"></a>    a <span class="op">=</span> pm.Gamma(<span class="st">'a'</span>,mu<span class="op">=</span><span class="fl">0.05</span>,sigma<span class="op">=</span><span class="fl">0.1</span>)</span>
-<span id="cb5-82"><a href="#cb5-82" aria-hidden="true" tabindex="-1"></a>    b <span class="op">=</span> pm.Gamma(<span class="st">'b'</span>,mu<span class="op">=</span><span class="fl">0.005</span>,sigma<span class="op">=</span><span class="fl">0.01</span>)</span>
-<span id="cb5-83"><a href="#cb5-83" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb5-84"><a href="#cb5-84" aria-hidden="true" tabindex="-1"></a>    mu <span class="op">=</span> times <span class="op">*</span> (<span class="op">-</span>a <span class="op">+</span> b<span class="op">*</span>(np.euler_gamma <span class="op">+</span> np.log(N)))</span>
-<span id="cb5-85"><a href="#cb5-85" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-86"><a href="#cb5-86" aria-hidden="true" tabindex="-1"></a>    Y <span class="op">=</span> pm.Poisson(<span class="st">"Y"</span>, mu<span class="op">=</span>mu,observed<span class="op">=</span>tools)</span>
-<span id="cb5-87"><a href="#cb5-87" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-88"><a href="#cb5-88" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-89"><a href="#cb5-89" aria-hidden="true" tabindex="-1"></a>The priors need some justification. First, the Gamma distributions have really small means. That is because the population and time values are quite large. If you push their values up a bit, you'd have explosive growth in technology. Second, I tuned the priors by looking at prior predictive simulations. I want the bulk of the prior predictions to be below 1000. Some of our islands only have about 1000 people. It is certainly possible that everyone on an island is an inventor but it is unlikely. I simply took draws from the prior and kept adjusting the parameters until the growth rates were fairly stable and represented wide uncertainty.</span>
-<span id="cb5-90"><a href="#cb5-90" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-93"><a href="#cb5-93" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb5-94"><a href="#cb5-94" aria-hidden="true" tabindex="-1"></a>pp <span class="op">=</span> pm.draw(mu,draws<span class="op">=</span><span class="dv">100</span>)</span>
-<span id="cb5-95"><a href="#cb5-95" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-96"><a href="#cb5-96" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> val <span class="kw">in</span> pp[:,:]:</span>
-<span id="cb5-97"><a href="#cb5-97" aria-hidden="true" tabindex="-1"></a>    plt.plot(val,<span class="st">'o'</span>,alpha<span class="op">=</span><span class="fl">0.3</span>)</span>
-<span id="cb5-98"><a href="#cb5-98" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-99"><a href="#cb5-99" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-102"><a href="#cb5-102" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb5-103"><a href="#cb5-103" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> m0:</span>
-<span id="cb5-104"><a href="#cb5-104" aria-hidden="true" tabindex="-1"></a>    trace0 <span class="op">=</span> pm.sample(nuts_sampler<span class="op">=</span><span class="st">"nutpie"</span>,progressbar<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb5-105"><a href="#cb5-105" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-106"><a href="#cb5-106" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-107"><a href="#cb5-107" aria-hidden="true" tabindex="-1"></a>We face a bit of challenge in fitting the model - the parameters $a$ and $b$ are collinear. Each represents a certain kind of difficulty and they can counterbalance each other. If $a$ is high, the skill is uniformly difficult to learn. But if $b$ is also high, it makes up for that because it provides more opportunities for novel innovation. So there are several combinations of $a$ and $b$ parameters that provide the same accuracy in predicting the oceania dataset. The figure below illustrates how the MCMC algorithm explores the parameter space. It travels back and forth on this narrow band of roughly equivalent probability.</span>
-<span id="cb5-108"><a href="#cb5-108" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-111"><a href="#cb5-111" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb5-112"><a href="#cb5-112" aria-hidden="true" tabindex="-1"></a>az.plot_pair(trace0,var_names<span class="op">=</span>[<span class="st">"a"</span>,<span class="st">"b"</span>])<span class="op">;</span></span>
-<span id="cb5-113"><a href="#cb5-113" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-114"><a href="#cb5-114" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-115"><a href="#cb5-115" aria-hidden="true" tabindex="-1"></a>Collinearity is a medium-sized problem. It will inflate the uncertainty on our parameters. If we really cared to pin down the value of $a$, we'd need extra information to first pin down the value of $b$, or visa-versa. Or, we should scrape this model and build a new one. In our case, I don't particularly care what value each parameter takes on. I'm more interested in whether our model can explain the available data.</span>
-<span id="cb5-116"><a href="#cb5-116" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-117"><a href="#cb5-117" aria-hidden="true" tabindex="-1"></a>Below I plot the predictions the model makes about island societies, given the estimated parameter values. I've plotted 50 random predictions to help represent the uncertainty propagating through the model. The model performs pretty well on 6 of the island societies, suggesting it could be a candidate explanation for dynamics of technical development in those societies. However, in Hawaii, Manus, Trobriand and Chuuk, the model doesn't have a good way to predict them. Hawaii and Chuuk both have more tools that they are supposed, given their development time and population size. Meanwhile, Manus and Trobriand have too few tools. </span>
-<span id="cb5-118"><a href="#cb5-118" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-119"><a href="#cb5-119" aria-hidden="true" tabindex="-1"></a>At this point, it doesn't look like the demographic theory of technology is very plausible. The worry persists even if you dealt with the collinearity problem. If you pushed the growth rate up a little bit, you'd over shoot Trobriand and Manus even more. If you pushed the growth rate down a little, the problem of Hawaii and Chuuk gets worse.</span>
-<span id="cb5-120"><a href="#cb5-120" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-123"><a href="#cb5-123" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb5-124"><a href="#cb5-124" aria-hidden="true" tabindex="-1"></a>post_pred_m0 <span class="op">=</span> pm.sample_posterior_predictive(model<span class="op">=</span>m0,trace<span class="op">=</span>trace0,progressbar<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb5-125"><a href="#cb5-125" aria-hidden="true" tabindex="-1"></a>predictions <span class="op">=</span> post_pred_m0.posterior_predictive[<span class="st">'Y'</span>].values.reshape((<span class="dv">4000</span>,<span class="dv">10</span>))</span>
-<span id="cb5-126"><a href="#cb5-126" aria-hidden="true" tabindex="-1"></a>label_id <span class="op">=</span> dk.culture.values</span>
-<span id="cb5-127"><a href="#cb5-127" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-128"><a href="#cb5-128" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">5</span>))</span>
-<span id="cb5-129"><a href="#cb5-129" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-130"><a href="#cb5-130" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> index <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(label_id)):</span>
-<span id="cb5-131"><a href="#cb5-131" aria-hidden="true" tabindex="-1"></a>    ax.text(np.log(N)[index], tools[index], label_id[index], size<span class="op">=</span><span class="dv">12</span>)</span>
-<span id="cb5-132"><a href="#cb5-132" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-133"><a href="#cb5-133" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">50</span>):</span>
-<span id="cb5-134"><a href="#cb5-134" aria-hidden="true" tabindex="-1"></a>    i <span class="op">=</span> np.random.randint(low<span class="op">=</span><span class="dv">0</span>,high<span class="op">=</span><span class="dv">4000</span>)</span>
-<span id="cb5-135"><a href="#cb5-135" aria-hidden="true" tabindex="-1"></a>    plt.plot(np.log(N),predictions[i],<span class="st">'o'</span>,alpha<span class="op">=</span><span class="fl">0.2</span>,color<span class="op">=</span><span class="st">"tab:blue"</span>,markersize<span class="op">=</span><span class="dv">5</span>)</span>
-<span id="cb5-136"><a href="#cb5-136" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb5-137"><a href="#cb5-137" aria-hidden="true" tabindex="-1"></a>plt.plot(np.log(N),tools,<span class="st">'o'</span>,color<span class="op">=</span><span class="st">"black"</span>)</span>
-<span id="cb5-138"><a href="#cb5-138" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb5-139"><a href="#cb5-139" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Log population size"</span>)<span class="op">;</span></span>
-<span id="cb5-140"><a href="#cb5-140" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-141"><a href="#cb5-141" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-142"><a href="#cb5-142" aria-hidden="true" tabindex="-1"></a>When it comes to fitting toy mechanistic models we have to be careful. They break more easily than linear regression. Frankly, I think that's a good thing. If your model fits every dataset, you cannot learn from it. However! If a toy model breaks for opaque reasons, then it is also hard to learn from. In our case, it's not initially easy to tell whether the demographic theory of technology is bunk or whether there are some simple features of the Oceanic societies that we have to add before the model works well.</span>
-<span id="cb5-143"><a href="#cb5-143" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-144"><a href="#cb5-144" aria-hidden="true" tabindex="-1"></a>The world is a complicated place. Many of those complications are case-specific - there are unique features of the history and geography of Oceania that influence the distribution of technology. Toy models are usually developed to capture some core general features that should recur across a range of cases. Out-of-the-box they usually don't fit any cases well. </span>
-<span id="cb5-145"><a href="#cb5-145" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-146"><a href="#cb5-146" aria-hidden="true" tabindex="-1"></a>The way I envision a productive scientific workflow is this: first we fit the toy model. Then we slowly layer on extra features to tailor it to some specific domain. If the toy model actually does capture some core mechanism in the world, it should start to fit nicely after a bit of tailoring. If the fit of the model doesn't improve too much once we add the extra features, we should think there is something wrong with the core theory.</span>
-<span id="cb5-147"><a href="#cb5-147" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-148"><a href="#cb5-148" aria-hidden="true" tabindex="-1"></a><span class="fu"># The Founder Effect</span></span>
-<span id="cb5-149"><a href="#cb5-149" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-150"><a href="#cb5-150" aria-hidden="true" tabindex="-1"></a>There is one thing left out of the model that feels inexcusable - people do not settle new islands empty-handed. If a well-developed society in Fiji sends out explorers who stumble across Hawaii, the first settlers of Hawaii will bring with them the technical knowledge of Fiji. We can incorporate this information into the model by starting out each society from the technical level of their founder society.</span>
-<span id="cb5-151"><a href="#cb5-151" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-152"><a href="#cb5-152" aria-hidden="true" tabindex="-1"></a>I did some reading on the expansion of humanity into Oceania (especially useful was @matisoo-smith2015) and pieced together a rough picture of how it happened. Below is a graph depicting the ancestry. Yellow societies were settled roughly 3500 years ago. Purple societies were settled within the last 1000 years. There is good deal of uncertainty in this map. For example, Fiji was likely settled by one of Santa Cruz, Tikopia or Malekula but we don't know which. Pinning down these uncertainities would certainly help the project but I'll leave them to the side at this point. As usual, my purpose is to illustrate a style of statistical reasoning rather than decisively settle some scientific question.</span>
-<span id="cb5-153"><a href="#cb5-153" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-156"><a href="#cb5-156" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb5-157"><a href="#cb5-157" aria-hidden="true" tabindex="-1"></a>G <span class="op">=</span> nx.DiGraph()</span>
-<span id="cb5-158"><a href="#cb5-158" aria-hidden="true" tabindex="-1"></a>island_labels <span class="op">=</span> np.concatenate((np.array([<span class="st">"Papua New Guinea"</span>]),dk.culture.values))</span>
-<span id="cb5-159"><a href="#cb5-159" aria-hidden="true" tabindex="-1"></a>G.add_nodes_from(island_labels)</span>
-<span id="cb5-160"><a href="#cb5-160" aria-hidden="true" tabindex="-1"></a>G.add_edges_from([(<span class="st">"Papua New Guinea"</span>,<span class="st">"Manus"</span>),</span>
-<span id="cb5-161"><a href="#cb5-161" aria-hidden="true" tabindex="-1"></a>                  (<span class="st">"Papua New Guinea"</span>,<span class="st">"Trobriand"</span>),</span>
-<span id="cb5-162"><a href="#cb5-162" aria-hidden="true" tabindex="-1"></a>                  (<span class="st">"Trobriand"</span>,<span class="st">"Santa Cruz"</span>),</span>
-<span id="cb5-163"><a href="#cb5-163" aria-hidden="true" tabindex="-1"></a>                  (<span class="st">"Trobriand"</span>,<span class="st">"Tikopia"</span>),</span>
-<span id="cb5-164"><a href="#cb5-164" aria-hidden="true" tabindex="-1"></a>                  (<span class="st">"Trobriand"</span>,<span class="st">"Malekula"</span>),</span>
-<span id="cb5-165"><a href="#cb5-165" aria-hidden="true" tabindex="-1"></a>                  (<span class="st">"Malekula"</span>,<span class="st">"Lau Fiji"</span>),</span>
-<span id="cb5-166"><a href="#cb5-166" aria-hidden="true" tabindex="-1"></a>                  (<span class="st">"Lau Fiji"</span>,<span class="st">"Tonga"</span>),</span>
-<span id="cb5-167"><a href="#cb5-167" aria-hidden="true" tabindex="-1"></a>                  (<span class="st">"Lau Fiji"</span>,<span class="st">"Chuuk"</span>),</span>
-<span id="cb5-168"><a href="#cb5-168" aria-hidden="true" tabindex="-1"></a>                  (<span class="st">"Tonga"</span>,<span class="st">"Hawaii"</span>)])</span>
-<span id="cb5-169"><a href="#cb5-169" aria-hidden="true" tabindex="-1"></a>node_color <span class="op">=</span> np.concatenate((np.array([<span class="dv">3350</span>]),T))</span>
-<span id="cb5-170"><a href="#cb5-170" aria-hidden="true" tabindex="-1"></a>pos <span class="op">=</span> {<span class="st">"Papua New Guinea"</span>: [<span class="op">-</span><span class="fl">0.6</span>,<span class="op">-</span><span class="fl">0.65</span>],</span>
-<span id="cb5-171"><a href="#cb5-171" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Yap"</span>:[<span class="op">-</span><span class="fl">0.6</span>,<span class="fl">0.4</span>],</span>
-<span id="cb5-172"><a href="#cb5-172" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Manus"</span>:[<span class="op">-</span><span class="fl">0.4</span>,<span class="op">-</span><span class="fl">0.2</span>],</span>
-<span id="cb5-173"><a href="#cb5-173" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Trobriand"</span>:[<span class="op">-</span><span class="fl">0.35</span>,<span class="op">-</span><span class="fl">0.6</span>],</span>
-<span id="cb5-174"><a href="#cb5-174" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Santa Cruz"</span>:[<span class="fl">0.01</span>,<span class="op">-</span><span class="fl">0.2</span>],</span>
-<span id="cb5-175"><a href="#cb5-175" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Tikopia"</span>:[<span class="fl">0.10</span>,<span class="op">-</span><span class="fl">.45</span>],</span>
-<span id="cb5-176"><a href="#cb5-176" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Malekula"</span>:[<span class="fl">0.25</span>,<span class="op">-</span><span class="fl">.6</span>],</span>
-<span id="cb5-177"><a href="#cb5-177" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Lau Fiji"</span>:[<span class="fl">0.5</span>,<span class="op">-</span><span class="fl">0.7</span>],</span>
-<span id="cb5-178"><a href="#cb5-178" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Tonga"</span>:[<span class="fl">0.7</span>,<span class="op">-</span><span class="fl">0.7</span>],</span>
-<span id="cb5-179"><a href="#cb5-179" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Hawaii"</span>:[<span class="fl">0.7</span>,<span class="fl">0.7</span>],</span>
-<span id="cb5-180"><a href="#cb5-180" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Chuuk"</span>:[<span class="op">-</span><span class="fl">0.1</span>,<span class="fl">0.4</span>]}</span>
-<span id="cb5-181"><a href="#cb5-181" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>,<span class="dv">4</span>))</span>
-<span id="cb5-182"><a href="#cb5-182" aria-hidden="true" tabindex="-1"></a>nx.draw_networkx(G,node_color<span class="op">=</span>node_color,cmap<span class="op">=</span><span class="st">"plasma"</span>,pos<span class="op">=</span>pos,with_labels<span class="op">=</span><span class="va">True</span>,node_size<span class="op">=</span><span class="dv">2500</span>,alpha<span class="op">=</span><span class="fl">0.8</span>)</span>
-<span id="cb5-183"><a href="#cb5-183" aria-hidden="true" tabindex="-1"></a>plt.savefig(<span class="st">"image"</span>)</span>
-<span id="cb5-184"><a href="#cb5-184" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-185"><a href="#cb5-185" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-186"><a href="#cb5-186" aria-hidden="true" tabindex="-1"></a>We'll need a new model where the level of technical skill is dependent on two factors: the demographic model for the settled society plus the level of technology present in the founder society at the time of founding.  We'll need to break the development time into two periods. In the first period, the founder society is innovating with its population size. In the second period, the ancestor society settles on the island and now that island starts innovating autonomously. The dividing line between the two periods is just the difference in their development time. </span>
-<span id="cb5-187"><a href="#cb5-187" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-188"><a href="#cb5-188" aria-hidden="true" tabindex="-1"></a>For example, suppose we want a function that tells us how many tools Hawaii should have. Hawaii was settled 800 years ago. Tonga was settled 2845 years ago. So we'd want to let Tonga innovate for 2045 years, record what ever skill level is present. Then we'd switch to Hawaii and innovate for 800 years using Hawaii's larger population size. Finally, we add the two skill levels together to get our final prediction. </span>
-<span id="cb5-189"><a href="#cb5-189" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-190"><a href="#cb5-190" aria-hidden="true" tabindex="-1"></a>Let's generalize away from just Hawaii and Tonga to build an abstract model. Denote the founder society with subscript $f$ and the settled society with subscript $s$. The level of tools on the settled society by the time of observation is:</span>
-<span id="cb5-191"><a href="#cb5-191" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-192"><a href="#cb5-192" aria-hidden="true" tabindex="-1"></a>$$ z_{s} = (-a + b*(\gamma + \ln(n_{s})))*T_{s} + (-a + b*(\gamma + \ln(n_{f})))*(T_{f} - T_{s})$$</span>
-<span id="cb5-193"><a href="#cb5-193" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-194"><a href="#cb5-194" aria-hidden="true" tabindex="-1"></a>The expression is long but it is just the original expression for the settled society, plus running the model for the founder society with an abbreviated length of time ($T_{f} - T_{s}$). Now we'll do a bunch of simplification and discover we can achieve a surprisingly compact expression. </span>
-<span id="cb5-195"><a href="#cb5-195" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-196"><a href="#cb5-196" aria-hidden="true" tabindex="-1"></a><span class="fu">## A surprisingly compact expression</span></span>
-<span id="cb5-197"><a href="#cb5-197" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-198"><a href="#cb5-198" aria-hidden="true" tabindex="-1"></a>First, we'll expand the second term. That means multiply the difference equation by $T_{f} - T_{s}$</span>
-<span id="cb5-199"><a href="#cb5-199" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-200"><a href="#cb5-200" aria-hidden="true" tabindex="-1"></a>$$ (-a + b*(\gamma + \ln(n_{s})))*T_{s} + (-a + b*(\gamma + \ln(n_{f})))*T_{f} - (-a + b*(\gamma + \ln(n_{f})))*T_{s} $$</span>
-<span id="cb5-201"><a href="#cb5-201" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-202"><a href="#cb5-202" aria-hidden="true" tabindex="-1"></a>Notice that the first and the last terms of the equations are almost the same - they have the core difference equation multiplied $T_{s}$. The only difference is that one uses the population of the settled society, $\ln(n_{s})$, and the other uses the population of the founding society, $\ln(n_{f})$. It will turn out we can exploit this fact to a lot of simplification. What is left will show that we only need to care about the ratio of population sizes to incorporate founder effects. It will also mean that we can leave the middle term completely untouched. </span>
-<span id="cb5-203"><a href="#cb5-203" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-204"><a href="#cb5-204" aria-hidden="true" tabindex="-1"></a>Let's distribute the time terms on the left and right sides of this expression.</span>
-<span id="cb5-205"><a href="#cb5-205" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-206"><a href="#cb5-206" aria-hidden="true" tabindex="-1"></a>$$ (-aT_{s}  + bT_{s}(\gamma + \ln(n_{s})))+ (-a + b(\gamma + \ln(n_{f})))T_{f} - (-aT_{s} + bT_{s}(\gamma + \ln(n_{f}))) $$</span>
-<span id="cb5-207"><a href="#cb5-207" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-208"><a href="#cb5-208" aria-hidden="true" tabindex="-1"></a>Multiply the third term by negative 1 to take care of the minus sign in front.</span>
-<span id="cb5-209"><a href="#cb5-209" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-210"><a href="#cb5-210" aria-hidden="true" tabindex="-1"></a>$$ -aT_{s}  + bT_{s}(\gamma + \ln(n_{s})) + (-a + b(\gamma + \ln(n_{f})))T_{f} + aT_{s} - bT_{s}(\gamma + \ln(n_{f})) $$</span>
-<span id="cb5-211"><a href="#cb5-211" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-212"><a href="#cb5-212" aria-hidden="true" tabindex="-1"></a>The $-aT_{s}$ term in the front cancels out the $aT_{s}$ term toward the end.</span>
-<span id="cb5-213"><a href="#cb5-213" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-214"><a href="#cb5-214" aria-hidden="true" tabindex="-1"></a>$$  bT_{s}(\gamma + \ln(n_{s})) + (-a + b(\gamma + \ln(n_{f})))T_{f} - bT_{s}(\gamma + \ln(n_{f}))$$</span>
-<span id="cb5-215"><a href="#cb5-215" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-216"><a href="#cb5-216" aria-hidden="true" tabindex="-1"></a>Distribute the $bT_{s}$ terms at the front and back.</span>
-<span id="cb5-217"><a href="#cb5-217" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-218"><a href="#cb5-218" aria-hidden="true" tabindex="-1"></a>$$  bT_{s}\gamma + bT_{s}\ln(n_{s}) + (-a + b*(\gamma + \ln(n_{f})))T_{f} - bT_{s}\gamma - bT_{s}\ln(n_{f})$$</span>
-<span id="cb5-219"><a href="#cb5-219" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-220"><a href="#cb5-220" aria-hidden="true" tabindex="-1"></a>The $bT_{s}\gamma$'s cancel. </span>
-<span id="cb5-221"><a href="#cb5-221" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-222"><a href="#cb5-222" aria-hidden="true" tabindex="-1"></a>$$  bT_{s}\ln(n_{s}) + (-a + b*(\gamma + \ln(n_{f})))T_{f} - bT_{s}\ln(n_{f})$$</span>
-<span id="cb5-223"><a href="#cb5-223" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-224"><a href="#cb5-224" aria-hidden="true" tabindex="-1"></a>Rearrange the expression to move the $bT_{s}\ln(n_{f})$ term to the front.</span>
-<span id="cb5-225"><a href="#cb5-225" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-226"><a href="#cb5-226" aria-hidden="true" tabindex="-1"></a>$$  bT_{s}\ln(n_{s}) - bT_{s}\ln(n_{f}) + (-a + b(\gamma + \ln(n_{f})))T_{f} $$</span>
-<span id="cb5-227"><a href="#cb5-227" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-228"><a href="#cb5-228" aria-hidden="true" tabindex="-1"></a>Factor out the $bT_{s}$ term.</span>
-<span id="cb5-229"><a href="#cb5-229" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-230"><a href="#cb5-230" aria-hidden="true" tabindex="-1"></a>$$  bT_{s}(\ln(n_{s}) - \ln(n_{f})) + (-a + b(\gamma + \ln(n_{f})))T_{f} $$</span>
-<span id="cb5-231"><a href="#cb5-231" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-232"><a href="#cb5-232" aria-hidden="true" tabindex="-1"></a>Lastly, use the fact that the difference between logarithms is just the logarithm of the quotient.</span>
-<span id="cb5-233"><a href="#cb5-233" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-234"><a href="#cb5-234" aria-hidden="true" tabindex="-1"></a>$$  bT_{s}(\ln(n_{s} / n_{f})) + (-a + b(\gamma + \ln(n_{f})))T_{f} $$</span>
-<span id="cb5-235"><a href="#cb5-235" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-236"><a href="#cb5-236" aria-hidden="true" tabindex="-1"></a>We're done. We've arrived at what I call the founder model. The second half of the expression is the familiar expression for the founder society - it tells us what happens if we just let the founder society do all the innovating. The first half of the expression adjusts the original model based on how much time the settled society has been around plus a ratio of their population sizes. When the settled society is bigger, the adjustment factor is positive. When the settled society is smaller, the adjustment factor is negative.</span>
-<span id="cb5-237"><a href="#cb5-237" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-238"><a href="#cb5-238" aria-hidden="true" tabindex="-1"></a><span class="fu">## Fitting the founder model</span></span>
-<span id="cb5-239"><a href="#cb5-239" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-240"><a href="#cb5-240" aria-hidden="true" tabindex="-1"></a>Appreciably, this model assumes that each island immediately takes on its mature population size upon being settled. That's silly. Population size is also a dynamic process. So some fairly important features of the world are left out. If you feel like that's too big of an omission, I can understand. At the very least it makes salient exactly why this sort of analysis cannot succeed without substantially more data and thinking. I care a lot more about understanding the techniques and capacities of mathematical modeling than actually answering whether the demographic theory is any good.</span>
-<span id="cb5-241"><a href="#cb5-241" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-242"><a href="#cb5-242" aria-hidden="true" tabindex="-1"></a>To program it up, it's a bit tedious. We'll need a unique equation for each island and lot of indexing. Regardless, we get the luxury of keeping just two free parameters. </span>
-<span id="cb5-243"><a href="#cb5-243" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-246"><a href="#cb5-246" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb5-247"><a href="#cb5-247" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pm.Model() <span class="im">as</span> m1:</span>
-<span id="cb5-248"><a href="#cb5-248" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Specify prior distributions</span></span>
-<span id="cb5-249"><a href="#cb5-249" aria-hidden="true" tabindex="-1"></a>    a <span class="op">=</span> pm.Gamma(<span class="st">'a'</span>,mu<span class="op">=</span><span class="fl">0.05</span>,sigma<span class="op">=</span><span class="fl">0.1</span>)</span>
-<span id="cb5-250"><a href="#cb5-250" aria-hidden="true" tabindex="-1"></a>    b <span class="op">=</span> pm.Gamma(<span class="st">'b'</span>,mu<span class="op">=</span><span class="fl">0.005</span>,sigma<span class="op">=</span><span class="fl">0.01</span>)</span>
-<span id="cb5-251"><a href="#cb5-251" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-252"><a href="#cb5-252" aria-hidden="true" tabindex="-1"></a>    y_yap <span class="op">=</span> T[<span class="dv">3</span>] <span class="op">*</span> (<span class="op">-</span>a <span class="op">+</span> b<span class="op">*</span>(np.euler_gamma <span class="op">+</span> np.log(N[<span class="dv">3</span>])))</span>
-<span id="cb5-253"><a href="#cb5-253" aria-hidden="true" tabindex="-1"></a>    y_manus <span class="op">=</span> T[<span class="dv">7</span>] <span class="op">*</span> (<span class="op">-</span>a <span class="op">+</span> b<span class="op">*</span>(np.euler_gamma <span class="op">+</span> np.log(N[<span class="dv">7</span>])))</span>
-<span id="cb5-254"><a href="#cb5-254" aria-hidden="true" tabindex="-1"></a>    y_trobriand <span class="op">=</span> T[<span class="dv">5</span>] <span class="op">*</span> (<span class="op">-</span>a <span class="op">+</span> b<span class="op">*</span>(np.euler_gamma <span class="op">+</span> np.log(N[<span class="dv">5</span>])))</span>
-<span id="cb5-255"><a href="#cb5-255" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-256"><a href="#cb5-256" aria-hidden="true" tabindex="-1"></a>    <span class="co"># descendents of trobriand</span></span>
-<span id="cb5-257"><a href="#cb5-257" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-258"><a href="#cb5-258" aria-hidden="true" tabindex="-1"></a>    y_santa_cruz <span class="op">=</span> b<span class="op">*</span>T[<span class="dv">2</span>]<span class="op">*</span>pt.log(N[<span class="dv">2</span>] <span class="op">/</span> N[<span class="dv">5</span>]) <span class="op">+</span> y_trobriand</span>
-<span id="cb5-259"><a href="#cb5-259" aria-hidden="true" tabindex="-1"></a>    y_tikopia <span class="op">=</span> b<span class="op">*</span>T[<span class="dv">1</span>]<span class="op">*</span>pt.log(N[<span class="dv">1</span>] <span class="op">/</span> N[<span class="dv">5</span>]) <span class="op">+</span> y_trobriand</span>
-<span id="cb5-260"><a href="#cb5-260" aria-hidden="true" tabindex="-1"></a>    y_malekula <span class="op">=</span> b<span class="op">*</span>T[<span class="dv">0</span>]<span class="op">*</span>pt.log(N[<span class="dv">0</span>] <span class="op">/</span> N[<span class="dv">5</span>]) <span class="op">+</span> y_trobriand</span>
-<span id="cb5-261"><a href="#cb5-261" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-262"><a href="#cb5-262" aria-hidden="true" tabindex="-1"></a>    <span class="co"># descendents of malekula</span></span>
-<span id="cb5-263"><a href="#cb5-263" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-264"><a href="#cb5-264" aria-hidden="true" tabindex="-1"></a>    y_fiji <span class="op">=</span> b<span class="op">*</span>T[<span class="dv">4</span>]<span class="op">*</span>pt.log(N[<span class="dv">4</span>] <span class="op">/</span> N[<span class="dv">0</span>]) <span class="op">+</span> y_malekula</span>
-<span id="cb5-265"><a href="#cb5-265" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-266"><a href="#cb5-266" aria-hidden="true" tabindex="-1"></a>    <span class="co"># descendents of fiji</span></span>
-<span id="cb5-267"><a href="#cb5-267" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-268"><a href="#cb5-268" aria-hidden="true" tabindex="-1"></a>    y_chuuk <span class="op">=</span> b <span class="op">*</span> T[<span class="dv">6</span>] <span class="op">*</span> pt.log(N[<span class="dv">6</span>] <span class="op">/</span> N[<span class="dv">4</span>]) <span class="op">+</span> y_fiji</span>
-<span id="cb5-269"><a href="#cb5-269" aria-hidden="true" tabindex="-1"></a>    y_tonga <span class="op">=</span> b <span class="op">*</span> T[<span class="dv">8</span>] <span class="op">*</span> pt.log(N[<span class="dv">8</span>] <span class="op">/</span> N[<span class="dv">4</span>]) <span class="op">+</span> y_fiji</span>
-<span id="cb5-270"><a href="#cb5-270" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-271"><a href="#cb5-271" aria-hidden="true" tabindex="-1"></a>    <span class="co"># descendents of tonga</span></span>
-<span id="cb5-272"><a href="#cb5-272" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-273"><a href="#cb5-273" aria-hidden="true" tabindex="-1"></a>    y_hawaii <span class="op">=</span> b <span class="op">*</span> T[<span class="dv">9</span>] <span class="op">*</span> pt.log(N[<span class="dv">9</span>] <span class="op">/</span> N[<span class="dv">8</span>]) <span class="op">+</span> y_tonga</span>
-<span id="cb5-274"><a href="#cb5-274" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-275"><a href="#cb5-275" aria-hidden="true" tabindex="-1"></a>    mu <span class="op">=</span> pt.as_tensor([y_malekula,y_tikopia,y_santa_cruz,y_yap,y_fiji,y_trobriand,y_chuuk,y_manus,y_tonga,y_hawaii])</span>
-<span id="cb5-276"><a href="#cb5-276" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-277"><a href="#cb5-277" aria-hidden="true" tabindex="-1"></a>    Y <span class="op">=</span> pm.Poisson(<span class="st">"Y"</span>, mu<span class="op">=</span>mu,observed<span class="op">=</span>tools)</span>
-<span id="cb5-278"><a href="#cb5-278" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-279"><a href="#cb5-279" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-280"><a href="#cb5-280" aria-hidden="true" tabindex="-1"></a>Despite the strange functional specification, the model fits as easily as the first.</span>
-<span id="cb5-281"><a href="#cb5-281" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-284"><a href="#cb5-284" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb5-285"><a href="#cb5-285" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> m1:</span>
-<span id="cb5-286"><a href="#cb5-286" aria-hidden="true" tabindex="-1"></a>    trace1 <span class="op">=</span> pm.sample(nuts_sampler<span class="op">=</span><span class="st">"nutpie"</span>,progressbar<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb5-287"><a href="#cb5-287" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-288"><a href="#cb5-288" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-289"><a href="#cb5-289" aria-hidden="true" tabindex="-1"></a>We can now visualize the predictions. The model does a lot better explaining those islands that previously had too many tools. Hawaii and Chuuk are now squarely with the range of model uncertainties. Manus and Trobriand are still a bit stubborn. This makes good sense - the structural changes we made meant that islands will, in general, have more tools than before. So if Trobriand and Manus previously had too few tools to be explained, we don't have many new tools to explain them.</span>
-<span id="cb5-290"><a href="#cb5-290" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-293"><a href="#cb5-293" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb5-294"><a href="#cb5-294" aria-hidden="true" tabindex="-1"></a>post_pred_m1 <span class="op">=</span> pm.sample_posterior_predictive(model<span class="op">=</span>m1,trace<span class="op">=</span>trace1,progressbar<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb5-295"><a href="#cb5-295" aria-hidden="true" tabindex="-1"></a>predictions <span class="op">=</span> post_pred_m1.posterior_predictive[<span class="st">'Y'</span>].values.reshape((<span class="dv">4000</span>,<span class="dv">10</span>))</span>
-<span id="cb5-296"><a href="#cb5-296" aria-hidden="true" tabindex="-1"></a>label_id <span class="op">=</span> dk.culture.values</span>
-<span id="cb5-297"><a href="#cb5-297" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-298"><a href="#cb5-298" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">4</span>))</span>
-<span id="cb5-299"><a href="#cb5-299" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-300"><a href="#cb5-300" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> index <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(label_id)):</span>
-<span id="cb5-301"><a href="#cb5-301" aria-hidden="true" tabindex="-1"></a>    ax.text(np.log(N)[index], tools[index], label_id[index], size<span class="op">=</span><span class="dv">12</span>)</span>
-<span id="cb5-302"><a href="#cb5-302" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-303"><a href="#cb5-303" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">50</span>):</span>
-<span id="cb5-304"><a href="#cb5-304" aria-hidden="true" tabindex="-1"></a>    i <span class="op">=</span> np.random.randint(low<span class="op">=</span><span class="dv">0</span>,high<span class="op">=</span><span class="dv">4000</span>)</span>
-<span id="cb5-305"><a href="#cb5-305" aria-hidden="true" tabindex="-1"></a>    plt.plot(np.log(N),predictions[i],<span class="st">'o'</span>,alpha<span class="op">=</span><span class="fl">0.2</span>,color<span class="op">=</span><span class="st">"tab:blue"</span>,markersize<span class="op">=</span><span class="dv">5</span>)</span>
-<span id="cb5-306"><a href="#cb5-306" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb5-307"><a href="#cb5-307" aria-hidden="true" tabindex="-1"></a>plt.plot(np.log(N),tools,<span class="st">'o'</span>,color<span class="op">=</span><span class="st">"black"</span>)</span>
-<span id="cb5-308"><a href="#cb5-308" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb5-309"><a href="#cb5-309" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Log population size"</span>)<span class="op">;</span></span>
-<span id="cb5-310"><a href="#cb5-310" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-311"><a href="#cb5-311" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-312"><a href="#cb5-312" aria-hidden="true" tabindex="-1"></a>Our visual intuition that the founder model is doing better is validated by model comparison statistics.</span>
-<span id="cb5-313"><a href="#cb5-313" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-316"><a href="#cb5-316" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb5-317"><a href="#cb5-317" aria-hidden="true" tabindex="-1"></a>trace0 <span class="op">=</span> pm.compute_log_likelihood(trace0,model<span class="op">=</span>m0)</span>
-<span id="cb5-318"><a href="#cb5-318" aria-hidden="true" tabindex="-1"></a>trace1 <span class="op">=</span> pm.compute_log_likelihood(trace1,model<span class="op">=</span>m1)</span>
-<span id="cb5-319"><a href="#cb5-319" aria-hidden="true" tabindex="-1"></a>az.compare({<span class="st">"Standard model"</span>:trace0,</span>
-<span id="cb5-320"><a href="#cb5-320" aria-hidden="true" tabindex="-1"></a>            <span class="st">"Founder model"</span>:trace1})</span>
-<span id="cb5-321"><a href="#cb5-321" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-322"><a href="#cb5-322" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-323"><a href="#cb5-323" aria-hidden="true" tabindex="-1"></a>What I really like about this strategy of modeling is that we've improve the fit just by incorporating domain knowledge. Often, in statistical modeling, the techniques to improve fit involve making the model more flexible. With more adjustable parameters, a model will always fit better. But the improvement in fit doesn't mean we are discovering the true mechanical structure behind the data. It often only means our model is more flexible. But here we didn't increase the parametric flexibility. All we did was thought about the problem and did algebra. I think that's an underappreciated but highly powerful technique.</span>
-<span id="cb5-324"><a href="#cb5-324" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-325"><a href="#cb5-325" aria-hidden="true" tabindex="-1"></a>I hope my position has become clear - toy models are easy to break but we should break them. Only by breaking them do we get our most informative analyses. When we slowly try to put them back together, we can often come up with clever structural adjustments to the model that improve fit without introducing inappropriate sorts of flexibility.</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> "More science, even less p-values."</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="an">bibliography:</span><span class="co"> dissertation_bibliography.bib</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">  freeze: true</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co">  echo: false</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="an">jupyter:</span><span class="co"> python3</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="an">image:</span><span class="co"> image.png</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co">    code-fold: false</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>To me, the most interesting question in the social sciences is what statistical practice will look like in 20 years. Criticisms of null hypothesis significance testing has become mainstream. Even if p-values still dominant the publication landscape, many of other approaches to analysis are making it into major journals. At the same time, the software that lets people build more customizable, interesting models has been getting faster and more accessible. Sometimes it feels like our biggest challenge is that we don't quite know what to do with all this power. As a community we need more examples of what another statistical practice might look like.</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>I previously <span class="co">[</span><span class="ot">wrote</span><span class="co">](https://daniel-saunders-phil.github.io/imagination_machine/posts/if-none-of-the-above-then-what/)</span> about a case where I took a toy mechanistic model and fit it to the small dataset with 10 islands in Oceania. What's cool about this sort of analysis is that you don't need to substitute out your mechanistic model for a linear regression when performing data analysis. That sort of substitution can introduce all sorts of complications in reasoning from one model to another. The approach where you fit a mechanistic model is much clearer and, when the model inevitably fails, the failures take on a importance within the framework of the theory. </span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>This post is a sequel. I'm going to continue working with that case study and show a small bit about how to iteratively tailor a toy mechanistic model to the messiness of the world.</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="fu"># Sometimes you just need to integrate</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>The demographic theory of technology is a toy model that relates population size to the advancement of technical skills. In many areas of social science, model-based thinking is valued for its ability to rigourly connect individual-level behavioural thinking to population outcomes. For full details, you'll need to read part 1. To summarize though, we have two parameters, $a$ represents the inherit difficulty of learning a skill. This is shared by all individuals. $b$ represents the individual variability in learning - different people are better or worse at imitating. We have a population with $n$ people. The population-level process is a differential equation. This equation tells us how the level of technical skill, denoted by $z'$, changes at each point in time.</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>$$ z' = -a + b*(\gamma + \ln(n)) $$</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>Differential equations tell us how to get from one point in time to the next or the growth rate in technology over time. But knowing how to step through time doesn't give us the full story. We need to be able to predict how many tools each island society should have, given their population size and a length of time. Each society might have been innovating for different lengths of time which means population size doesn't totally determine the outcome.</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>Fortunately, in this case, we can just integrate the equation with respect to time. One you specify $a,b,n$, the growth rate is a constant. It doesn't matter how many tools you already have, you'll grow by the same amount in the next period. To know the number of tools have 30 time-steps, we just multiply the growth rate by 30. The technical skill on an island at a certain point in time is just:</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>$$ z = (-a + b*(\gamma + \ln(n)))*T $$</span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>In the previous post, I suggested we'd need a differential equation solver to fit our model. That turned out to be erroneous. We can now fit our model much more quickly and the extra analytical rigour will allow us to derive a new model later down the road.</span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a><span class="fu">## Fitting</span></span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>We'll import the same data.</span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pymc <span class="im">as</span> pm</span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> arviz <span class="im">as</span> az</span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> networkx <span class="im">as</span> nx</span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pytensor.tensor <span class="im">as</span> pt</span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy <span class="im">import</span> stats</span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a>seed <span class="op">=</span> np.random.seed(<span class="dv">123</span>)</span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
+<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a>    dk <span class="op">=</span> pd.read_csv(<span class="st">"Kline"</span>,sep<span class="op">=</span><span class="st">";"</span>)</span>
+<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> <span class="pp">FileNotFoundError</span>:</span>
+<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a>    dk <span class="op">=</span> pd.read_csv(<span class="st">"https://raw.githubusercontent.com/pymc-devs/pymc-resources/main/Rethinking_2/Data/Kline"</span>,sep<span class="op">=</span><span class="st">";"</span>)</span>
+<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a>times <span class="op">=</span> [<span class="dv">3000</span>,<span class="dv">3000</span>,<span class="dv">3000</span>,<span class="dv">3500</span>,<span class="dv">3000</span>,<span class="dv">3350</span>,<span class="dv">600</span>,<span class="dv">3350</span>,<span class="dv">2845</span>,<span class="dv">800</span>]</span>
+<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a>dk[<span class="st">'initial_settlement (BP)'</span>] <span class="op">=</span> times</span>
+<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a>dk</span>
+<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a>Rename our variables to T for time, N for population size, and tools for the total tools present in a society.</span>
+<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a>T <span class="op">=</span> dk[<span class="st">'initial_settlement (BP)'</span>].values</span>
+<span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> dk.population.values</span>
+<span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a>tools <span class="op">=</span> dk.total_tools.values</span>
+<span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-74"><a href="#cb5-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-75"><a href="#cb5-75" aria-hidden="true" tabindex="-1"></a>The model can be expressed compactly with:</span>
+<span id="cb5-76"><a href="#cb5-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-79"><a href="#cb5-79" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb5-80"><a href="#cb5-80" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pm.Model() <span class="im">as</span> m0:</span>
+<span id="cb5-81"><a href="#cb5-81" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-82"><a href="#cb5-82" aria-hidden="true" tabindex="-1"></a>    a <span class="op">=</span> pm.Gamma(<span class="st">'a'</span>,mu<span class="op">=</span><span class="fl">0.05</span>,sigma<span class="op">=</span><span class="fl">0.1</span>)</span>
+<span id="cb5-83"><a href="#cb5-83" aria-hidden="true" tabindex="-1"></a>    b <span class="op">=</span> pm.Gamma(<span class="st">'b'</span>,mu<span class="op">=</span><span class="fl">0.005</span>,sigma<span class="op">=</span><span class="fl">0.01</span>)</span>
+<span id="cb5-84"><a href="#cb5-84" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-85"><a href="#cb5-85" aria-hidden="true" tabindex="-1"></a>    mu <span class="op">=</span> times <span class="op">*</span> (<span class="op">-</span>a <span class="op">+</span> b<span class="op">*</span>(np.euler_gamma <span class="op">+</span> np.log(N)))</span>
+<span id="cb5-86"><a href="#cb5-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-87"><a href="#cb5-87" aria-hidden="true" tabindex="-1"></a>    Y <span class="op">=</span> pm.Poisson(<span class="st">"Y"</span>, mu<span class="op">=</span>mu,observed<span class="op">=</span>tools)</span>
+<span id="cb5-88"><a href="#cb5-88" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-89"><a href="#cb5-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-90"><a href="#cb5-90" aria-hidden="true" tabindex="-1"></a>The priors need some justification. First, the Gamma distributions have really small means. That is because the population and time values are quite large. If you push their values up a bit, you'd have explosive growth in technology. Second, I tuned the priors by looking at prior predictive simulations. I want the bulk of the prior predictions to be below 1000. Some of our islands only have about 1000 people. It is certainly possible that everyone on an island is an inventor but it is unlikely. I simply took draws from the prior and kept adjusting the parameters until the growth rates were fairly stable and represented wide uncertainty.</span>
+<span id="cb5-91"><a href="#cb5-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-94"><a href="#cb5-94" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb5-95"><a href="#cb5-95" aria-hidden="true" tabindex="-1"></a>pp <span class="op">=</span> pm.draw(mu,draws<span class="op">=</span><span class="dv">100</span>)</span>
+<span id="cb5-96"><a href="#cb5-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-97"><a href="#cb5-97" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> val <span class="kw">in</span> pp[:,:]:</span>
+<span id="cb5-98"><a href="#cb5-98" aria-hidden="true" tabindex="-1"></a>    plt.plot(val,<span class="st">'o'</span>,alpha<span class="op">=</span><span class="fl">0.3</span>)</span>
+<span id="cb5-99"><a href="#cb5-99" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-100"><a href="#cb5-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-103"><a href="#cb5-103" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb5-104"><a href="#cb5-104" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> m0:</span>
+<span id="cb5-105"><a href="#cb5-105" aria-hidden="true" tabindex="-1"></a>    trace0 <span class="op">=</span> pm.sample(nuts_sampler<span class="op">=</span><span class="st">"nutpie"</span>,progressbar<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb5-106"><a href="#cb5-106" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-107"><a href="#cb5-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-108"><a href="#cb5-108" aria-hidden="true" tabindex="-1"></a>We face a bit of challenge in fitting the model - the parameters $a$ and $b$ are collinear. Each represents a certain kind of difficulty and they can counterbalance each other. If $a$ is high, the skill is uniformly difficult to learn. But if $b$ is also high, it makes up for that because it provides more opportunities for novel innovation. So there are several combinations of $a$ and $b$ parameters that provide the same accuracy in predicting the oceania dataset. The figure below illustrates how the MCMC algorithm explores the parameter space. It travels back and forth on this narrow band of roughly equivalent probability.</span>
+<span id="cb5-109"><a href="#cb5-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-112"><a href="#cb5-112" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb5-113"><a href="#cb5-113" aria-hidden="true" tabindex="-1"></a>az.plot_pair(trace0,var_names<span class="op">=</span>[<span class="st">"a"</span>,<span class="st">"b"</span>])<span class="op">;</span></span>
+<span id="cb5-114"><a href="#cb5-114" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-115"><a href="#cb5-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-116"><a href="#cb5-116" aria-hidden="true" tabindex="-1"></a>Collinearity is a medium-sized problem. It will inflate the uncertainty on our parameters. If we really cared to pin down the value of $a$, we'd need extra information to first pin down the value of $b$, or visa-versa. Or, we should scrape this model and build a new one. In our case, I don't particularly care what value each parameter takes on. I'm more interested in whether our model can explain the available data.</span>
+<span id="cb5-117"><a href="#cb5-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-118"><a href="#cb5-118" aria-hidden="true" tabindex="-1"></a>Below I plot the predictions the model makes about island societies, given the estimated parameter values. I've plotted 50 random predictions to help represent the uncertainty propagating through the model. The model performs pretty well on 6 of the island societies, suggesting it could be a candidate explanation for dynamics of technical development in those societies. However, in Hawaii, Manus, Trobriand and Chuuk, the model doesn't have a good way to predict them. Hawaii and Chuuk both have more tools that they are supposed, given their development time and population size. Meanwhile, Manus and Trobriand have too few tools. </span>
+<span id="cb5-119"><a href="#cb5-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-120"><a href="#cb5-120" aria-hidden="true" tabindex="-1"></a>At this point, it doesn't look like the demographic theory of technology is very plausible. The worry persists even if you dealt with the collinearity problem. If you pushed the growth rate up a little bit, you'd over shoot Trobriand and Manus even more. If you pushed the growth rate down a little, the problem of Hawaii and Chuuk gets worse.</span>
+<span id="cb5-121"><a href="#cb5-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-124"><a href="#cb5-124" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb5-125"><a href="#cb5-125" aria-hidden="true" tabindex="-1"></a>post_pred_m0 <span class="op">=</span> pm.sample_posterior_predictive(model<span class="op">=</span>m0,trace<span class="op">=</span>trace0,progressbar<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb5-126"><a href="#cb5-126" aria-hidden="true" tabindex="-1"></a>predictions <span class="op">=</span> post_pred_m0.posterior_predictive[<span class="st">'Y'</span>].values.reshape((<span class="dv">4000</span>,<span class="dv">10</span>))</span>
+<span id="cb5-127"><a href="#cb5-127" aria-hidden="true" tabindex="-1"></a>label_id <span class="op">=</span> dk.culture.values</span>
+<span id="cb5-128"><a href="#cb5-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-129"><a href="#cb5-129" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">5</span>))</span>
+<span id="cb5-130"><a href="#cb5-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-131"><a href="#cb5-131" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> index <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(label_id)):</span>
+<span id="cb5-132"><a href="#cb5-132" aria-hidden="true" tabindex="-1"></a>    ax.text(np.log(N)[index], tools[index], label_id[index], size<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb5-133"><a href="#cb5-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-134"><a href="#cb5-134" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">50</span>):</span>
+<span id="cb5-135"><a href="#cb5-135" aria-hidden="true" tabindex="-1"></a>    i <span class="op">=</span> np.random.randint(low<span class="op">=</span><span class="dv">0</span>,high<span class="op">=</span><span class="dv">4000</span>)</span>
+<span id="cb5-136"><a href="#cb5-136" aria-hidden="true" tabindex="-1"></a>    plt.plot(np.log(N),predictions[i],<span class="st">'o'</span>,alpha<span class="op">=</span><span class="fl">0.2</span>,color<span class="op">=</span><span class="st">"tab:blue"</span>,markersize<span class="op">=</span><span class="dv">5</span>)</span>
+<span id="cb5-137"><a href="#cb5-137" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-138"><a href="#cb5-138" aria-hidden="true" tabindex="-1"></a>plt.plot(np.log(N),tools,<span class="st">'o'</span>,color<span class="op">=</span><span class="st">"black"</span>)</span>
+<span id="cb5-139"><a href="#cb5-139" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-140"><a href="#cb5-140" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Log population size"</span>)<span class="op">;</span></span>
+<span id="cb5-141"><a href="#cb5-141" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-142"><a href="#cb5-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-143"><a href="#cb5-143" aria-hidden="true" tabindex="-1"></a>When it comes to fitting toy mechanistic models we have to be careful. They break more easily than linear regression. Frankly, I think that's a good thing. If your model fits every dataset, you cannot learn from it. However! If a toy model breaks for opaque reasons, then it is also hard to learn from. In our case, it's not initially easy to tell whether the demographic theory of technology is bunk or whether there are some simple features of the Oceanic societies that we have to add before the model works well.</span>
+<span id="cb5-144"><a href="#cb5-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-145"><a href="#cb5-145" aria-hidden="true" tabindex="-1"></a>The world is a complicated place. Many of those complications are case-specific - there are unique features of the history and geography of Oceania that influence the distribution of technology. Toy models are usually developed to capture some core general features that should recur across a range of cases. Out-of-the-box they usually don't fit any cases well. </span>
+<span id="cb5-146"><a href="#cb5-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-147"><a href="#cb5-147" aria-hidden="true" tabindex="-1"></a>The way I envision a productive scientific workflow is this: first we fit the toy model. Then we slowly layer on extra features to tailor it to some specific domain. If the toy model actually does capture some core mechanism in the world, it should start to fit nicely after a bit of tailoring. If the fit of the model doesn't improve too much once we add the extra features, we should think there is something wrong with the core theory.</span>
+<span id="cb5-148"><a href="#cb5-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-149"><a href="#cb5-149" aria-hidden="true" tabindex="-1"></a><span class="fu"># The Founder Effect</span></span>
+<span id="cb5-150"><a href="#cb5-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-151"><a href="#cb5-151" aria-hidden="true" tabindex="-1"></a>There is one thing left out of the model that feels inexcusable - people do not settle new islands empty-handed. If a well-developed society in Fiji sends out explorers who stumble across Hawaii, the first settlers of Hawaii will bring with them the technical knowledge of Fiji. We can incorporate this information into the model by starting out each society from the technical level of their founder society.</span>
+<span id="cb5-152"><a href="#cb5-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-153"><a href="#cb5-153" aria-hidden="true" tabindex="-1"></a>I did some reading on the expansion of humanity into Oceania (especially useful was @matisoo-smith2015) and pieced together a rough picture of how it happened. Below is a graph depicting the ancestry. Yellow societies were settled roughly 3500 years ago. Purple societies were settled within the last 1000 years. There is good deal of uncertainty in this map. For example, Fiji was likely settled by one of Santa Cruz, Tikopia or Malekula but we don't know which. Pinning down these uncertainities would certainly help the project but I'll leave them to the side at this point. As usual, my purpose is to illustrate a style of statistical reasoning rather than decisively settle some scientific question.</span>
+<span id="cb5-154"><a href="#cb5-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-157"><a href="#cb5-157" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb5-158"><a href="#cb5-158" aria-hidden="true" tabindex="-1"></a>G <span class="op">=</span> nx.DiGraph()</span>
+<span id="cb5-159"><a href="#cb5-159" aria-hidden="true" tabindex="-1"></a>island_labels <span class="op">=</span> np.concatenate((np.array([<span class="st">"Papua New Guinea"</span>]),dk.culture.values))</span>
+<span id="cb5-160"><a href="#cb5-160" aria-hidden="true" tabindex="-1"></a>G.add_nodes_from(island_labels)</span>
+<span id="cb5-161"><a href="#cb5-161" aria-hidden="true" tabindex="-1"></a>G.add_edges_from([(<span class="st">"Papua New Guinea"</span>,<span class="st">"Manus"</span>),</span>
+<span id="cb5-162"><a href="#cb5-162" aria-hidden="true" tabindex="-1"></a>                  (<span class="st">"Papua New Guinea"</span>,<span class="st">"Trobriand"</span>),</span>
+<span id="cb5-163"><a href="#cb5-163" aria-hidden="true" tabindex="-1"></a>                  (<span class="st">"Trobriand"</span>,<span class="st">"Santa Cruz"</span>),</span>
+<span id="cb5-164"><a href="#cb5-164" aria-hidden="true" tabindex="-1"></a>                  (<span class="st">"Trobriand"</span>,<span class="st">"Tikopia"</span>),</span>
+<span id="cb5-165"><a href="#cb5-165" aria-hidden="true" tabindex="-1"></a>                  (<span class="st">"Trobriand"</span>,<span class="st">"Malekula"</span>),</span>
+<span id="cb5-166"><a href="#cb5-166" aria-hidden="true" tabindex="-1"></a>                  (<span class="st">"Malekula"</span>,<span class="st">"Lau Fiji"</span>),</span>
+<span id="cb5-167"><a href="#cb5-167" aria-hidden="true" tabindex="-1"></a>                  (<span class="st">"Lau Fiji"</span>,<span class="st">"Tonga"</span>),</span>
+<span id="cb5-168"><a href="#cb5-168" aria-hidden="true" tabindex="-1"></a>                  (<span class="st">"Lau Fiji"</span>,<span class="st">"Chuuk"</span>),</span>
+<span id="cb5-169"><a href="#cb5-169" aria-hidden="true" tabindex="-1"></a>                  (<span class="st">"Tonga"</span>,<span class="st">"Hawaii"</span>)])</span>
+<span id="cb5-170"><a href="#cb5-170" aria-hidden="true" tabindex="-1"></a>node_color <span class="op">=</span> np.concatenate((np.array([<span class="dv">3350</span>]),T))</span>
+<span id="cb5-171"><a href="#cb5-171" aria-hidden="true" tabindex="-1"></a>pos <span class="op">=</span> {<span class="st">"Papua New Guinea"</span>: [<span class="op">-</span><span class="fl">0.6</span>,<span class="op">-</span><span class="fl">0.65</span>],</span>
+<span id="cb5-172"><a href="#cb5-172" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Yap"</span>:[<span class="op">-</span><span class="fl">0.6</span>,<span class="fl">0.4</span>],</span>
+<span id="cb5-173"><a href="#cb5-173" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Manus"</span>:[<span class="op">-</span><span class="fl">0.4</span>,<span class="op">-</span><span class="fl">0.2</span>],</span>
+<span id="cb5-174"><a href="#cb5-174" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Trobriand"</span>:[<span class="op">-</span><span class="fl">0.35</span>,<span class="op">-</span><span class="fl">0.6</span>],</span>
+<span id="cb5-175"><a href="#cb5-175" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Santa Cruz"</span>:[<span class="fl">0.01</span>,<span class="op">-</span><span class="fl">0.2</span>],</span>
+<span id="cb5-176"><a href="#cb5-176" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Tikopia"</span>:[<span class="fl">0.10</span>,<span class="op">-</span><span class="fl">.45</span>],</span>
+<span id="cb5-177"><a href="#cb5-177" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Malekula"</span>:[<span class="fl">0.25</span>,<span class="op">-</span><span class="fl">.6</span>],</span>
+<span id="cb5-178"><a href="#cb5-178" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Lau Fiji"</span>:[<span class="fl">0.5</span>,<span class="op">-</span><span class="fl">0.7</span>],</span>
+<span id="cb5-179"><a href="#cb5-179" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Tonga"</span>:[<span class="fl">0.7</span>,<span class="op">-</span><span class="fl">0.7</span>],</span>
+<span id="cb5-180"><a href="#cb5-180" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Hawaii"</span>:[<span class="fl">0.7</span>,<span class="fl">0.7</span>],</span>
+<span id="cb5-181"><a href="#cb5-181" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Chuuk"</span>:[<span class="op">-</span><span class="fl">0.1</span>,<span class="fl">0.4</span>]}</span>
+<span id="cb5-182"><a href="#cb5-182" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>,<span class="dv">4</span>))</span>
+<span id="cb5-183"><a href="#cb5-183" aria-hidden="true" tabindex="-1"></a>nx.draw_networkx(G,node_color<span class="op">=</span>node_color,cmap<span class="op">=</span><span class="st">"plasma"</span>,pos<span class="op">=</span>pos,with_labels<span class="op">=</span><span class="va">True</span>,node_size<span class="op">=</span><span class="dv">2500</span>,alpha<span class="op">=</span><span class="fl">0.8</span>)</span>
+<span id="cb5-184"><a href="#cb5-184" aria-hidden="true" tabindex="-1"></a>plt.savefig(<span class="st">"image"</span>)</span>
+<span id="cb5-185"><a href="#cb5-185" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-186"><a href="#cb5-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-187"><a href="#cb5-187" aria-hidden="true" tabindex="-1"></a>We'll need a new model where the level of technical skill is dependent on two factors: the demographic model for the settled society plus the level of technology present in the founder society at the time of founding.  We'll need to break the development time into two periods. In the first period, the founder society is innovating with its population size. In the second period, the ancestor society settles on the island and now that island starts innovating autonomously. The dividing line between the two periods is just the difference in their development time. </span>
+<span id="cb5-188"><a href="#cb5-188" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-189"><a href="#cb5-189" aria-hidden="true" tabindex="-1"></a>For example, suppose we want a function that tells us how many tools Hawaii should have. Hawaii was settled 800 years ago. Tonga was settled 2845 years ago. So we'd want to let Tonga innovate for 2045 years, record what ever skill level is present. Then we'd switch to Hawaii and innovate for 800 years using Hawaii's larger population size. Finally, we add the two skill levels together to get our final prediction. </span>
+<span id="cb5-190"><a href="#cb5-190" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-191"><a href="#cb5-191" aria-hidden="true" tabindex="-1"></a>Let's generalize away from just Hawaii and Tonga to build an abstract model. Denote the founder society with subscript $f$ and the settled society with subscript $s$. The level of tools on the settled society by the time of observation is:</span>
+<span id="cb5-192"><a href="#cb5-192" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-193"><a href="#cb5-193" aria-hidden="true" tabindex="-1"></a>$$ z_{s} = (-a + b*(\gamma + \ln(n_{s})))*T_{s} + (-a + b*(\gamma + \ln(n_{f})))*(T_{f} - T_{s})$$</span>
+<span id="cb5-194"><a href="#cb5-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-195"><a href="#cb5-195" aria-hidden="true" tabindex="-1"></a>The expression is long but it is just the original expression for the settled society, plus running the model for the founder society with an abbreviated length of time ($T_{f} - T_{s}$). Now we'll do a bunch of simplification and discover we can achieve a surprisingly compact expression. </span>
+<span id="cb5-196"><a href="#cb5-196" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-197"><a href="#cb5-197" aria-hidden="true" tabindex="-1"></a><span class="fu">## A surprisingly compact expression</span></span>
+<span id="cb5-198"><a href="#cb5-198" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-199"><a href="#cb5-199" aria-hidden="true" tabindex="-1"></a>First, we'll expand the second term. That means multiply the difference equation by $T_{f} - T_{s}$</span>
+<span id="cb5-200"><a href="#cb5-200" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-201"><a href="#cb5-201" aria-hidden="true" tabindex="-1"></a>$$ (-a + b*(\gamma + \ln(n_{s})))*T_{s} + (-a + b*(\gamma + \ln(n_{f})))*T_{f} - (-a + b*(\gamma + \ln(n_{f})))*T_{s} $$</span>
+<span id="cb5-202"><a href="#cb5-202" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-203"><a href="#cb5-203" aria-hidden="true" tabindex="-1"></a>Notice that the first and the last terms of the equations are almost the same - they have the core difference equation multiplied $T_{s}$. The only difference is that one uses the population of the settled society, $\ln(n_{s})$, and the other uses the population of the founding society, $\ln(n_{f})$. It will turn out we can exploit this fact to a lot of simplification. What is left will show that we only need to care about the ratio of population sizes to incorporate founder effects. It will also mean that we can leave the middle term completely untouched. </span>
+<span id="cb5-204"><a href="#cb5-204" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-205"><a href="#cb5-205" aria-hidden="true" tabindex="-1"></a>Let's distribute the time terms on the left and right sides of this expression.</span>
+<span id="cb5-206"><a href="#cb5-206" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-207"><a href="#cb5-207" aria-hidden="true" tabindex="-1"></a>$$ (-aT_{s}  + bT_{s}(\gamma + \ln(n_{s})))+ (-a + b(\gamma + \ln(n_{f})))T_{f} - (-aT_{s} + bT_{s}(\gamma + \ln(n_{f}))) $$</span>
+<span id="cb5-208"><a href="#cb5-208" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-209"><a href="#cb5-209" aria-hidden="true" tabindex="-1"></a>Multiply the third term by negative 1 to take care of the minus sign in front.</span>
+<span id="cb5-210"><a href="#cb5-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-211"><a href="#cb5-211" aria-hidden="true" tabindex="-1"></a>$$ -aT_{s}  + bT_{s}(\gamma + \ln(n_{s})) + (-a + b(\gamma + \ln(n_{f})))T_{f} + aT_{s} - bT_{s}(\gamma + \ln(n_{f})) $$</span>
+<span id="cb5-212"><a href="#cb5-212" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-213"><a href="#cb5-213" aria-hidden="true" tabindex="-1"></a>The $-aT_{s}$ term in the front cancels out the $aT_{s}$ term toward the end.</span>
+<span id="cb5-214"><a href="#cb5-214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-215"><a href="#cb5-215" aria-hidden="true" tabindex="-1"></a>$$  bT_{s}(\gamma + \ln(n_{s})) + (-a + b(\gamma + \ln(n_{f})))T_{f} - bT_{s}(\gamma + \ln(n_{f}))$$</span>
+<span id="cb5-216"><a href="#cb5-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-217"><a href="#cb5-217" aria-hidden="true" tabindex="-1"></a>Distribute the $bT_{s}$ terms at the front and back.</span>
+<span id="cb5-218"><a href="#cb5-218" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-219"><a href="#cb5-219" aria-hidden="true" tabindex="-1"></a>$$  bT_{s}\gamma + bT_{s}\ln(n_{s}) + (-a + b*(\gamma + \ln(n_{f})))T_{f} - bT_{s}\gamma - bT_{s}\ln(n_{f})$$</span>
+<span id="cb5-220"><a href="#cb5-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-221"><a href="#cb5-221" aria-hidden="true" tabindex="-1"></a>The $bT_{s}\gamma$'s cancel. </span>
+<span id="cb5-222"><a href="#cb5-222" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-223"><a href="#cb5-223" aria-hidden="true" tabindex="-1"></a>$$  bT_{s}\ln(n_{s}) + (-a + b*(\gamma + \ln(n_{f})))T_{f} - bT_{s}\ln(n_{f})$$</span>
+<span id="cb5-224"><a href="#cb5-224" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-225"><a href="#cb5-225" aria-hidden="true" tabindex="-1"></a>Rearrange the expression to move the $bT_{s}\ln(n_{f})$ term to the front.</span>
+<span id="cb5-226"><a href="#cb5-226" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-227"><a href="#cb5-227" aria-hidden="true" tabindex="-1"></a>$$  bT_{s}\ln(n_{s}) - bT_{s}\ln(n_{f}) + (-a + b(\gamma + \ln(n_{f})))T_{f} $$</span>
+<span id="cb5-228"><a href="#cb5-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-229"><a href="#cb5-229" aria-hidden="true" tabindex="-1"></a>Factor out the $bT_{s}$ term.</span>
+<span id="cb5-230"><a href="#cb5-230" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-231"><a href="#cb5-231" aria-hidden="true" tabindex="-1"></a>$$  bT_{s}(\ln(n_{s}) - \ln(n_{f})) + (-a + b(\gamma + \ln(n_{f})))T_{f} $$</span>
+<span id="cb5-232"><a href="#cb5-232" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-233"><a href="#cb5-233" aria-hidden="true" tabindex="-1"></a>Lastly, use the fact that the difference between logarithms is just the logarithm of the quotient.</span>
+<span id="cb5-234"><a href="#cb5-234" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-235"><a href="#cb5-235" aria-hidden="true" tabindex="-1"></a>$$  bT_{s}(\ln(n_{s} / n_{f})) + (-a + b(\gamma + \ln(n_{f})))T_{f} $$</span>
+<span id="cb5-236"><a href="#cb5-236" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-237"><a href="#cb5-237" aria-hidden="true" tabindex="-1"></a>We're done. We've arrived at what I call the founder model. The second half of the expression is the familiar expression for the founder society - it tells us what happens if we just let the founder society do all the innovating. The first half of the expression adjusts the original model based on how much time the settled society has been around plus a ratio of their population sizes. When the settled society is bigger, the adjustment factor is positive. When the settled society is smaller, the adjustment factor is negative.</span>
+<span id="cb5-238"><a href="#cb5-238" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-239"><a href="#cb5-239" aria-hidden="true" tabindex="-1"></a><span class="fu">## Fitting the founder model</span></span>
+<span id="cb5-240"><a href="#cb5-240" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-241"><a href="#cb5-241" aria-hidden="true" tabindex="-1"></a>Appreciably, this model assumes that each island immediately takes on its mature population size upon being settled. That's silly. Population size is also a dynamic process. So some fairly important features of the world are left out. If you feel like that's too big of an omission, I can understand. At the very least it makes salient exactly why this sort of analysis cannot succeed without substantially more data and thinking. I care a lot more about understanding the techniques and capacities of mathematical modeling than actually answering whether the demographic theory is any good.</span>
+<span id="cb5-242"><a href="#cb5-242" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-243"><a href="#cb5-243" aria-hidden="true" tabindex="-1"></a>To program it up, it's a bit tedious. We'll need a unique equation for each island and lot of indexing. Regardless, we get the luxury of keeping just two free parameters. </span>
+<span id="cb5-244"><a href="#cb5-244" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-247"><a href="#cb5-247" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb5-248"><a href="#cb5-248" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pm.Model() <span class="im">as</span> m1:</span>
+<span id="cb5-249"><a href="#cb5-249" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Specify prior distributions</span></span>
+<span id="cb5-250"><a href="#cb5-250" aria-hidden="true" tabindex="-1"></a>    a <span class="op">=</span> pm.Gamma(<span class="st">'a'</span>,mu<span class="op">=</span><span class="fl">0.05</span>,sigma<span class="op">=</span><span class="fl">0.1</span>)</span>
+<span id="cb5-251"><a href="#cb5-251" aria-hidden="true" tabindex="-1"></a>    b <span class="op">=</span> pm.Gamma(<span class="st">'b'</span>,mu<span class="op">=</span><span class="fl">0.005</span>,sigma<span class="op">=</span><span class="fl">0.01</span>)</span>
+<span id="cb5-252"><a href="#cb5-252" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-253"><a href="#cb5-253" aria-hidden="true" tabindex="-1"></a>    y_yap <span class="op">=</span> T[<span class="dv">3</span>] <span class="op">*</span> (<span class="op">-</span>a <span class="op">+</span> b<span class="op">*</span>(np.euler_gamma <span class="op">+</span> np.log(N[<span class="dv">3</span>])))</span>
+<span id="cb5-254"><a href="#cb5-254" aria-hidden="true" tabindex="-1"></a>    y_manus <span class="op">=</span> T[<span class="dv">7</span>] <span class="op">*</span> (<span class="op">-</span>a <span class="op">+</span> b<span class="op">*</span>(np.euler_gamma <span class="op">+</span> np.log(N[<span class="dv">7</span>])))</span>
+<span id="cb5-255"><a href="#cb5-255" aria-hidden="true" tabindex="-1"></a>    y_trobriand <span class="op">=</span> T[<span class="dv">5</span>] <span class="op">*</span> (<span class="op">-</span>a <span class="op">+</span> b<span class="op">*</span>(np.euler_gamma <span class="op">+</span> np.log(N[<span class="dv">5</span>])))</span>
+<span id="cb5-256"><a href="#cb5-256" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-257"><a href="#cb5-257" aria-hidden="true" tabindex="-1"></a>    <span class="co"># descendents of trobriand</span></span>
+<span id="cb5-258"><a href="#cb5-258" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-259"><a href="#cb5-259" aria-hidden="true" tabindex="-1"></a>    y_santa_cruz <span class="op">=</span> b<span class="op">*</span>T[<span class="dv">2</span>]<span class="op">*</span>pt.log(N[<span class="dv">2</span>] <span class="op">/</span> N[<span class="dv">5</span>]) <span class="op">+</span> y_trobriand</span>
+<span id="cb5-260"><a href="#cb5-260" aria-hidden="true" tabindex="-1"></a>    y_tikopia <span class="op">=</span> b<span class="op">*</span>T[<span class="dv">1</span>]<span class="op">*</span>pt.log(N[<span class="dv">1</span>] <span class="op">/</span> N[<span class="dv">5</span>]) <span class="op">+</span> y_trobriand</span>
+<span id="cb5-261"><a href="#cb5-261" aria-hidden="true" tabindex="-1"></a>    y_malekula <span class="op">=</span> b<span class="op">*</span>T[<span class="dv">0</span>]<span class="op">*</span>pt.log(N[<span class="dv">0</span>] <span class="op">/</span> N[<span class="dv">5</span>]) <span class="op">+</span> y_trobriand</span>
+<span id="cb5-262"><a href="#cb5-262" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-263"><a href="#cb5-263" aria-hidden="true" tabindex="-1"></a>    <span class="co"># descendents of malekula</span></span>
+<span id="cb5-264"><a href="#cb5-264" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-265"><a href="#cb5-265" aria-hidden="true" tabindex="-1"></a>    y_fiji <span class="op">=</span> b<span class="op">*</span>T[<span class="dv">4</span>]<span class="op">*</span>pt.log(N[<span class="dv">4</span>] <span class="op">/</span> N[<span class="dv">0</span>]) <span class="op">+</span> y_malekula</span>
+<span id="cb5-266"><a href="#cb5-266" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-267"><a href="#cb5-267" aria-hidden="true" tabindex="-1"></a>    <span class="co"># descendents of fiji</span></span>
+<span id="cb5-268"><a href="#cb5-268" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-269"><a href="#cb5-269" aria-hidden="true" tabindex="-1"></a>    y_chuuk <span class="op">=</span> b <span class="op">*</span> T[<span class="dv">6</span>] <span class="op">*</span> pt.log(N[<span class="dv">6</span>] <span class="op">/</span> N[<span class="dv">4</span>]) <span class="op">+</span> y_fiji</span>
+<span id="cb5-270"><a href="#cb5-270" aria-hidden="true" tabindex="-1"></a>    y_tonga <span class="op">=</span> b <span class="op">*</span> T[<span class="dv">8</span>] <span class="op">*</span> pt.log(N[<span class="dv">8</span>] <span class="op">/</span> N[<span class="dv">4</span>]) <span class="op">+</span> y_fiji</span>
+<span id="cb5-271"><a href="#cb5-271" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-272"><a href="#cb5-272" aria-hidden="true" tabindex="-1"></a>    <span class="co"># descendents of tonga</span></span>
+<span id="cb5-273"><a href="#cb5-273" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-274"><a href="#cb5-274" aria-hidden="true" tabindex="-1"></a>    y_hawaii <span class="op">=</span> b <span class="op">*</span> T[<span class="dv">9</span>] <span class="op">*</span> pt.log(N[<span class="dv">9</span>] <span class="op">/</span> N[<span class="dv">8</span>]) <span class="op">+</span> y_tonga</span>
+<span id="cb5-275"><a href="#cb5-275" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-276"><a href="#cb5-276" aria-hidden="true" tabindex="-1"></a>    mu <span class="op">=</span> pt.as_tensor([y_malekula,y_tikopia,y_santa_cruz,y_yap,y_fiji,y_trobriand,y_chuuk,y_manus,y_tonga,y_hawaii])</span>
+<span id="cb5-277"><a href="#cb5-277" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-278"><a href="#cb5-278" aria-hidden="true" tabindex="-1"></a>    Y <span class="op">=</span> pm.Poisson(<span class="st">"Y"</span>, mu<span class="op">=</span>mu,observed<span class="op">=</span>tools)</span>
+<span id="cb5-279"><a href="#cb5-279" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-280"><a href="#cb5-280" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-281"><a href="#cb5-281" aria-hidden="true" tabindex="-1"></a>Despite the strange functional specification, the model fits as easily as the first.</span>
+<span id="cb5-282"><a href="#cb5-282" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-285"><a href="#cb5-285" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb5-286"><a href="#cb5-286" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> m1:</span>
+<span id="cb5-287"><a href="#cb5-287" aria-hidden="true" tabindex="-1"></a>    trace1 <span class="op">=</span> pm.sample(nuts_sampler<span class="op">=</span><span class="st">"nutpie"</span>,progressbar<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb5-288"><a href="#cb5-288" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-289"><a href="#cb5-289" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-290"><a href="#cb5-290" aria-hidden="true" tabindex="-1"></a>We can now visualize the predictions. The model does a lot better explaining those islands that previously had too many tools. Hawaii and Chuuk are now squarely with the range of model uncertainties. Manus and Trobriand are still a bit stubborn. This makes good sense - the structural changes we made meant that islands will, in general, have more tools than before. So if Trobriand and Manus previously had too few tools to be explained, we don't have many new tools to explain them.</span>
+<span id="cb5-291"><a href="#cb5-291" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-294"><a href="#cb5-294" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb5-295"><a href="#cb5-295" aria-hidden="true" tabindex="-1"></a>post_pred_m1 <span class="op">=</span> pm.sample_posterior_predictive(model<span class="op">=</span>m1,trace<span class="op">=</span>trace1,progressbar<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb5-296"><a href="#cb5-296" aria-hidden="true" tabindex="-1"></a>predictions <span class="op">=</span> post_pred_m1.posterior_predictive[<span class="st">'Y'</span>].values.reshape((<span class="dv">4000</span>,<span class="dv">10</span>))</span>
+<span id="cb5-297"><a href="#cb5-297" aria-hidden="true" tabindex="-1"></a>label_id <span class="op">=</span> dk.culture.values</span>
+<span id="cb5-298"><a href="#cb5-298" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-299"><a href="#cb5-299" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">4</span>))</span>
+<span id="cb5-300"><a href="#cb5-300" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-301"><a href="#cb5-301" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> index <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(label_id)):</span>
+<span id="cb5-302"><a href="#cb5-302" aria-hidden="true" tabindex="-1"></a>    ax.text(np.log(N)[index], tools[index], label_id[index], size<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb5-303"><a href="#cb5-303" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-304"><a href="#cb5-304" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">50</span>):</span>
+<span id="cb5-305"><a href="#cb5-305" aria-hidden="true" tabindex="-1"></a>    i <span class="op">=</span> np.random.randint(low<span class="op">=</span><span class="dv">0</span>,high<span class="op">=</span><span class="dv">4000</span>)</span>
+<span id="cb5-306"><a href="#cb5-306" aria-hidden="true" tabindex="-1"></a>    plt.plot(np.log(N),predictions[i],<span class="st">'o'</span>,alpha<span class="op">=</span><span class="fl">0.2</span>,color<span class="op">=</span><span class="st">"tab:blue"</span>,markersize<span class="op">=</span><span class="dv">5</span>)</span>
+<span id="cb5-307"><a href="#cb5-307" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-308"><a href="#cb5-308" aria-hidden="true" tabindex="-1"></a>plt.plot(np.log(N),tools,<span class="st">'o'</span>,color<span class="op">=</span><span class="st">"black"</span>)</span>
+<span id="cb5-309"><a href="#cb5-309" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-310"><a href="#cb5-310" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Log population size"</span>)<span class="op">;</span></span>
+<span id="cb5-311"><a href="#cb5-311" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-312"><a href="#cb5-312" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-313"><a href="#cb5-313" aria-hidden="true" tabindex="-1"></a>Our visual intuition that the founder model is doing better is validated by model comparison statistics.</span>
+<span id="cb5-314"><a href="#cb5-314" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-317"><a href="#cb5-317" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb5-318"><a href="#cb5-318" aria-hidden="true" tabindex="-1"></a>trace0 <span class="op">=</span> pm.compute_log_likelihood(trace0,model<span class="op">=</span>m0)</span>
+<span id="cb5-319"><a href="#cb5-319" aria-hidden="true" tabindex="-1"></a>trace1 <span class="op">=</span> pm.compute_log_likelihood(trace1,model<span class="op">=</span>m1)</span>
+<span id="cb5-320"><a href="#cb5-320" aria-hidden="true" tabindex="-1"></a>az.compare({<span class="st">"Standard model"</span>:trace0,</span>
+<span id="cb5-321"><a href="#cb5-321" aria-hidden="true" tabindex="-1"></a>            <span class="st">"Founder model"</span>:trace1})</span>
+<span id="cb5-322"><a href="#cb5-322" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-323"><a href="#cb5-323" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-324"><a href="#cb5-324" aria-hidden="true" tabindex="-1"></a>What I really like about this strategy of modeling is that we've improve the fit just by incorporating domain knowledge. Often, in statistical modeling, the techniques to improve fit involve making the model more flexible. With more adjustable parameters, a model will always fit better. But the improvement in fit doesn't mean we are discovering the true mechanical structure behind the data. It often only means our model is more flexible. But here we didn't increase the parametric flexibility. All we did was thought about the problem and did algebra. I think that's an underappreciated but highly powerful technique.</span>
+<span id="cb5-325"><a href="#cb5-325" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-326"><a href="#cb5-326" aria-hidden="true" tabindex="-1"></a>I hope my position has become clear - toy models are easy to break but we should break them. Only by breaking them do we get our most informative analyses. When we slowly try to put them back together, we can often come up with clever structural adjustments to the model that improve fit without introducing inappropriate sorts of flexibility.</span>
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

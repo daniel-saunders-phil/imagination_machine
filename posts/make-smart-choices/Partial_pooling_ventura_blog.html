@@ -8,6 +8,7 @@
 
 <meta name="author" content="Daniel Saunders">
 <meta name="dcterms.date" content="2022-12-22">
+<meta name="description" content="The truth is out there. Only the multi-level model can find it.">
 
 <title>Imagination Machine - Make Smart Choices, Use Multi-Level Models</title>
 <style>
@@ -168,6 +169,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="quarto-title-block"><div><h1 class="title">Make Smart Choices, Use Multi-Level Models</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
 </div>
 
+<div>
+  <div class="description">
+    The truth is out there. Only the multi-level model can find it.
+  </div>
+</div>
 
 
 <div class="quarto-title-meta">
@@ -663,510 +669,511 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> Make Smart Choices, Use Multi-Level Models</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> Daniel Saunders</span></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> 2022-12-22</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">  echo: false</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">  freeze: true</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="an">jupyter:</span><span class="co"> python3</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="an">image:</span><span class="co"> output_28_0.png</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>Two of the more exciting areas of growth in philosophy of science are large-scale automatic text analysis studies and cultural evolutionary models of scientific communities. </span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>**Text analysis** studies provide really useful ways of summarizing trends both in philosophy of science and the scientific literature. When we do intellectual history with classical methods, we tend to focus on the heavy hitting, widely cited papers. This makes good sense because people can only read so many papers in their short lives. So focus on the big ones. But most papers are not widely cited. They are just normal little contributions. These mundane papers get less attention in intellectual history. They tend to be boring. Understanding what ordinary work looks like is just as important for understanding a period as understanding the revolutionary papers. Machines don't get bored of reading mundane papers. Hence the appeal of automated text analysis.</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>**Cultural evolutionary** models imagine science is shaped by a process akin to natural selection. Some methods spread through the population of scientists. Others die out. If we could figure out the mechanisms that reward certain kinds of work, then selection-based models could provide some understanding of what shapes scientific practice in the long run.</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>A natural thought is that these two methods could be brought together. Text analysis provides the data to test, fit, or otherwise evaluate the cultural evolution models. So far, no one has been able to pull this off in a compelling manner. Rafael Ventura has an exciting new pre-print that is a good step in this direction. Ventura is looking at how formal methods have spread over time inside philosophy of science. The goal is to see whether there is any *selection* for model-based papers over other papers. In other words, is the incentive structure one that rewards modeling throughout philosophy of science?</span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>His data collection has two steps. First, he organizes the published philosophy of science literature into 16 topics. The topics are based on co-citation networks. The intuitive picture (I'm no expert in bibliometric techniques so this is loose!) was that two papers that tend to cite the same references will tend to be in the same topic. If two papers cite a bunch of non-overlapping references, they will tend to be in different topics. Second, he classified papers by whether they used formal methods or not and tracked how the frequency of formal methods changes over time in the 16 topics. Full details on the data collection process are found here: http://philsci-archive.pitt.edu/20885/. </span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>The bit that interests me is that choice to put papers into discrete topics based on co-citation. The 16 topics are not, of course, really entirely isolated research programs. Papers across the topics will cite some of the same works, experience some of the same incentive structures, and cultural shifts in one area of philosophy of science tend to diffuse into other areas. So the choice of 16 topics is somewhat artificial. This isn't to say it's a bad choice - there will definitely be a lot of cultural selection concentrated inside each topic. But the choice does introduce some limitations on the results. It would be nice if we could find a way around that, a way of quantifying the causal influence between research communities as well as within them. That's what this post is all about.</span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>The past few months, I've been playing around with Bayesian statistical packages in Python. It is mostly just for curiosity's sake. But now when I read papers with data analysis and their underlying data is public, it can be a lot of fun to reanalyze the results. That's what I've done here. Specifically, I'm using a technique from Bayesian statistics called multi-level modeling.</span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>The headline is that at least one of the major findings from Ventura's paper reverses when the same data is reanalyzed with multi-level modeling. He suggests that there is no selection for formal models across all of philosophy of science. But there might be selection for modeling within particular subdisciplines. I find a stronger pattern of selection for formal models at both levels - the whole of philosophy of science and many of the local clusters.</span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="fu"># The intuition behind multi-level modeling</span></span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>Let's lay an intuition for multi-level modeling. Suppose you have a bag of red and blue marbles. If you pull out a sample of 10 marbles, you can estimate the proportion of blue marbles in the bag. This is a very standard statistical problem. Bayesians use examples like this to motivate their approach in intro books all the time. </span>
-<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>Now imagine you have a *big* bag containing 10 *small* bags of marbles. If you pull out 7 of the small bags and then you pull out 10 marbles from each bag, what's the right way of analyzing this data? </span>
-<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>One option is to treat each bag as its own thing. It just the same problem as before but repeated 7 times. This approach seems silly because it assumes each small bag is entirely independent of the others. Surely, learning about the proportion of blue marbles in one bag should inform your expectation about the next bag because all of the small bags come from the same place.</span>
-<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>A second option is to ignore the fact marbles are grouped by little bags and just try to estimate the number of blue marbles in the big bag. You just count up the number of blue marbles across all bags and use that number to guide the estimate. This is also silly because you are ignoring the fact that the marbles are grouped by bag.</span>
-<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>The best approach is to use multi-level modeling. You simultaneously try to estimate the proportion of marbles in each bag while also trying to estimate the amount that the bags are correlated. The big bag represents some underlying distributions that generates the small bags. If you could learn about the underlying distribution in the big bag, you could make smarter guesses as to what will happen in a given small bag.</span>
-<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>Now replace bags with research communities. The big bag is the whole philosophy of science community. The little bags are the topic. At both levels, there is selection for or against formal methods. My goal is to estimate the selection in each topic while also allowing causal influence to flow between topics (and estimating how much cross-flow there is).</span>
-<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>I'm not going to get too much further into the technical details. I imagine readers who know what I'm talking about will just want to see the code and readers who don't will need a specialized introduction to multi-level models. A really fun introduction to this strategy is here https://www.youtube.com/watch?v=SocRgsf202M.</span>
-<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a><span class="co">#| tags: [remove-input]</span></span>
-<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pymc <span class="im">as</span> pm</span>
-<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> arviz <span class="im">as</span> az</span>
-<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy <span class="im">import</span> stats</span>
-<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'figure.figsize'</span>] <span class="op">=</span> [<span class="dv">7</span>, <span class="dv">4</span>]</span>
-<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'font.size'</span>] <span class="op">=</span> <span class="dv">14</span></span>
-<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a><span class="fu"># Data cleaning</span></span>
-<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a><span class="co">#| id: 340d1e96</span></span>
-<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a><span class="co">#| colab: {base_uri: 'https://localhost:8080/'}</span></span>
-<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a><span class="co">#| outputId: e4de5f51-c0bc-437f-a22a-04a082cccbd5</span></span>
-<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a>url_1 <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com/daniel-saunders-phil/hbms-for-philosophy-of-science/main/clusters_count_by_year.csv"</span></span>
-<span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a>url_2 <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com/daniel-saunders-phil/hbms-for-philosophy-of-science/main/clusters_quant_count_by_year.csv"</span></span>
-<span id="cb5-68"><a href="#cb5-68" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a>cluster_count_by_year <span class="op">=</span> pd.read_csv(url_1)</span>
-<span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a>cluster_quant_count <span class="op">=</span> pd.read_csv(url_2)</span>
-<span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a>proportion_per_year <span class="op">=</span> cluster_quant_count <span class="op">/</span> cluster_count_by_year</span>
-<span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a>proportion_per_year <span class="op">=</span> proportion_per_year.drop(labels<span class="op">=</span><span class="st">'CL'</span>,axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-74"><a href="#cb5-74" aria-hidden="true" tabindex="-1"></a><span class="co"># 16 x 22 matrix</span></span>
-<span id="cb5-75"><a href="#cb5-75" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-76"><a href="#cb5-76" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.ones((<span class="dv">16</span>,<span class="dv">21</span>))</span>
-<span id="cb5-77"><a href="#cb5-77" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-78"><a href="#cb5-78" aria-hidden="true" tabindex="-1"></a><span class="co"># fill each row with the numbers 0-20</span></span>
-<span id="cb5-79"><a href="#cb5-79" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-80"><a href="#cb5-80" aria-hidden="true" tabindex="-1"></a>x[<span class="dv">0</span>:<span class="dv">16</span>] <span class="op">=</span> np.arange(<span class="dv">21</span>)</span>
-<span id="cb5-81"><a href="#cb5-81" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-82"><a href="#cb5-82" aria-hidden="true" tabindex="-1"></a><span class="co"># assign data to n and k</span></span>
-<span id="cb5-83"><a href="#cb5-83" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-84"><a href="#cb5-84" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> cluster_count_by_year.values</span>
-<span id="cb5-85"><a href="#cb5-85" aria-hidden="true" tabindex="-1"></a>k <span class="op">=</span> cluster_quant_count.values</span>
-<span id="cb5-86"><a href="#cb5-86" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-87"><a href="#cb5-87" aria-hidden="true" tabindex="-1"></a><span class="co"># skip first entry in each row</span></span>
-<span id="cb5-88"><a href="#cb5-88" aria-hidden="true" tabindex="-1"></a><span class="co"># which is just an index</span></span>
-<span id="cb5-89"><a href="#cb5-89" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-90"><a href="#cb5-90" aria-hidden="true" tabindex="-1"></a>k <span class="op">=</span> k[:,<span class="dv">1</span>:]</span>
-<span id="cb5-91"><a href="#cb5-91" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> n[:,<span class="dv">1</span>:]</span>
-<span id="cb5-92"><a href="#cb5-92" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-93"><a href="#cb5-93" aria-hidden="true" tabindex="-1"></a><span class="co"># transpose all arrays</span></span>
-<span id="cb5-94"><a href="#cb5-94" aria-hidden="true" tabindex="-1"></a><span class="co"># my bayes stats package (pymc) </span></span>
-<span id="cb5-95"><a href="#cb5-95" aria-hidden="true" tabindex="-1"></a><span class="co"># expects variables in</span></span>
-<span id="cb5-96"><a href="#cb5-96" aria-hidden="true" tabindex="-1"></a><span class="co"># column orientation</span></span>
-<span id="cb5-97"><a href="#cb5-97" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-98"><a href="#cb5-98" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> x.T</span>
-<span id="cb5-99"><a href="#cb5-99" aria-hidden="true" tabindex="-1"></a>k <span class="op">=</span> k.T</span>
-<span id="cb5-100"><a href="#cb5-100" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> n.T</span>
-<span id="cb5-101"><a href="#cb5-101" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-102"><a href="#cb5-102" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-105"><a href="#cb5-105" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb5-106"><a href="#cb5-106" aria-hidden="true" tabindex="-1"></a>x.shape,n.shape,k.shape</span>
-<span id="cb5-107"><a href="#cb5-107" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-108"><a href="#cb5-108" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-111"><a href="#cb5-111" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb5-112"><a href="#cb5-112" aria-hidden="true" tabindex="-1"></a><span class="co">#| id: ea7e8823</span></span>
-<span id="cb5-113"><a href="#cb5-113" aria-hidden="true" tabindex="-1"></a><span class="co">#| colab: {base_uri: 'https://localhost:8080/', height: 378}</span></span>
-<span id="cb5-114"><a href="#cb5-114" aria-hidden="true" tabindex="-1"></a><span class="co">#| outputId: bb54b889-c220-41fc-cc14-ec5b43f91563</span></span>
-<span id="cb5-115"><a href="#cb5-115" aria-hidden="true" tabindex="-1"></a><span class="co"># construct a 4x4 grid of subplots</span></span>
-<span id="cb5-116"><a href="#cb5-116" aria-hidden="true" tabindex="-1"></a><span class="co"># one for each of 16 topics.</span></span>
-<span id="cb5-117"><a href="#cb5-117" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-118"><a href="#cb5-118" aria-hidden="true" tabindex="-1"></a>f,ax <span class="op">=</span> plt.subplots(<span class="dv">4</span>,<span class="dv">4</span>,sharex<span class="op">=</span><span class="va">True</span>,sharey<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb5-119"><a href="#cb5-119" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-120"><a href="#cb5-120" aria-hidden="true" tabindex="-1"></a><span class="co"># loop through the grid and plot the proportion</span></span>
-<span id="cb5-121"><a href="#cb5-121" aria-hidden="true" tabindex="-1"></a><span class="co"># of formal papers for each year.</span></span>
-<span id="cb5-122"><a href="#cb5-122" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-123"><a href="#cb5-123" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
-<span id="cb5-124"><a href="#cb5-124" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
-<span id="cb5-125"><a href="#cb5-125" aria-hidden="true" tabindex="-1"></a>        ax[i][j].plot(proportion_per_year.iloc[i<span class="op">*</span><span class="dv">4</span><span class="op">+</span>j].values,<span class="st">'o'</span>,markersize<span class="op">=</span><span class="dv">2</span>)</span>
-<span id="cb5-126"><a href="#cb5-126" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-127"><a href="#cb5-127" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-128"><a href="#cb5-128" aria-hidden="true" tabindex="-1"></a>Here's what the data looks like for each of the 16 topics. Each dot represents the proportion of formal methods papers in a topic for a given year, starting at 2000 through 2020.</span>
-<span id="cb5-129"><a href="#cb5-129" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-130"><a href="#cb5-130" aria-hidden="true" tabindex="-1"></a><span class="fu"># Unpooled analysis</span></span>
-<span id="cb5-131"><a href="#cb5-131" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-132"><a href="#cb5-132" aria-hidden="true" tabindex="-1"></a>My real goal is a multi-level model (also called partial pooling). But to calibrate my expectations, I want to fit a simpler model without a multi-level structure. I'm just going to treat each topic as its own thing and estimate the trend in formal methods one at a time.</span>
-<span id="cb5-133"><a href="#cb5-133" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-134"><a href="#cb5-134" aria-hidden="true" tabindex="-1"></a>One difference between my analysis and Ventura's relies on how we specified our logistic regressions. He used a probit model whereas I used an logit model. The difference shouldn't matter (and is very esoteric anyway). I only picked a logit because it plays nicer with the bayesian software package. So we shouldn't get exactly the same results but the general conclusions should remain the same.</span>
-<span id="cb5-135"><a href="#cb5-135" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-136"><a href="#cb5-136" aria-hidden="true" tabindex="-1"></a><span class="fu">## Prior simulation</span></span>
-<span id="cb5-137"><a href="#cb5-137" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-138"><a href="#cb5-138" aria-hidden="true" tabindex="-1"></a>When working with Bayesian methods, we have to select priors. I used a strategy known as *weakly regularizing priors*. The goal is to pick out priors that penalize really extreme effects but still allow for enough uncertainty that the data can drive the ultimate analysis. To calibrate the priors before including the data, I sample from my prior distributions and plots 50 lines at a time to give me a sense of what plausible relationships might look like.</span>
-<span id="cb5-139"><a href="#cb5-139" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-140"><a href="#cb5-140" aria-hidden="true" tabindex="-1"></a>Below is the priors I ended up using. For the slopes, I assumed a normal distribution centered around 0 with a standard deviation of 0.3. For the intercepts, I assumed a normal distribution centered around 0 with a standard deviation of 3.</span>
-<span id="cb5-141"><a href="#cb5-141" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-144"><a href="#cb5-144" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb5-145"><a href="#cb5-145" aria-hidden="true" tabindex="-1"></a><span class="co">#| id: 0d759790</span></span>
-<span id="cb5-146"><a href="#cb5-146" aria-hidden="true" tabindex="-1"></a><span class="co">#| colab: {base_uri: 'https://localhost:8080/', height: 378}</span></span>
-<span id="cb5-147"><a href="#cb5-147" aria-hidden="true" tabindex="-1"></a><span class="co">#| outputId: eccba072-f4a9-4064-bc76-0b165e1f5e91</span></span>
-<span id="cb5-148"><a href="#cb5-148" aria-hidden="true" tabindex="-1"></a><span class="co"># prior simulation</span></span>
-<span id="cb5-149"><a href="#cb5-149" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-150"><a href="#cb5-150" aria-hidden="true" tabindex="-1"></a>x_prior <span class="op">=</span> np.arange(<span class="dv">21</span>)</span>
-<span id="cb5-151"><a href="#cb5-151" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-152"><a href="#cb5-152" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">50</span>):</span>
-<span id="cb5-153"><a href="#cb5-153" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb5-154"><a href="#cb5-154" aria-hidden="true" tabindex="-1"></a>    <span class="co"># sample a value from the priors</span></span>
-<span id="cb5-155"><a href="#cb5-155" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-156"><a href="#cb5-156" aria-hidden="true" tabindex="-1"></a>    a <span class="op">=</span> stats.norm(<span class="dv">0</span>,<span class="dv">3</span>).rvs()</span>
-<span id="cb5-157"><a href="#cb5-157" aria-hidden="true" tabindex="-1"></a>    b <span class="op">=</span> stats.norm(<span class="dv">0</span>,<span class="fl">0.3</span>).rvs()</span>
-<span id="cb5-158"><a href="#cb5-158" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb5-159"><a href="#cb5-159" aria-hidden="true" tabindex="-1"></a>    <span class="co"># plug into the inverse logit function</span></span>
-<span id="cb5-160"><a href="#cb5-160" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-161"><a href="#cb5-161" aria-hidden="true" tabindex="-1"></a>    p <span class="op">=</span> np.exp(a <span class="op">+</span> b<span class="op">*</span>x_prior) <span class="op">/</span> (<span class="dv">1</span> <span class="op">+</span> np.exp(a <span class="op">+</span> b<span class="op">*</span>x_prior))</span>
-<span id="cb5-162"><a href="#cb5-162" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-163"><a href="#cb5-163" aria-hidden="true" tabindex="-1"></a>    plt.plot(p)</span>
-<span id="cb5-164"><a href="#cb5-164" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-165"><a href="#cb5-165" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-166"><a href="#cb5-166" aria-hidden="true" tabindex="-1"></a>Later, we'll find that my results depart from those found by Ventura in a couple of places. I suspect that is partly due to the influence of the priors. So I want to spend a bit longer justifying mine.</span>
-<span id="cb5-167"><a href="#cb5-167" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-168"><a href="#cb5-168" aria-hidden="true" tabindex="-1"></a>Many people are skeptical of the use of priors in statistics. Isn't it cheating to build assumptions into the model, rather than letting the data do the work? The trouble with prior skepticism is that all analyzes use priors, it's just that Bayesian analysis uses them explicitly. Other modeling techniques will often tacitly assume flat priors on the possible intercept and slopes. Let me show you what the models look like with much flatter priors.</span>
-<span id="cb5-169"><a href="#cb5-169" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-172"><a href="#cb5-172" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb5-173"><a href="#cb5-173" aria-hidden="true" tabindex="-1"></a><span class="co">#| id: e73d67d8</span></span>
-<span id="cb5-174"><a href="#cb5-174" aria-hidden="true" tabindex="-1"></a><span class="co">#| colab: {base_uri: 'https://localhost:8080/', height: 378}</span></span>
-<span id="cb5-175"><a href="#cb5-175" aria-hidden="true" tabindex="-1"></a><span class="co">#| outputId: 67905f90-5a50-4d16-9400-0f232fdb3119</span></span>
-<span id="cb5-176"><a href="#cb5-176" aria-hidden="true" tabindex="-1"></a><span class="co"># prior simulation</span></span>
-<span id="cb5-177"><a href="#cb5-177" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-178"><a href="#cb5-178" aria-hidden="true" tabindex="-1"></a>x_prior <span class="op">=</span> np.arange(<span class="dv">21</span>)</span>
-<span id="cb5-179"><a href="#cb5-179" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-180"><a href="#cb5-180" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">50</span>):</span>
-<span id="cb5-181"><a href="#cb5-181" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-182"><a href="#cb5-182" aria-hidden="true" tabindex="-1"></a>    a <span class="op">=</span> stats.norm(<span class="dv">0</span>,<span class="dv">5</span>).rvs()</span>
-<span id="cb5-183"><a href="#cb5-183" aria-hidden="true" tabindex="-1"></a>    b <span class="op">=</span> stats.norm(<span class="dv">0</span>,<span class="dv">2</span>).rvs()</span>
-<span id="cb5-184"><a href="#cb5-184" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-185"><a href="#cb5-185" aria-hidden="true" tabindex="-1"></a>    p <span class="op">=</span> np.exp(a <span class="op">+</span> b<span class="op">*</span>x_prior) <span class="op">/</span> (<span class="dv">1</span> <span class="op">+</span> np.exp(a <span class="op">+</span> b<span class="op">*</span>x_prior))</span>
-<span id="cb5-186"><a href="#cb5-186" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-187"><a href="#cb5-187" aria-hidden="true" tabindex="-1"></a>    plt.plot(p)</span>
-<span id="cb5-188"><a href="#cb5-188" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-189"><a href="#cb5-189" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-190"><a href="#cb5-190" aria-hidden="true" tabindex="-1"></a>Here I expanded the standard of deviation around the intercept and the slope. The irony is that increasing uncertainty at the level of the priors can decrease uncertainty at the level of predictions. Most predicted models here assume really sharp slopes and implausibly faster growth rates for formal methods in philosophy. Most of these lines shoot from the top to the bottom in the span of 5 or 6 years, suggesting that philosophy could have made a complete revolution in methodology. These predictions are implausible. (A careful explanation of why non-informative priors can be problematic can be found in Richard McElreath's statistical rethinking book https://xcelab.net/rm/statistical-rethinking/). Hence my preference for the weakly informative priors described above. </span>
-<span id="cb5-191"><a href="#cb5-191" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-192"><a href="#cb5-192" aria-hidden="true" tabindex="-1"></a><span class="fu">## Sampling</span></span>
-<span id="cb5-193"><a href="#cb5-193" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-194"><a href="#cb5-194" aria-hidden="true" tabindex="-1"></a>This code fits 16 logistic regressions, one for each topic.</span>
-<span id="cb5-195"><a href="#cb5-195" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-198"><a href="#cb5-198" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb5-199"><a href="#cb5-199" aria-hidden="true" tabindex="-1"></a><span class="co">#| id: 65a463ce</span></span>
-<span id="cb5-200"><a href="#cb5-200" aria-hidden="true" tabindex="-1"></a><span class="co">#| colab: {base_uri: 'https://localhost:8080/', height: 57}</span></span>
-<span id="cb5-201"><a href="#cb5-201" aria-hidden="true" tabindex="-1"></a><span class="co">#| outputId: f1c4b0cd-1d15-4a43-87ed-a5540ee7c5e5</span></span>
-<span id="cb5-202"><a href="#cb5-202" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pm.Model() <span class="im">as</span> no_pool:</span>
-<span id="cb5-203"><a href="#cb5-203" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb5-204"><a href="#cb5-204" aria-hidden="true" tabindex="-1"></a>    <span class="co"># priors</span></span>
-<span id="cb5-205"><a href="#cb5-205" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb5-206"><a href="#cb5-206" aria-hidden="true" tabindex="-1"></a>    a <span class="op">=</span> pm.Normal(<span class="st">'a'</span>,<span class="dv">0</span>,<span class="dv">3</span>,shape<span class="op">=</span><span class="dv">16</span>)</span>
-<span id="cb5-207"><a href="#cb5-207" aria-hidden="true" tabindex="-1"></a>    b <span class="op">=</span> pm.Normal(<span class="st">'b'</span>,<span class="dv">0</span>,<span class="fl">0.3</span>,shape<span class="op">=</span><span class="dv">16</span>)</span>
-<span id="cb5-208"><a href="#cb5-208" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb5-209"><a href="#cb5-209" aria-hidden="true" tabindex="-1"></a>    <span class="co"># link function</span></span>
-<span id="cb5-210"><a href="#cb5-210" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-211"><a href="#cb5-211" aria-hidden="true" tabindex="-1"></a>    p <span class="op">=</span> pm.invlogit(a <span class="op">+</span> b<span class="op">*</span>x)</span>
-<span id="cb5-212"><a href="#cb5-212" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb5-213"><a href="#cb5-213" aria-hidden="true" tabindex="-1"></a>    <span class="co"># outcome distribution</span></span>
-<span id="cb5-214"><a href="#cb5-214" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-215"><a href="#cb5-215" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> pm.Binomial(<span class="st">'y'</span>,p<span class="op">=</span>p,n<span class="op">=</span>n,observed<span class="op">=</span>k)</span>
-<span id="cb5-216"><a href="#cb5-216" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb5-217"><a href="#cb5-217" aria-hidden="true" tabindex="-1"></a>    <span class="co"># sampler</span></span>
-<span id="cb5-218"><a href="#cb5-218" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb5-219"><a href="#cb5-219" aria-hidden="true" tabindex="-1"></a>    trace_no_pool <span class="op">=</span> pm.sample(nuts_sampler<span class="op">=</span><span class="st">"nutpie"</span>,progressbar<span class="op">=</span><span class="va">False</span>)<span class="op">;</span></span>
-<span id="cb5-220"><a href="#cb5-220" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-221"><a href="#cb5-221" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-224"><a href="#cb5-224" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb5-225"><a href="#cb5-225" aria-hidden="true" tabindex="-1"></a><span class="co">#| id: 00ebbd58</span></span>
-<span id="cb5-226"><a href="#cb5-226" aria-hidden="true" tabindex="-1"></a><span class="co">#| colab: {base_uri: 'https://localhost:8080/', height: 279}</span></span>
-<span id="cb5-227"><a href="#cb5-227" aria-hidden="true" tabindex="-1"></a><span class="co">#| outputId: 3bc025b6-3da6-4e05-e27e-c39eb22ec52d</span></span>
-<span id="cb5-228"><a href="#cb5-228" aria-hidden="true" tabindex="-1"></a>az.plot_trace(trace_no_pool)<span class="op">;</span></span>
-<span id="cb5-229"><a href="#cb5-229" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-230"><a href="#cb5-230" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-231"><a href="#cb5-231" aria-hidden="true" tabindex="-1"></a>These plots provide a check on whether the computational estimation strategy was effective. There is little to discuss here, except the good sign that nothing blew up during sampling.</span>
-<span id="cb5-232"><a href="#cb5-232" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-235"><a href="#cb5-235" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb5-236"><a href="#cb5-236" aria-hidden="true" tabindex="-1"></a><span class="co">#| id: a192a5f8</span></span>
-<span id="cb5-237"><a href="#cb5-237" aria-hidden="true" tabindex="-1"></a><span class="co">#| outputId: 61b12f36-cdb1-485e-d0b5-ab53a15e3547</span></span>
-<span id="cb5-238"><a href="#cb5-238" aria-hidden="true" tabindex="-1"></a>az.plot_forest(trace_no_pool,var_names<span class="op">=</span><span class="st">'b'</span>,combined<span class="op">=</span><span class="va">True</span>,hdi_prob<span class="op">=</span><span class="fl">0.95</span>,quartiles<span class="op">=</span><span class="va">False</span>)<span class="op">;</span></span>
-<span id="cb5-239"><a href="#cb5-239" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-240"><a href="#cb5-240" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-241"><a href="#cb5-241" aria-hidden="true" tabindex="-1"></a>I'm just listing the slope parameters on each regression (ignoring the intercepts for now). Dots represent the highest posterior point estimate for each slope or, simply, the slope of best fit. The lines represent uncertainty - 95% of the posterior distribution fits within the line. This is like a 95% confidence interval in classic statistics.</span>
-<span id="cb5-242"><a href="#cb5-242" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-243"><a href="#cb5-243" aria-hidden="true" tabindex="-1"></a>The general pattern is that most topics experience a modest growth trend for formal methods. A few don't: Confirmation (2), Metaphysics (8), Relativity (10), and Realism (12). (The numbers that index topics in Ventura's paper and my analysis will be slightly different. I count up from 0 and go through 15. He counts from 1 and goes to 16. I do this just because the Bayesian fitting software uses this convention. So if you are switching between papers, just keep this in mind.)</span>
-<span id="cb5-244"><a href="#cb5-244" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-245"><a href="#cb5-245" aria-hidden="true" tabindex="-1"></a><span class="fu">## Posterior predictive checking</span></span>
-<span id="cb5-246"><a href="#cb5-246" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-247"><a href="#cb5-247" aria-hidden="true" tabindex="-1"></a>These numbers are hard to interpret just as numbers. Let's extract predictions from what the estimated models and compare them against the observed data.</span>
-<span id="cb5-248"><a href="#cb5-248" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-251"><a href="#cb5-251" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb5-252"><a href="#cb5-252" aria-hidden="true" tabindex="-1"></a><span class="co">#| id: 31f927e0</span></span>
-<span id="cb5-253"><a href="#cb5-253" aria-hidden="true" tabindex="-1"></a><span class="co">#| colab: {base_uri: 'https://localhost:8080/', height: 37}</span></span>
-<span id="cb5-254"><a href="#cb5-254" aria-hidden="true" tabindex="-1"></a><span class="co">#| outputId: 336fa884-09f0-4f22-93e5-c24ce6cdf207</span></span>
-<span id="cb5-255"><a href="#cb5-255" aria-hidden="true" tabindex="-1"></a>post_pred_no_pool <span class="op">=</span> pm.sample_posterior_predictive(trace_no_pool,model<span class="op">=</span>no_pool,progressbar<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb5-256"><a href="#cb5-256" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-257"><a href="#cb5-257" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-260"><a href="#cb5-260" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb5-261"><a href="#cb5-261" aria-hidden="true" tabindex="-1"></a><span class="co">#| id: d02a5510</span></span>
-<span id="cb5-262"><a href="#cb5-262" aria-hidden="true" tabindex="-1"></a><span class="co">#| colab: {base_uri: 'https://localhost:8080/', height: 596}</span></span>
-<span id="cb5-263"><a href="#cb5-263" aria-hidden="true" tabindex="-1"></a><span class="co">#| outputId: 6b02e48b-8fef-4232-cf7b-53762b9e231e</span></span>
-<span id="cb5-264"><a href="#cb5-264" aria-hidden="true" tabindex="-1"></a>f,ax <span class="op">=</span> plt.subplots(<span class="dv">4</span>,<span class="dv">4</span>,sharex<span class="op">=</span><span class="va">True</span>,sharey<span class="op">=</span><span class="va">True</span>,figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">6</span>))</span>
-<span id="cb5-265"><a href="#cb5-265" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-266"><a href="#cb5-266" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> sample <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">50</span>):</span>
-<span id="cb5-267"><a href="#cb5-267" aria-hidden="true" tabindex="-1"></a>    predictions <span class="op">=</span> np.array(post_pred_no_pool.posterior_predictive.y[<span class="dv">0</span>][sample].T)</span>
-<span id="cb5-268"><a href="#cb5-268" aria-hidden="true" tabindex="-1"></a>    ceiling <span class="op">=</span> n.T</span>
-<span id="cb5-269"><a href="#cb5-269" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb5-270"><a href="#cb5-270" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
-<span id="cb5-271"><a href="#cb5-271" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
-<span id="cb5-272"><a href="#cb5-272" aria-hidden="true" tabindex="-1"></a>            </span>
-<span id="cb5-273"><a href="#cb5-273" aria-hidden="true" tabindex="-1"></a>            proportions <span class="op">=</span> predictions[i<span class="op">*</span><span class="dv">4</span><span class="op">+</span>j] <span class="op">/</span> ceiling[i<span class="op">*</span><span class="dv">4</span><span class="op">+</span>j]</span>
-<span id="cb5-274"><a href="#cb5-274" aria-hidden="true" tabindex="-1"></a>            ax[i][j].plot(proportions,<span class="st">'o'</span>,alpha<span class="op">=</span><span class="fl">0.2</span>,color<span class="op">=</span><span class="st">'tab:orange'</span>)</span>
-<span id="cb5-275"><a href="#cb5-275" aria-hidden="true" tabindex="-1"></a>            </span>
-<span id="cb5-276"><a href="#cb5-276" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
-<span id="cb5-277"><a href="#cb5-277" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
-<span id="cb5-278"><a href="#cb5-278" aria-hidden="true" tabindex="-1"></a>        ax[i][j].plot(proportion_per_year.iloc[i<span class="op">*</span><span class="dv">4</span><span class="op">+</span>j].values,<span class="st">'-'</span>,markersize<span class="op">=</span><span class="dv">2</span>)</span>
-<span id="cb5-279"><a href="#cb5-279" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-280"><a href="#cb5-280" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-281"><a href="#cb5-281" aria-hidden="true" tabindex="-1"></a>This plot displays the predicted proportion of formal papers in each year. Uncertainty is represented by the spread of the dots and their opacity.</span>
-<span id="cb5-282"><a href="#cb5-282" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-283"><a href="#cb5-283" aria-hidden="true" tabindex="-1"></a>One good check is whether the model captures a few plausible intuitive stories. For example, topic 11 is on row 3, column 4. It experiences huge growth in formal methods. This is decision theory. So it makes good sense that nearly half of papers published in this area are in the business of building models. (The other half are likely papers reflecting on the methodology or concepts of decision theory.)</span>
-<span id="cb5-284"><a href="#cb5-284" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-285"><a href="#cb5-285" aria-hidden="true" tabindex="-1"></a>One thing to notice is that uncertainty at the beginning of the period tends to be pretty large. This makes sense because we have very little data for the beginning of each period. Some of these topics only have a handful of papers published in them in the year 2000. So it's like the sample size is very small for the beginning. But it tends to grow in the later years so the estimate clamps down.</span>
-<span id="cb5-286"><a href="#cb5-286" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-287"><a href="#cb5-287" aria-hidden="true" tabindex="-1"></a>The high beginning uncertainty is also a reason why splitting the community into 16 topics might introduce some artifacts into the statistical analysis. In the year 2000, each subtopic was not as clearly distinguished as they were in, say, 2010. The common narrative is that philosophy of science sorta splintered into many sub-specialties at the end of the very end of the 20th century and then these subdisciplines consolidated during the early 2000s. So we should also expect more overlap in causal selective forces for the early years, something not reflected in this analysis. Instead, we get big initial uncertainty because each subtopic is not well-established yet.</span>
-<span id="cb5-288"><a href="#cb5-288" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-291"><a href="#cb5-291" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb5-292"><a href="#cb5-292" aria-hidden="true" tabindex="-1"></a><span class="co">#| id: '39165831'</span></span>
-<span id="cb5-293"><a href="#cb5-293" aria-hidden="true" tabindex="-1"></a><span class="co">#| colab: {base_uri: 'https://localhost:8080/', height: 601}</span></span>
-<span id="cb5-294"><a href="#cb5-294" aria-hidden="true" tabindex="-1"></a><span class="co">#| outputId: a3c5a898-b263-4bd5-c6f7-495f17613079</span></span>
-<span id="cb5-295"><a href="#cb5-295" aria-hidden="true" tabindex="-1"></a>a_means <span class="op">=</span> [np.array(trace_no_pool.posterior[<span class="st">'a'</span>][<span class="dv">0</span>][:,i].mean()) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">16</span>)]</span>
-<span id="cb5-296"><a href="#cb5-296" aria-hidden="true" tabindex="-1"></a>b_means <span class="op">=</span> [np.array(trace_no_pool.posterior[<span class="st">'b'</span>][<span class="dv">0</span>][:,i].mean()) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">16</span>)]</span>
-<span id="cb5-297"><a href="#cb5-297" aria-hidden="true" tabindex="-1"></a>a_means <span class="op">=</span> np.array(a_means)</span>
-<span id="cb5-298"><a href="#cb5-298" aria-hidden="true" tabindex="-1"></a>b_means <span class="op">=</span> np.array(b_means)</span>
-<span id="cb5-299"><a href="#cb5-299" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-300"><a href="#cb5-300" aria-hidden="true" tabindex="-1"></a>f,ax <span class="op">=</span> plt.subplots(<span class="dv">4</span>,<span class="dv">4</span>,sharex<span class="op">=</span><span class="va">True</span>,sharey<span class="op">=</span><span class="va">True</span>,figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">6</span>))</span>
-<span id="cb5-301"><a href="#cb5-301" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-302"><a href="#cb5-302" aria-hidden="true" tabindex="-1"></a>x_pred <span class="op">=</span> np.arange(<span class="dv">21</span>)</span>
-<span id="cb5-303"><a href="#cb5-303" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-304"><a href="#cb5-304" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
-<span id="cb5-305"><a href="#cb5-305" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
-<span id="cb5-306"><a href="#cb5-306" aria-hidden="true" tabindex="-1"></a>        a <span class="op">=</span> a_means[i<span class="op">*</span><span class="dv">4</span><span class="op">+</span>j] </span>
-<span id="cb5-307"><a href="#cb5-307" aria-hidden="true" tabindex="-1"></a>        b <span class="op">=</span> b_means[i<span class="op">*</span><span class="dv">4</span><span class="op">+</span>j]</span>
-<span id="cb5-308"><a href="#cb5-308" aria-hidden="true" tabindex="-1"></a>        p <span class="op">=</span> np.exp(a <span class="op">+</span> b<span class="op">*</span>x_pred) <span class="op">/</span> (<span class="dv">1</span> <span class="op">+</span> np.exp(a <span class="op">+</span> b<span class="op">*</span>x_pred))</span>
-<span id="cb5-309"><a href="#cb5-309" aria-hidden="true" tabindex="-1"></a>        ax[i][j].plot(p)</span>
-<span id="cb5-310"><a href="#cb5-310" aria-hidden="true" tabindex="-1"></a>        ax[i][j].plot(proportion_per_year.iloc[i<span class="op">*</span><span class="dv">4</span><span class="op">+</span>j].values,<span class="st">'o'</span>,markersize<span class="op">=</span><span class="dv">3</span>)</span>
-<span id="cb5-311"><a href="#cb5-311" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-312"><a href="#cb5-312" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-313"><a href="#cb5-313" aria-hidden="true" tabindex="-1"></a>A second way of visualizing the model is to strip away the uncertainty and plot the best performing logistic curves for each community. These are what the model thinks the likely trend is in each place.</span>
-<span id="cb5-314"><a href="#cb5-314" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-315"><a href="#cb5-315" aria-hidden="true" tabindex="-1"></a><span class="fu"># Multi-level model analysis</span></span>
-<span id="cb5-316"><a href="#cb5-316" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-317"><a href="#cb5-317" aria-hidden="true" tabindex="-1"></a>Now time for the real focus.</span>
-<span id="cb5-318"><a href="#cb5-318" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-319"><a href="#cb5-319" aria-hidden="true" tabindex="-1"></a><span class="fu">## Prior simulation</span></span>
-<span id="cb5-320"><a href="#cb5-320" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-321"><a href="#cb5-321" aria-hidden="true" tabindex="-1"></a>Again I conduct a prior simulation. This time is tricker though because I have priors representing the overall population effects and the those priors shape the subsequent topic effects. So we want to get a prior simulation that allows for a wide range of possible population-topic relationships plus the old goal of giving each topic a range of plausible effects.</span>
-<span id="cb5-322"><a href="#cb5-322" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-325"><a href="#cb5-325" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb5-326"><a href="#cb5-326" aria-hidden="true" tabindex="-1"></a><span class="co">#| id: 57ddd095</span></span>
-<span id="cb5-327"><a href="#cb5-327" aria-hidden="true" tabindex="-1"></a><span class="co">#| colab: {base_uri: 'https://localhost:8080/', height: 596}</span></span>
-<span id="cb5-328"><a href="#cb5-328" aria-hidden="true" tabindex="-1"></a><span class="co">#| outputId: 0974fc6a-bf00-44b1-e356-7b3adb3fae05</span></span>
-<span id="cb5-329"><a href="#cb5-329" aria-hidden="true" tabindex="-1"></a><span class="co"># prior simulation</span></span>
-<span id="cb5-330"><a href="#cb5-330" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-331"><a href="#cb5-331" aria-hidden="true" tabindex="-1"></a>f,ax <span class="op">=</span> plt.subplots(<span class="dv">4</span>,<span class="dv">4</span>,sharex<span class="op">=</span><span class="va">True</span>,sharey<span class="op">=</span><span class="va">True</span>,figsize<span class="op">=</span>(<span class="dv">6</span>,<span class="dv">6</span>))</span>
-<span id="cb5-332"><a href="#cb5-332" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-333"><a href="#cb5-333" aria-hidden="true" tabindex="-1"></a>hamu <span class="op">=</span> stats.norm(<span class="dv">0</span>,<span class="dv">2</span>).rvs(<span class="dv">16</span>)</span>
-<span id="cb5-334"><a href="#cb5-334" aria-hidden="true" tabindex="-1"></a>hasig <span class="op">=</span> stats.expon(scale<span class="op">=</span><span class="dv">2</span>).rvs(<span class="dv">16</span>)</span>
-<span id="cb5-335"><a href="#cb5-335" aria-hidden="true" tabindex="-1"></a>hbmu <span class="op">=</span> stats.norm(<span class="dv">0</span>,<span class="fl">0.2</span>).rvs(<span class="dv">16</span>)</span>
-<span id="cb5-336"><a href="#cb5-336" aria-hidden="true" tabindex="-1"></a>hbsig <span class="op">=</span> stats.expon(scale<span class="op">=</span><span class="fl">0.7</span>).rvs(<span class="dv">16</span>)</span>
-<span id="cb5-337"><a href="#cb5-337" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-338"><a href="#cb5-338" aria-hidden="true" tabindex="-1"></a>x_prior <span class="op">=</span> np.arange(<span class="dv">21</span>)</span>
-<span id="cb5-339"><a href="#cb5-339" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-340"><a href="#cb5-340" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>): </span>
-<span id="cb5-341"><a href="#cb5-341" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
-<span id="cb5-342"><a href="#cb5-342" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb5-343"><a href="#cb5-343" aria-hidden="true" tabindex="-1"></a>        amu <span class="op">=</span> hamu[i<span class="op">*</span><span class="dv">4</span><span class="op">+</span>j]</span>
-<span id="cb5-344"><a href="#cb5-344" aria-hidden="true" tabindex="-1"></a>        asig <span class="op">=</span> hasig[i<span class="op">*</span><span class="dv">4</span><span class="op">+</span>j]</span>
-<span id="cb5-345"><a href="#cb5-345" aria-hidden="true" tabindex="-1"></a>        bmu <span class="op">=</span> hbmu[i<span class="op">*</span><span class="dv">4</span><span class="op">+</span>j]</span>
-<span id="cb5-346"><a href="#cb5-346" aria-hidden="true" tabindex="-1"></a>        bsig <span class="op">=</span> hbsig[i<span class="op">*</span><span class="dv">4</span><span class="op">+</span>j]</span>
-<span id="cb5-347"><a href="#cb5-347" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb5-348"><a href="#cb5-348" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> l <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">30</span>):</span>
-<span id="cb5-349"><a href="#cb5-349" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-350"><a href="#cb5-350" aria-hidden="true" tabindex="-1"></a>            a <span class="op">=</span> stats.norm(amu,asig).rvs()</span>
-<span id="cb5-351"><a href="#cb5-351" aria-hidden="true" tabindex="-1"></a>            b <span class="op">=</span> stats.norm(bmu,bsig).rvs()</span>
-<span id="cb5-352"><a href="#cb5-352" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-353"><a href="#cb5-353" aria-hidden="true" tabindex="-1"></a>            p <span class="op">=</span> np.exp(a <span class="op">+</span> b<span class="op">*</span>x_prior) <span class="op">/</span> (<span class="dv">1</span> <span class="op">+</span> np.exp(a <span class="op">+</span> b<span class="op">*</span>x_prior))</span>
-<span id="cb5-354"><a href="#cb5-354" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-355"><a href="#cb5-355" aria-hidden="true" tabindex="-1"></a>            ax[i][j].plot(p)</span>
-<span id="cb5-356"><a href="#cb5-356" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb5-357"><a href="#cb5-357" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-358"><a href="#cb5-358" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-359"><a href="#cb5-359" aria-hidden="true" tabindex="-1"></a><span class="fu">## Sampling</span></span>
-<span id="cb5-360"><a href="#cb5-360" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-363"><a href="#cb5-363" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb5-364"><a href="#cb5-364" aria-hidden="true" tabindex="-1"></a><span class="co">#| id: e1fe47ca</span></span>
-<span id="cb5-365"><a href="#cb5-365" aria-hidden="true" tabindex="-1"></a><span class="co">#| colab: {base_uri: 'https://localhost:8080/', height: 57}</span></span>
-<span id="cb5-366"><a href="#cb5-366" aria-hidden="true" tabindex="-1"></a><span class="co">#| outputId: 5b1d30b3-1c4e-47a6-8859-9d852f3f7986</span></span>
-<span id="cb5-367"><a href="#cb5-367" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-368"><a href="#cb5-368" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pm.Model() <span class="im">as</span> partial_pool:</span>
-<span id="cb5-369"><a href="#cb5-369" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb5-370"><a href="#cb5-370" aria-hidden="true" tabindex="-1"></a>    <span class="co"># hyperparameters</span></span>
-<span id="cb5-371"><a href="#cb5-371" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb5-372"><a href="#cb5-372" aria-hidden="true" tabindex="-1"></a>    hamu <span class="op">=</span> pm.Normal(<span class="st">'hamu'</span>,<span class="dv">0</span>,<span class="dv">2</span>)</span>
-<span id="cb5-373"><a href="#cb5-373" aria-hidden="true" tabindex="-1"></a>    hasig <span class="op">=</span> pm.Exponential(<span class="st">'hasig'</span>,<span class="dv">2</span>)</span>
-<span id="cb5-374"><a href="#cb5-374" aria-hidden="true" tabindex="-1"></a>    hbmu <span class="op">=</span> pm.Normal(<span class="st">'hbmu'</span>,<span class="dv">0</span>,<span class="fl">0.2</span>)</span>
-<span id="cb5-375"><a href="#cb5-375" aria-hidden="true" tabindex="-1"></a>    hbsig <span class="op">=</span> pm.Exponential(<span class="st">'hbsig'</span>,<span class="fl">0.7</span>)</span>
-<span id="cb5-376"><a href="#cb5-376" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb5-377"><a href="#cb5-377" aria-hidden="true" tabindex="-1"></a>    <span class="co"># regular parameters</span></span>
-<span id="cb5-378"><a href="#cb5-378" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-379"><a href="#cb5-379" aria-hidden="true" tabindex="-1"></a>    a <span class="op">=</span> pm.Normal(<span class="st">'a'</span>,hamu,hasig,shape<span class="op">=</span><span class="dv">16</span>)</span>
-<span id="cb5-380"><a href="#cb5-380" aria-hidden="true" tabindex="-1"></a>    b <span class="op">=</span> pm.Normal(<span class="st">'b'</span>,hbmu,hbsig,shape<span class="op">=</span><span class="dv">16</span>)</span>
-<span id="cb5-381"><a href="#cb5-381" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb5-382"><a href="#cb5-382" aria-hidden="true" tabindex="-1"></a>    <span class="co"># link function</span></span>
-<span id="cb5-383"><a href="#cb5-383" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-384"><a href="#cb5-384" aria-hidden="true" tabindex="-1"></a>    p <span class="op">=</span> pm.invlogit(a <span class="op">+</span> b<span class="op">*</span>x)</span>
-<span id="cb5-385"><a href="#cb5-385" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb5-386"><a href="#cb5-386" aria-hidden="true" tabindex="-1"></a>    <span class="co"># outcome distribution</span></span>
-<span id="cb5-387"><a href="#cb5-387" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-388"><a href="#cb5-388" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> pm.Binomial(<span class="st">'y'</span>,p<span class="op">=</span>p,n<span class="op">=</span>n,observed<span class="op">=</span>k)</span>
-<span id="cb5-389"><a href="#cb5-389" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb5-390"><a href="#cb5-390" aria-hidden="true" tabindex="-1"></a>    <span class="co"># sampler</span></span>
-<span id="cb5-391"><a href="#cb5-391" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb5-392"><a href="#cb5-392" aria-hidden="true" tabindex="-1"></a>    trace_partial_pool <span class="op">=</span> pm.sample(nuts_sampler<span class="op">=</span><span class="st">"nutpie"</span>,progressbar<span class="op">=</span><span class="va">False</span>)<span class="op">;</span></span>
-<span id="cb5-393"><a href="#cb5-393" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-394"><a href="#cb5-394" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-395"><a href="#cb5-395" aria-hidden="true" tabindex="-1"></a>Let's compare the slopes estimated with multi-level models with those estimated by 16 independent models.</span>
-<span id="cb5-396"><a href="#cb5-396" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-399"><a href="#cb5-399" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb5-400"><a href="#cb5-400" aria-hidden="true" tabindex="-1"></a><span class="co">#| id: f92b5c71</span></span>
-<span id="cb5-401"><a href="#cb5-401" aria-hidden="true" tabindex="-1"></a><span class="co">#| colab: {base_uri: 'https://localhost:8080/', height: 516}</span></span>
-<span id="cb5-402"><a href="#cb5-402" aria-hidden="true" tabindex="-1"></a><span class="co">#| outputId: 31cdba07-752f-482a-885e-7c10e42cba69</span></span>
-<span id="cb5-403"><a href="#cb5-403" aria-hidden="true" tabindex="-1"></a>az.plot_forest([trace_partial_pool,trace_no_pool],model_names<span class="op">=</span>[<span class="st">"partial pooling"</span>,<span class="st">"no pooling"</span>],var_names<span class="op">=</span><span class="st">'b'</span>,combined<span class="op">=</span><span class="va">True</span>,hdi_prob<span class="op">=</span><span class="fl">0.95</span>,quartiles<span class="op">=</span><span class="va">False</span>)<span class="op">;</span></span>
-<span id="cb5-404"><a href="#cb5-404" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-405"><a href="#cb5-405" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-406"><a href="#cb5-406" aria-hidden="true" tabindex="-1"></a>One thing to notice is that the level of uncertainty has shrunk across the board. In basically every place, the blue line (multi-level / partial pooling) is shorter than the orange line (no pooling). This is because multi-level models can use more information to inform the estimate in each topic. Information is pooled across topics to form better expectations about each individual topic. It's like we've increased our sample size but we never had to collect new data. We just had to use it more efficiently.</span>
-<span id="cb5-407"><a href="#cb5-407" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-408"><a href="#cb5-408" aria-hidden="true" tabindex="-1"></a>A second thing to notice is that that several topics either switched from a negative to positive slope or they moved closer to positivity. This suggests that the multi-level model is detecting even stronger selection for formal methods than the previous analysis is. Why would this be? I suspect it largely depends on the interaction effect between intercepts and slopes. When the intercept starts really low, we are more likely to estimate a positive slope. When the intercept starts higher up, we are more likely to estimate a neutral or negative slope. The multi-level model now starts most intercepts fairly low. Here's a comparison of the two estimates by intercept. The blue lines tend to be more starkly negative for topics 2, 8 and 12, allowing their slopes to head toward positivity.</span>
-<span id="cb5-409"><a href="#cb5-409" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-410"><a href="#cb5-410" aria-hidden="true" tabindex="-1"></a>I plot the intercept comparisons below.</span>
-<span id="cb5-411"><a href="#cb5-411" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-414"><a href="#cb5-414" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb5-415"><a href="#cb5-415" aria-hidden="true" tabindex="-1"></a><span class="co">#| id: 2616df92</span></span>
-<span id="cb5-416"><a href="#cb5-416" aria-hidden="true" tabindex="-1"></a><span class="co">#| colab: {base_uri: 'https://localhost:8080/', height: 516}</span></span>
-<span id="cb5-417"><a href="#cb5-417" aria-hidden="true" tabindex="-1"></a><span class="co">#| outputId: 207f27cb-1af8-4c64-d825-8c5a869d8b9e</span></span>
-<span id="cb5-418"><a href="#cb5-418" aria-hidden="true" tabindex="-1"></a>az.plot_forest([trace_partial_pool,trace_no_pool],model_names<span class="op">=</span>[<span class="st">"partial pooling"</span>,<span class="st">"no pooling"</span>],var_names<span class="op">=</span><span class="st">'a'</span>,combined<span class="op">=</span><span class="va">True</span>,hdi_prob<span class="op">=</span><span class="fl">0.95</span>,quartiles<span class="op">=</span><span class="va">False</span>)<span class="op">;</span></span>
-<span id="cb5-419"><a href="#cb5-419" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-420"><a href="#cb5-420" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-421"><a href="#cb5-421" aria-hidden="true" tabindex="-1"></a><span class="fu">## Posterior predictive checking</span></span>
-<span id="cb5-422"><a href="#cb5-422" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-423"><a href="#cb5-423" aria-hidden="true" tabindex="-1"></a>Let's look at the prediction plots now and see what changed once we introduced partial pooling.</span>
-<span id="cb5-424"><a href="#cb5-424" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-427"><a href="#cb5-427" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb5-428"><a href="#cb5-428" aria-hidden="true" tabindex="-1"></a><span class="co">#| id: d6ce9d38</span></span>
-<span id="cb5-429"><a href="#cb5-429" aria-hidden="true" tabindex="-1"></a><span class="co">#| colab: {base_uri: 'https://localhost:8080/', height: 37}</span></span>
-<span id="cb5-430"><a href="#cb5-430" aria-hidden="true" tabindex="-1"></a><span class="co">#| outputId: 496f409e-1167-40bf-f35c-942c797116e4</span></span>
-<span id="cb5-431"><a href="#cb5-431" aria-hidden="true" tabindex="-1"></a>post_pred_partial_pool <span class="op">=</span> pm.sample_posterior_predictive(trace_partial_pool,model<span class="op">=</span>partial_pool,progressbar<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb5-432"><a href="#cb5-432" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-433"><a href="#cb5-433" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-436"><a href="#cb5-436" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb5-437"><a href="#cb5-437" aria-hidden="true" tabindex="-1"></a><span class="co">#| id: 5330a432</span></span>
-<span id="cb5-438"><a href="#cb5-438" aria-hidden="true" tabindex="-1"></a><span class="co">#| colab: {base_uri: 'https://localhost:8080/', height: 596}</span></span>
-<span id="cb5-439"><a href="#cb5-439" aria-hidden="true" tabindex="-1"></a><span class="co">#| outputId: 7b42f1dd-9b66-4572-fcea-a59a855f8cc2</span></span>
-<span id="cb5-440"><a href="#cb5-440" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-441"><a href="#cb5-441" aria-hidden="true" tabindex="-1"></a>f,ax <span class="op">=</span> plt.subplots(<span class="dv">4</span>,<span class="dv">4</span>,sharex<span class="op">=</span><span class="va">True</span>,sharey<span class="op">=</span><span class="va">True</span>,figsize<span class="op">=</span>(<span class="dv">6</span>,<span class="dv">6</span>))</span>
-<span id="cb5-442"><a href="#cb5-442" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-443"><a href="#cb5-443" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">50</span>):</span>
-<span id="cb5-444"><a href="#cb5-444" aria-hidden="true" tabindex="-1"></a>    predictions <span class="op">=</span> np.array(post_pred_partial_pool.posterior_predictive.y[<span class="dv">0</span>][k].T)</span>
-<span id="cb5-445"><a href="#cb5-445" aria-hidden="true" tabindex="-1"></a>    ceiling <span class="op">=</span> np.transpose(n)</span>
-<span id="cb5-446"><a href="#cb5-446" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb5-447"><a href="#cb5-447" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
-<span id="cb5-448"><a href="#cb5-448" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
-<span id="cb5-449"><a href="#cb5-449" aria-hidden="true" tabindex="-1"></a>            </span>
-<span id="cb5-450"><a href="#cb5-450" aria-hidden="true" tabindex="-1"></a>            proportions <span class="op">=</span> predictions[i<span class="op">*</span><span class="dv">4</span><span class="op">+</span>j] <span class="op">/</span> ceiling[i<span class="op">*</span><span class="dv">4</span><span class="op">+</span>j]</span>
-<span id="cb5-451"><a href="#cb5-451" aria-hidden="true" tabindex="-1"></a>            ax[i][j].plot(proportions,<span class="st">'o'</span>,alpha<span class="op">=</span><span class="fl">0.2</span>,color<span class="op">=</span><span class="st">'tab:orange'</span>)</span>
-<span id="cb5-452"><a href="#cb5-452" aria-hidden="true" tabindex="-1"></a>            </span>
-<span id="cb5-453"><a href="#cb5-453" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
-<span id="cb5-454"><a href="#cb5-454" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
-<span id="cb5-455"><a href="#cb5-455" aria-hidden="true" tabindex="-1"></a>        ax[i][j].plot(proportion_per_year.iloc[i<span class="op">*</span><span class="dv">4</span><span class="op">+</span>j].values,<span class="st">'-'</span>,markersize<span class="op">=</span><span class="dv">2</span>)</span>
-<span id="cb5-456"><a href="#cb5-456" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-457"><a href="#cb5-457" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-458"><a href="#cb5-458" aria-hidden="true" tabindex="-1"></a>One thing to notice that there is less initial uncertainty in many of these plots. This highlights on the advantages of multi-level models - less uncertainty in the intercepts means more plausible estimates of the slope.</span>
-<span id="cb5-459"><a href="#cb5-459" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-462"><a href="#cb5-462" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb5-463"><a href="#cb5-463" aria-hidden="true" tabindex="-1"></a><span class="co">#| id: d662628c</span></span>
-<span id="cb5-464"><a href="#cb5-464" aria-hidden="true" tabindex="-1"></a><span class="co">#| colab: {base_uri: 'https://localhost:8080/', height: 601}</span></span>
-<span id="cb5-465"><a href="#cb5-465" aria-hidden="true" tabindex="-1"></a><span class="co">#| outputId: ad774b6d-cdb6-4cd5-afd6-664e148e6677</span></span>
-<span id="cb5-466"><a href="#cb5-466" aria-hidden="true" tabindex="-1"></a>a_means_pp <span class="op">=</span> [np.array(trace_partial_pool.posterior[<span class="st">'a'</span>][<span class="dv">0</span>][:,i].mean()) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">16</span>)]</span>
-<span id="cb5-467"><a href="#cb5-467" aria-hidden="true" tabindex="-1"></a>b_means_pp <span class="op">=</span> [np.array(trace_partial_pool.posterior[<span class="st">'b'</span>][<span class="dv">0</span>][:,i].mean()) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">16</span>)]</span>
-<span id="cb5-468"><a href="#cb5-468" aria-hidden="true" tabindex="-1"></a>a_means_pp <span class="op">=</span> np.array(a_means_pp)</span>
-<span id="cb5-469"><a href="#cb5-469" aria-hidden="true" tabindex="-1"></a>b_means_pp <span class="op">=</span> np.array(b_means_pp)</span>
-<span id="cb5-470"><a href="#cb5-470" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-471"><a href="#cb5-471" aria-hidden="true" tabindex="-1"></a>f,ax <span class="op">=</span> plt.subplots(<span class="dv">4</span>,<span class="dv">4</span>,sharex<span class="op">=</span><span class="va">True</span>,sharey<span class="op">=</span><span class="va">True</span>,figsize<span class="op">=</span>(<span class="dv">6</span>,<span class="dv">6</span>))</span>
-<span id="cb5-472"><a href="#cb5-472" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-473"><a href="#cb5-473" aria-hidden="true" tabindex="-1"></a>x_pred <span class="op">=</span> np.arange(<span class="dv">21</span>)</span>
-<span id="cb5-474"><a href="#cb5-474" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-475"><a href="#cb5-475" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
-<span id="cb5-476"><a href="#cb5-476" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
-<span id="cb5-477"><a href="#cb5-477" aria-hidden="true" tabindex="-1"></a>        a <span class="op">=</span> a_means_pp[i<span class="op">*</span><span class="dv">4</span><span class="op">+</span>j] </span>
-<span id="cb5-478"><a href="#cb5-478" aria-hidden="true" tabindex="-1"></a>        b <span class="op">=</span> b_means_pp[i<span class="op">*</span><span class="dv">4</span><span class="op">+</span>j]</span>
-<span id="cb5-479"><a href="#cb5-479" aria-hidden="true" tabindex="-1"></a>        p <span class="op">=</span> np.exp(a <span class="op">+</span> b<span class="op">*</span>x_pred) <span class="op">/</span> (<span class="dv">1</span> <span class="op">+</span> np.exp(a <span class="op">+</span> b<span class="op">*</span>x_pred))</span>
-<span id="cb5-480"><a href="#cb5-480" aria-hidden="true" tabindex="-1"></a>        ax[i][j].plot(p)</span>
-<span id="cb5-481"><a href="#cb5-481" aria-hidden="true" tabindex="-1"></a>        ax[i][j].plot(proportion_per_year.iloc[i<span class="op">*</span><span class="dv">4</span><span class="op">+</span>j].values,<span class="st">'o'</span>,markersize<span class="op">=</span><span class="dv">3</span>)</span>
-<span id="cb5-482"><a href="#cb5-482" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-483"><a href="#cb5-483" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-484"><a href="#cb5-484" aria-hidden="true" tabindex="-1"></a>There are small divergences in the trend lines. I'll zoom in one difference in the last section.</span>
-<span id="cb5-485"><a href="#cb5-485" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-486"><a href="#cb5-486" aria-hidden="true" tabindex="-1"></a>Finally, we have the trend line for the entire population of studies. It is subtly but confidently positive, suggesting an overall tendency to select for formal methods in philosophy of science over the last several years. The observed trends are plotted and faded behind it.</span>
-<span id="cb5-487"><a href="#cb5-487" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-490"><a href="#cb5-490" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb5-491"><a href="#cb5-491" aria-hidden="true" tabindex="-1"></a><span class="co">#| id: 6f002b9d</span></span>
-<span id="cb5-492"><a href="#cb5-492" aria-hidden="true" tabindex="-1"></a><span class="co">#| colab: {base_uri: 'https://localhost:8080/', height: 384}</span></span>
-<span id="cb5-493"><a href="#cb5-493" aria-hidden="true" tabindex="-1"></a><span class="co">#| outputId: 4abe95f9-d128-4893-bfdc-08f81353a077</span></span>
-<span id="cb5-494"><a href="#cb5-494" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> np.array(trace_partial_pool.posterior[<span class="st">'hamu'</span>].mean((<span class="st">"chain"</span>,<span class="st">"draw"</span>)))</span>
-<span id="cb5-495"><a href="#cb5-495" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> np.array(trace_partial_pool.posterior[<span class="st">'hbmu'</span>].mean((<span class="st">"chain"</span>,<span class="st">"draw"</span>)))</span>
-<span id="cb5-496"><a href="#cb5-496" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-497"><a href="#cb5-497" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> np.exp(a <span class="op">+</span> b<span class="op">*</span>x_pred) <span class="op">/</span> (<span class="dv">1</span> <span class="op">+</span> np.exp(a <span class="op">+</span> b<span class="op">*</span>x_pred))</span>
-<span id="cb5-498"><a href="#cb5-498" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-499"><a href="#cb5-499" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
-<span id="cb5-500"><a href="#cb5-500" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
-<span id="cb5-501"><a href="#cb5-501" aria-hidden="true" tabindex="-1"></a>        plt.plot(proportion_per_year.iloc[i<span class="op">*</span><span class="dv">4</span><span class="op">+</span>j].values,<span class="st">'-'</span>,alpha<span class="op">=</span><span class="fl">0.4</span>)</span>
-<span id="cb5-502"><a href="#cb5-502" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-503"><a href="#cb5-503" aria-hidden="true" tabindex="-1"></a>plt.plot(p,color<span class="op">=</span><span class="st">"black"</span>)</span>
-<span id="cb5-504"><a href="#cb5-504" aria-hidden="true" tabindex="-1"></a>plt.ylim([<span class="dv">0</span>,<span class="dv">1</span>])<span class="op">;</span></span>
-<span id="cb5-505"><a href="#cb5-505" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-506"><a href="#cb5-506" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-507"><a href="#cb5-507" aria-hidden="true" tabindex="-1"></a>Ventura's analysis noted that there was no overall selection for formal methods across philosophy of science. Interestingly, my analysis finds a small and very confident positive slope for the population-level effect. The population-level slope is 0.018 with the bottom of the credibility interval at 0.002 and the top at 0.034. So under classical statistics, this would be like a statistically significant effect. </span>
-<span id="cb5-508"><a href="#cb5-508" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-509"><a href="#cb5-509" aria-hidden="true" tabindex="-1"></a>Should we prefer the multi-level trend estimate? I suspect so but the reason lies in how multi-level models handle each individual cluster. So I'll turn to that next.</span>
-<span id="cb5-510"><a href="#cb5-510" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-511"><a href="#cb5-511" aria-hidden="true" tabindex="-1"></a><span class="fu"># Comparing partial pooling and unpooled analysis</span></span>
-<span id="cb5-512"><a href="#cb5-512" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-513"><a href="#cb5-513" aria-hidden="true" tabindex="-1"></a>I want to provide one more illustration of why multi-level models are really helpful in this context. This time, we'll zoom in one one particular topic and study how the two different modeling strategies handle it. Consider topic 8 (metaphysics). When I first estimated this cluster with the unpooled model, the slope was solidly negative. The mean was -0.054 and the edges of the credibility interval were also mostly negative. But when we estimated the partially pooled model, the slope switched to -0.018 and the credibility interval that includes negative and positive values. Meanwhile, the intercept moved around too, from -3.3 to -3.8. The plot below illustrates what these look like along side the data.</span>
-<span id="cb5-514"><a href="#cb5-514" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-517"><a href="#cb5-517" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb5-518"><a href="#cb5-518" aria-hidden="true" tabindex="-1"></a><span class="co">#| id: 8b906acb</span></span>
-<span id="cb5-519"><a href="#cb5-519" aria-hidden="true" tabindex="-1"></a><span class="co">#| colab: {base_uri: 'https://localhost:8080/', height: 453}</span></span>
-<span id="cb5-520"><a href="#cb5-520" aria-hidden="true" tabindex="-1"></a><span class="co">#| outputId: eda22feb-3365-4790-f274-c175c327fc84</span></span>
-<span id="cb5-521"><a href="#cb5-521" aria-hidden="true" tabindex="-1"></a>cluster <span class="op">=</span> <span class="dv">8</span></span>
-<span id="cb5-522"><a href="#cb5-522" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-523"><a href="#cb5-523" aria-hidden="true" tabindex="-1"></a><span class="co"># load relevant subset of data</span></span>
-<span id="cb5-524"><a href="#cb5-524" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-525"><a href="#cb5-525" aria-hidden="true" tabindex="-1"></a>quant_count_cluster <span class="op">=</span> cluster_quant_count.iloc[cluster][<span class="dv">1</span>:].values</span>
-<span id="cb5-526"><a href="#cb5-526" aria-hidden="true" tabindex="-1"></a>total_count_cluster <span class="op">=</span> cluster_count_by_year.iloc[cluster][<span class="dv">1</span>:].values</span>
-<span id="cb5-527"><a href="#cb5-527" aria-hidden="true" tabindex="-1"></a>plt.plot(quant_count_cluster <span class="op">/</span> total_count_cluster,<span class="st">'o'</span>,color<span class="op">=</span><span class="st">'black'</span>)</span>
-<span id="cb5-528"><a href="#cb5-528" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-529"><a href="#cb5-529" aria-hidden="true" tabindex="-1"></a><span class="co"># load model parameters</span></span>
-<span id="cb5-530"><a href="#cb5-530" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-531"><a href="#cb5-531" aria-hidden="true" tabindex="-1"></a>plt.plot(np.exp(a_means[cluster] <span class="op">+</span>  b_means[cluster]<span class="op">*</span>x_pred) <span class="op">/</span> (<span class="dv">1</span> <span class="op">+</span> np.exp(a_means[cluster] <span class="op">+</span>  b_means[cluster]<span class="op">*</span>x_pred)),label<span class="op">=</span><span class="st">"unpooled"</span>)</span>
-<span id="cb5-532"><a href="#cb5-532" aria-hidden="true" tabindex="-1"></a>plt.plot(np.exp(a_means_pp[cluster] <span class="op">+</span>  b_means_pp[cluster]<span class="op">*</span>x_pred) <span class="op">/</span> (<span class="dv">1</span> <span class="op">+</span> np.exp(a_means_pp[cluster] <span class="op">+</span>  b_means_pp[cluster]<span class="op">*</span>x_pred)),label<span class="op">=</span><span class="st">"partially pooled"</span>)</span>
-<span id="cb5-533"><a href="#cb5-533" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
-<span id="cb5-534"><a href="#cb5-534" aria-hidden="true" tabindex="-1"></a>plt.ylim([<span class="op">-</span><span class="fl">0.02</span>,<span class="fl">0.5</span>])<span class="op">;</span></span>
-<span id="cb5-535"><a href="#cb5-535" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-536"><a href="#cb5-536" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"old intercept:"</span>,a_means[cluster])</span>
-<span id="cb5-537"><a href="#cb5-537" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"new intercept:"</span>,a_means_pp[cluster]) </span>
-<span id="cb5-538"><a href="#cb5-538" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"old slope:"</span>,b_means[cluster])</span>
-<span id="cb5-539"><a href="#cb5-539" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"new slope:"</span>,b_means_pp[cluster])</span>
-<span id="cb5-540"><a href="#cb5-540" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-541"><a href="#cb5-541" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-542"><a href="#cb5-542" aria-hidden="true" tabindex="-1"></a>On first glance, the partially pooled model does worse. Both models fit the data after 2005 just fine. But the unpooled model accommodates the starting points better. So why prefer the multi-level model?</span>
-<span id="cb5-543"><a href="#cb5-543" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-544"><a href="#cb5-544" aria-hidden="true" tabindex="-1"></a>One of the basic goals of regression is to help us distinguish between anomalous features of the data and regular ones. Regular features are supposed to represent some underlying causal pattern. Anomalous features represent random noise that is not a part of the underlying pattern. But how do you decide what is an anomaly and what is a pattern? The modeling assumptions are what makes those decisions.</span>
-<span id="cb5-545"><a href="#cb5-545" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-546"><a href="#cb5-546" aria-hidden="true" tabindex="-1"></a>Now here's the question, are the data points before 2005 an anomaly or part of our pattern? The multi-level model and the unpooled model make different decisions on this question. The unpooled model tries to accommodate them. The multi-level model basically ignores them. The reason the multi-level model ignores them is because it can see all the other topics as well and draw information from them. One thing it learns from studying the other models is that it is very rare for a topic to have a high initial intercept. So when it approaches this topic, it is skeptical of high intercept parameters. It confidently starts low and then sets the slope parameter wherever it needs to get a good match on the remaining data.</span>
-<span id="cb5-547"><a href="#cb5-547" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-548"><a href="#cb5-548" aria-hidden="true" tabindex="-1"></a>The unpooled model has less information for starting points so it sets it's slope parameter higher and then picks a negative slope to try to accommodate the later years.</span>
-<span id="cb5-549"><a href="#cb5-549" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-550"><a href="#cb5-550" aria-hidden="true" tabindex="-1"></a>Why then should we prefer the multi-level model in the end? It probably fits each individual cluster a bit worse than the unpooled model. But it uses the total sum of the information more efficiently because pay attention to the population-subpopulation structure. So we should expect the multi-level model is picking out the underlying pattern with more accuracy. Once it gets the intercepts low across the board, it can latch onto more positive slopes, too. If the slope estimates turn more positive for each cluster, then the overall trend has a better estimate too.</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> "The truth is out there. Only the multi-level model can find it."</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">  echo: false</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">  freeze: true</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="an">jupyter:</span><span class="co"> python3</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="an">image:</span><span class="co"> output_28_0.png</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>Two of the more exciting areas of growth in philosophy of science are large-scale automatic text analysis studies and cultural evolutionary models of scientific communities. </span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>**Text analysis** studies provide really useful ways of summarizing trends both in philosophy of science and the scientific literature. When we do intellectual history with classical methods, we tend to focus on the heavy hitting, widely cited papers. This makes good sense because people can only read so many papers in their short lives. So focus on the big ones. But most papers are not widely cited. They are just normal little contributions. These mundane papers get less attention in intellectual history. They tend to be boring. Understanding what ordinary work looks like is just as important for understanding a period as understanding the revolutionary papers. Machines don't get bored of reading mundane papers. Hence the appeal of automated text analysis.</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>**Cultural evolutionary** models imagine science is shaped by a process akin to natural selection. Some methods spread through the population of scientists. Others die out. If we could figure out the mechanisms that reward certain kinds of work, then selection-based models could provide some understanding of what shapes scientific practice in the long run.</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>A natural thought is that these two methods could be brought together. Text analysis provides the data to test, fit, or otherwise evaluate the cultural evolution models. So far, no one has been able to pull this off in a compelling manner. Rafael Ventura has an exciting new pre-print that is a good step in this direction. Ventura is looking at how formal methods have spread over time inside philosophy of science. The goal is to see whether there is any *selection* for model-based papers over other papers. In other words, is the incentive structure one that rewards modeling throughout philosophy of science?</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>His data collection has two steps. First, he organizes the published philosophy of science literature into 16 topics. The topics are based on co-citation networks. The intuitive picture (I'm no expert in bibliometric techniques so this is loose!) was that two papers that tend to cite the same references will tend to be in the same topic. If two papers cite a bunch of non-overlapping references, they will tend to be in different topics. Second, he classified papers by whether they used formal methods or not and tracked how the frequency of formal methods changes over time in the 16 topics. Full details on the data collection process are found here: http://philsci-archive.pitt.edu/20885/. </span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>The bit that interests me is that choice to put papers into discrete topics based on co-citation. The 16 topics are not, of course, really entirely isolated research programs. Papers across the topics will cite some of the same works, experience some of the same incentive structures, and cultural shifts in one area of philosophy of science tend to diffuse into other areas. So the choice of 16 topics is somewhat artificial. This isn't to say it's a bad choice - there will definitely be a lot of cultural selection concentrated inside each topic. But the choice does introduce some limitations on the results. It would be nice if we could find a way around that, a way of quantifying the causal influence between research communities as well as within them. That's what this post is all about.</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>The past few months, I've been playing around with Bayesian statistical packages in Python. It is mostly just for curiosity's sake. But now when I read papers with data analysis and their underlying data is public, it can be a lot of fun to reanalyze the results. That's what I've done here. Specifically, I'm using a technique from Bayesian statistics called multi-level modeling.</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>The headline is that at least one of the major findings from Ventura's paper reverses when the same data is reanalyzed with multi-level modeling. He suggests that there is no selection for formal models across all of philosophy of science. But there might be selection for modeling within particular subdisciplines. I find a stronger pattern of selection for formal models at both levels - the whole of philosophy of science and many of the local clusters.</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a><span class="fu"># The intuition behind multi-level modeling</span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>Let's lay an intuition for multi-level modeling. Suppose you have a bag of red and blue marbles. If you pull out a sample of 10 marbles, you can estimate the proportion of blue marbles in the bag. This is a very standard statistical problem. Bayesians use examples like this to motivate their approach in intro books all the time. </span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>Now imagine you have a *big* bag containing 10 *small* bags of marbles. If you pull out 7 of the small bags and then you pull out 10 marbles from each bag, what's the right way of analyzing this data? </span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>One option is to treat each bag as its own thing. It just the same problem as before but repeated 7 times. This approach seems silly because it assumes each small bag is entirely independent of the others. Surely, learning about the proportion of blue marbles in one bag should inform your expectation about the next bag because all of the small bags come from the same place.</span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>A second option is to ignore the fact marbles are grouped by little bags and just try to estimate the number of blue marbles in the big bag. You just count up the number of blue marbles across all bags and use that number to guide the estimate. This is also silly because you are ignoring the fact that the marbles are grouped by bag.</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>The best approach is to use multi-level modeling. You simultaneously try to estimate the proportion of marbles in each bag while also trying to estimate the amount that the bags are correlated. The big bag represents some underlying distributions that generates the small bags. If you could learn about the underlying distribution in the big bag, you could make smarter guesses as to what will happen in a given small bag.</span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>Now replace bags with research communities. The big bag is the whole philosophy of science community. The little bags are the topic. At both levels, there is selection for or against formal methods. My goal is to estimate the selection in each topic while also allowing causal influence to flow between topics (and estimating how much cross-flow there is).</span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>I'm not going to get too much further into the technical details. I imagine readers who know what I'm talking about will just want to see the code and readers who don't will need a specialized introduction to multi-level models. A really fun introduction to this strategy is here https://www.youtube.com/watch?v=SocRgsf202M.</span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a><span class="co">#| tags: [remove-input]</span></span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pymc <span class="im">as</span> pm</span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> arviz <span class="im">as</span> az</span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy <span class="im">import</span> stats</span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'figure.figsize'</span>] <span class="op">=</span> [<span class="dv">7</span>, <span class="dv">4</span>]</span>
+<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'font.size'</span>] <span class="op">=</span> <span class="dv">14</span></span>
+<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a><span class="fu"># Data cleaning</span></span>
+<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a><span class="co">#| id: 340d1e96</span></span>
+<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a><span class="co">#| colab: {base_uri: 'https://localhost:8080/'}</span></span>
+<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a><span class="co">#| outputId: e4de5f51-c0bc-437f-a22a-04a082cccbd5</span></span>
+<span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a>url_1 <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com/daniel-saunders-phil/hbms-for-philosophy-of-science/main/clusters_count_by_year.csv"</span></span>
+<span id="cb5-68"><a href="#cb5-68" aria-hidden="true" tabindex="-1"></a>url_2 <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com/daniel-saunders-phil/hbms-for-philosophy-of-science/main/clusters_quant_count_by_year.csv"</span></span>
+<span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a>cluster_count_by_year <span class="op">=</span> pd.read_csv(url_1)</span>
+<span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a>cluster_quant_count <span class="op">=</span> pd.read_csv(url_2)</span>
+<span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a>proportion_per_year <span class="op">=</span> cluster_quant_count <span class="op">/</span> cluster_count_by_year</span>
+<span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a>proportion_per_year <span class="op">=</span> proportion_per_year.drop(labels<span class="op">=</span><span class="st">'CL'</span>,axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb5-74"><a href="#cb5-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-75"><a href="#cb5-75" aria-hidden="true" tabindex="-1"></a><span class="co"># 16 x 22 matrix</span></span>
+<span id="cb5-76"><a href="#cb5-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-77"><a href="#cb5-77" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.ones((<span class="dv">16</span>,<span class="dv">21</span>))</span>
+<span id="cb5-78"><a href="#cb5-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-79"><a href="#cb5-79" aria-hidden="true" tabindex="-1"></a><span class="co"># fill each row with the numbers 0-20</span></span>
+<span id="cb5-80"><a href="#cb5-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-81"><a href="#cb5-81" aria-hidden="true" tabindex="-1"></a>x[<span class="dv">0</span>:<span class="dv">16</span>] <span class="op">=</span> np.arange(<span class="dv">21</span>)</span>
+<span id="cb5-82"><a href="#cb5-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-83"><a href="#cb5-83" aria-hidden="true" tabindex="-1"></a><span class="co"># assign data to n and k</span></span>
+<span id="cb5-84"><a href="#cb5-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-85"><a href="#cb5-85" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> cluster_count_by_year.values</span>
+<span id="cb5-86"><a href="#cb5-86" aria-hidden="true" tabindex="-1"></a>k <span class="op">=</span> cluster_quant_count.values</span>
+<span id="cb5-87"><a href="#cb5-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-88"><a href="#cb5-88" aria-hidden="true" tabindex="-1"></a><span class="co"># skip first entry in each row</span></span>
+<span id="cb5-89"><a href="#cb5-89" aria-hidden="true" tabindex="-1"></a><span class="co"># which is just an index</span></span>
+<span id="cb5-90"><a href="#cb5-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-91"><a href="#cb5-91" aria-hidden="true" tabindex="-1"></a>k <span class="op">=</span> k[:,<span class="dv">1</span>:]</span>
+<span id="cb5-92"><a href="#cb5-92" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> n[:,<span class="dv">1</span>:]</span>
+<span id="cb5-93"><a href="#cb5-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-94"><a href="#cb5-94" aria-hidden="true" tabindex="-1"></a><span class="co"># transpose all arrays</span></span>
+<span id="cb5-95"><a href="#cb5-95" aria-hidden="true" tabindex="-1"></a><span class="co"># my bayes stats package (pymc) </span></span>
+<span id="cb5-96"><a href="#cb5-96" aria-hidden="true" tabindex="-1"></a><span class="co"># expects variables in</span></span>
+<span id="cb5-97"><a href="#cb5-97" aria-hidden="true" tabindex="-1"></a><span class="co"># column orientation</span></span>
+<span id="cb5-98"><a href="#cb5-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-99"><a href="#cb5-99" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> x.T</span>
+<span id="cb5-100"><a href="#cb5-100" aria-hidden="true" tabindex="-1"></a>k <span class="op">=</span> k.T</span>
+<span id="cb5-101"><a href="#cb5-101" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> n.T</span>
+<span id="cb5-102"><a href="#cb5-102" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-103"><a href="#cb5-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-106"><a href="#cb5-106" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb5-107"><a href="#cb5-107" aria-hidden="true" tabindex="-1"></a>x.shape,n.shape,k.shape</span>
+<span id="cb5-108"><a href="#cb5-108" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-109"><a href="#cb5-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-112"><a href="#cb5-112" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb5-113"><a href="#cb5-113" aria-hidden="true" tabindex="-1"></a><span class="co">#| id: ea7e8823</span></span>
+<span id="cb5-114"><a href="#cb5-114" aria-hidden="true" tabindex="-1"></a><span class="co">#| colab: {base_uri: 'https://localhost:8080/', height: 378}</span></span>
+<span id="cb5-115"><a href="#cb5-115" aria-hidden="true" tabindex="-1"></a><span class="co">#| outputId: bb54b889-c220-41fc-cc14-ec5b43f91563</span></span>
+<span id="cb5-116"><a href="#cb5-116" aria-hidden="true" tabindex="-1"></a><span class="co"># construct a 4x4 grid of subplots</span></span>
+<span id="cb5-117"><a href="#cb5-117" aria-hidden="true" tabindex="-1"></a><span class="co"># one for each of 16 topics.</span></span>
+<span id="cb5-118"><a href="#cb5-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-119"><a href="#cb5-119" aria-hidden="true" tabindex="-1"></a>f,ax <span class="op">=</span> plt.subplots(<span class="dv">4</span>,<span class="dv">4</span>,sharex<span class="op">=</span><span class="va">True</span>,sharey<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb5-120"><a href="#cb5-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-121"><a href="#cb5-121" aria-hidden="true" tabindex="-1"></a><span class="co"># loop through the grid and plot the proportion</span></span>
+<span id="cb5-122"><a href="#cb5-122" aria-hidden="true" tabindex="-1"></a><span class="co"># of formal papers for each year.</span></span>
+<span id="cb5-123"><a href="#cb5-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-124"><a href="#cb5-124" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
+<span id="cb5-125"><a href="#cb5-125" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
+<span id="cb5-126"><a href="#cb5-126" aria-hidden="true" tabindex="-1"></a>        ax[i][j].plot(proportion_per_year.iloc[i<span class="op">*</span><span class="dv">4</span><span class="op">+</span>j].values,<span class="st">'o'</span>,markersize<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb5-127"><a href="#cb5-127" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-128"><a href="#cb5-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-129"><a href="#cb5-129" aria-hidden="true" tabindex="-1"></a>Here's what the data looks like for each of the 16 topics. Each dot represents the proportion of formal methods papers in a topic for a given year, starting at 2000 through 2020.</span>
+<span id="cb5-130"><a href="#cb5-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-131"><a href="#cb5-131" aria-hidden="true" tabindex="-1"></a><span class="fu"># Unpooled analysis</span></span>
+<span id="cb5-132"><a href="#cb5-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-133"><a href="#cb5-133" aria-hidden="true" tabindex="-1"></a>My real goal is a multi-level model (also called partial pooling). But to calibrate my expectations, I want to fit a simpler model without a multi-level structure. I'm just going to treat each topic as its own thing and estimate the trend in formal methods one at a time.</span>
+<span id="cb5-134"><a href="#cb5-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-135"><a href="#cb5-135" aria-hidden="true" tabindex="-1"></a>One difference between my analysis and Ventura's relies on how we specified our logistic regressions. He used a probit model whereas I used an logit model. The difference shouldn't matter (and is very esoteric anyway). I only picked a logit because it plays nicer with the bayesian software package. So we shouldn't get exactly the same results but the general conclusions should remain the same.</span>
+<span id="cb5-136"><a href="#cb5-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-137"><a href="#cb5-137" aria-hidden="true" tabindex="-1"></a><span class="fu">## Prior simulation</span></span>
+<span id="cb5-138"><a href="#cb5-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-139"><a href="#cb5-139" aria-hidden="true" tabindex="-1"></a>When working with Bayesian methods, we have to select priors. I used a strategy known as *weakly regularizing priors*. The goal is to pick out priors that penalize really extreme effects but still allow for enough uncertainty that the data can drive the ultimate analysis. To calibrate the priors before including the data, I sample from my prior distributions and plots 50 lines at a time to give me a sense of what plausible relationships might look like.</span>
+<span id="cb5-140"><a href="#cb5-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-141"><a href="#cb5-141" aria-hidden="true" tabindex="-1"></a>Below is the priors I ended up using. For the slopes, I assumed a normal distribution centered around 0 with a standard deviation of 0.3. For the intercepts, I assumed a normal distribution centered around 0 with a standard deviation of 3.</span>
+<span id="cb5-142"><a href="#cb5-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-145"><a href="#cb5-145" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb5-146"><a href="#cb5-146" aria-hidden="true" tabindex="-1"></a><span class="co">#| id: 0d759790</span></span>
+<span id="cb5-147"><a href="#cb5-147" aria-hidden="true" tabindex="-1"></a><span class="co">#| colab: {base_uri: 'https://localhost:8080/', height: 378}</span></span>
+<span id="cb5-148"><a href="#cb5-148" aria-hidden="true" tabindex="-1"></a><span class="co">#| outputId: eccba072-f4a9-4064-bc76-0b165e1f5e91</span></span>
+<span id="cb5-149"><a href="#cb5-149" aria-hidden="true" tabindex="-1"></a><span class="co"># prior simulation</span></span>
+<span id="cb5-150"><a href="#cb5-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-151"><a href="#cb5-151" aria-hidden="true" tabindex="-1"></a>x_prior <span class="op">=</span> np.arange(<span class="dv">21</span>)</span>
+<span id="cb5-152"><a href="#cb5-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-153"><a href="#cb5-153" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">50</span>):</span>
+<span id="cb5-154"><a href="#cb5-154" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-155"><a href="#cb5-155" aria-hidden="true" tabindex="-1"></a>    <span class="co"># sample a value from the priors</span></span>
+<span id="cb5-156"><a href="#cb5-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-157"><a href="#cb5-157" aria-hidden="true" tabindex="-1"></a>    a <span class="op">=</span> stats.norm(<span class="dv">0</span>,<span class="dv">3</span>).rvs()</span>
+<span id="cb5-158"><a href="#cb5-158" aria-hidden="true" tabindex="-1"></a>    b <span class="op">=</span> stats.norm(<span class="dv">0</span>,<span class="fl">0.3</span>).rvs()</span>
+<span id="cb5-159"><a href="#cb5-159" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-160"><a href="#cb5-160" aria-hidden="true" tabindex="-1"></a>    <span class="co"># plug into the inverse logit function</span></span>
+<span id="cb5-161"><a href="#cb5-161" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-162"><a href="#cb5-162" aria-hidden="true" tabindex="-1"></a>    p <span class="op">=</span> np.exp(a <span class="op">+</span> b<span class="op">*</span>x_prior) <span class="op">/</span> (<span class="dv">1</span> <span class="op">+</span> np.exp(a <span class="op">+</span> b<span class="op">*</span>x_prior))</span>
+<span id="cb5-163"><a href="#cb5-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-164"><a href="#cb5-164" aria-hidden="true" tabindex="-1"></a>    plt.plot(p)</span>
+<span id="cb5-165"><a href="#cb5-165" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-166"><a href="#cb5-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-167"><a href="#cb5-167" aria-hidden="true" tabindex="-1"></a>Later, we'll find that my results depart from those found by Ventura in a couple of places. I suspect that is partly due to the influence of the priors. So I want to spend a bit longer justifying mine.</span>
+<span id="cb5-168"><a href="#cb5-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-169"><a href="#cb5-169" aria-hidden="true" tabindex="-1"></a>Many people are skeptical of the use of priors in statistics. Isn't it cheating to build assumptions into the model, rather than letting the data do the work? The trouble with prior skepticism is that all analyzes use priors, it's just that Bayesian analysis uses them explicitly. Other modeling techniques will often tacitly assume flat priors on the possible intercept and slopes. Let me show you what the models look like with much flatter priors.</span>
+<span id="cb5-170"><a href="#cb5-170" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-173"><a href="#cb5-173" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb5-174"><a href="#cb5-174" aria-hidden="true" tabindex="-1"></a><span class="co">#| id: e73d67d8</span></span>
+<span id="cb5-175"><a href="#cb5-175" aria-hidden="true" tabindex="-1"></a><span class="co">#| colab: {base_uri: 'https://localhost:8080/', height: 378}</span></span>
+<span id="cb5-176"><a href="#cb5-176" aria-hidden="true" tabindex="-1"></a><span class="co">#| outputId: 67905f90-5a50-4d16-9400-0f232fdb3119</span></span>
+<span id="cb5-177"><a href="#cb5-177" aria-hidden="true" tabindex="-1"></a><span class="co"># prior simulation</span></span>
+<span id="cb5-178"><a href="#cb5-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-179"><a href="#cb5-179" aria-hidden="true" tabindex="-1"></a>x_prior <span class="op">=</span> np.arange(<span class="dv">21</span>)</span>
+<span id="cb5-180"><a href="#cb5-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-181"><a href="#cb5-181" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">50</span>):</span>
+<span id="cb5-182"><a href="#cb5-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-183"><a href="#cb5-183" aria-hidden="true" tabindex="-1"></a>    a <span class="op">=</span> stats.norm(<span class="dv">0</span>,<span class="dv">5</span>).rvs()</span>
+<span id="cb5-184"><a href="#cb5-184" aria-hidden="true" tabindex="-1"></a>    b <span class="op">=</span> stats.norm(<span class="dv">0</span>,<span class="dv">2</span>).rvs()</span>
+<span id="cb5-185"><a href="#cb5-185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-186"><a href="#cb5-186" aria-hidden="true" tabindex="-1"></a>    p <span class="op">=</span> np.exp(a <span class="op">+</span> b<span class="op">*</span>x_prior) <span class="op">/</span> (<span class="dv">1</span> <span class="op">+</span> np.exp(a <span class="op">+</span> b<span class="op">*</span>x_prior))</span>
+<span id="cb5-187"><a href="#cb5-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-188"><a href="#cb5-188" aria-hidden="true" tabindex="-1"></a>    plt.plot(p)</span>
+<span id="cb5-189"><a href="#cb5-189" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-190"><a href="#cb5-190" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-191"><a href="#cb5-191" aria-hidden="true" tabindex="-1"></a>Here I expanded the standard of deviation around the intercept and the slope. The irony is that increasing uncertainty at the level of the priors can decrease uncertainty at the level of predictions. Most predicted models here assume really sharp slopes and implausibly faster growth rates for formal methods in philosophy. Most of these lines shoot from the top to the bottom in the span of 5 or 6 years, suggesting that philosophy could have made a complete revolution in methodology. These predictions are implausible. (A careful explanation of why non-informative priors can be problematic can be found in Richard McElreath's statistical rethinking book https://xcelab.net/rm/statistical-rethinking/). Hence my preference for the weakly informative priors described above. </span>
+<span id="cb5-192"><a href="#cb5-192" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-193"><a href="#cb5-193" aria-hidden="true" tabindex="-1"></a><span class="fu">## Sampling</span></span>
+<span id="cb5-194"><a href="#cb5-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-195"><a href="#cb5-195" aria-hidden="true" tabindex="-1"></a>This code fits 16 logistic regressions, one for each topic.</span>
+<span id="cb5-196"><a href="#cb5-196" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-199"><a href="#cb5-199" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb5-200"><a href="#cb5-200" aria-hidden="true" tabindex="-1"></a><span class="co">#| id: 65a463ce</span></span>
+<span id="cb5-201"><a href="#cb5-201" aria-hidden="true" tabindex="-1"></a><span class="co">#| colab: {base_uri: 'https://localhost:8080/', height: 57}</span></span>
+<span id="cb5-202"><a href="#cb5-202" aria-hidden="true" tabindex="-1"></a><span class="co">#| outputId: f1c4b0cd-1d15-4a43-87ed-a5540ee7c5e5</span></span>
+<span id="cb5-203"><a href="#cb5-203" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pm.Model() <span class="im">as</span> no_pool:</span>
+<span id="cb5-204"><a href="#cb5-204" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-205"><a href="#cb5-205" aria-hidden="true" tabindex="-1"></a>    <span class="co"># priors</span></span>
+<span id="cb5-206"><a href="#cb5-206" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-207"><a href="#cb5-207" aria-hidden="true" tabindex="-1"></a>    a <span class="op">=</span> pm.Normal(<span class="st">'a'</span>,<span class="dv">0</span>,<span class="dv">3</span>,shape<span class="op">=</span><span class="dv">16</span>)</span>
+<span id="cb5-208"><a href="#cb5-208" aria-hidden="true" tabindex="-1"></a>    b <span class="op">=</span> pm.Normal(<span class="st">'b'</span>,<span class="dv">0</span>,<span class="fl">0.3</span>,shape<span class="op">=</span><span class="dv">16</span>)</span>
+<span id="cb5-209"><a href="#cb5-209" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-210"><a href="#cb5-210" aria-hidden="true" tabindex="-1"></a>    <span class="co"># link function</span></span>
+<span id="cb5-211"><a href="#cb5-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-212"><a href="#cb5-212" aria-hidden="true" tabindex="-1"></a>    p <span class="op">=</span> pm.invlogit(a <span class="op">+</span> b<span class="op">*</span>x)</span>
+<span id="cb5-213"><a href="#cb5-213" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-214"><a href="#cb5-214" aria-hidden="true" tabindex="-1"></a>    <span class="co"># outcome distribution</span></span>
+<span id="cb5-215"><a href="#cb5-215" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-216"><a href="#cb5-216" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> pm.Binomial(<span class="st">'y'</span>,p<span class="op">=</span>p,n<span class="op">=</span>n,observed<span class="op">=</span>k)</span>
+<span id="cb5-217"><a href="#cb5-217" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-218"><a href="#cb5-218" aria-hidden="true" tabindex="-1"></a>    <span class="co"># sampler</span></span>
+<span id="cb5-219"><a href="#cb5-219" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-220"><a href="#cb5-220" aria-hidden="true" tabindex="-1"></a>    trace_no_pool <span class="op">=</span> pm.sample(nuts_sampler<span class="op">=</span><span class="st">"nutpie"</span>,progressbar<span class="op">=</span><span class="va">False</span>)<span class="op">;</span></span>
+<span id="cb5-221"><a href="#cb5-221" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-222"><a href="#cb5-222" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-225"><a href="#cb5-225" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb5-226"><a href="#cb5-226" aria-hidden="true" tabindex="-1"></a><span class="co">#| id: 00ebbd58</span></span>
+<span id="cb5-227"><a href="#cb5-227" aria-hidden="true" tabindex="-1"></a><span class="co">#| colab: {base_uri: 'https://localhost:8080/', height: 279}</span></span>
+<span id="cb5-228"><a href="#cb5-228" aria-hidden="true" tabindex="-1"></a><span class="co">#| outputId: 3bc025b6-3da6-4e05-e27e-c39eb22ec52d</span></span>
+<span id="cb5-229"><a href="#cb5-229" aria-hidden="true" tabindex="-1"></a>az.plot_trace(trace_no_pool)<span class="op">;</span></span>
+<span id="cb5-230"><a href="#cb5-230" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-231"><a href="#cb5-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-232"><a href="#cb5-232" aria-hidden="true" tabindex="-1"></a>These plots provide a check on whether the computational estimation strategy was effective. There is little to discuss here, except the good sign that nothing blew up during sampling.</span>
+<span id="cb5-233"><a href="#cb5-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-236"><a href="#cb5-236" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb5-237"><a href="#cb5-237" aria-hidden="true" tabindex="-1"></a><span class="co">#| id: a192a5f8</span></span>
+<span id="cb5-238"><a href="#cb5-238" aria-hidden="true" tabindex="-1"></a><span class="co">#| outputId: 61b12f36-cdb1-485e-d0b5-ab53a15e3547</span></span>
+<span id="cb5-239"><a href="#cb5-239" aria-hidden="true" tabindex="-1"></a>az.plot_forest(trace_no_pool,var_names<span class="op">=</span><span class="st">'b'</span>,combined<span class="op">=</span><span class="va">True</span>,hdi_prob<span class="op">=</span><span class="fl">0.95</span>,quartiles<span class="op">=</span><span class="va">False</span>)<span class="op">;</span></span>
+<span id="cb5-240"><a href="#cb5-240" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-241"><a href="#cb5-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-242"><a href="#cb5-242" aria-hidden="true" tabindex="-1"></a>I'm just listing the slope parameters on each regression (ignoring the intercepts for now). Dots represent the highest posterior point estimate for each slope or, simply, the slope of best fit. The lines represent uncertainty - 95% of the posterior distribution fits within the line. This is like a 95% confidence interval in classic statistics.</span>
+<span id="cb5-243"><a href="#cb5-243" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-244"><a href="#cb5-244" aria-hidden="true" tabindex="-1"></a>The general pattern is that most topics experience a modest growth trend for formal methods. A few don't: Confirmation (2), Metaphysics (8), Relativity (10), and Realism (12). (The numbers that index topics in Ventura's paper and my analysis will be slightly different. I count up from 0 and go through 15. He counts from 1 and goes to 16. I do this just because the Bayesian fitting software uses this convention. So if you are switching between papers, just keep this in mind.)</span>
+<span id="cb5-245"><a href="#cb5-245" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-246"><a href="#cb5-246" aria-hidden="true" tabindex="-1"></a><span class="fu">## Posterior predictive checking</span></span>
+<span id="cb5-247"><a href="#cb5-247" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-248"><a href="#cb5-248" aria-hidden="true" tabindex="-1"></a>These numbers are hard to interpret just as numbers. Let's extract predictions from what the estimated models and compare them against the observed data.</span>
+<span id="cb5-249"><a href="#cb5-249" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-252"><a href="#cb5-252" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb5-253"><a href="#cb5-253" aria-hidden="true" tabindex="-1"></a><span class="co">#| id: 31f927e0</span></span>
+<span id="cb5-254"><a href="#cb5-254" aria-hidden="true" tabindex="-1"></a><span class="co">#| colab: {base_uri: 'https://localhost:8080/', height: 37}</span></span>
+<span id="cb5-255"><a href="#cb5-255" aria-hidden="true" tabindex="-1"></a><span class="co">#| outputId: 336fa884-09f0-4f22-93e5-c24ce6cdf207</span></span>
+<span id="cb5-256"><a href="#cb5-256" aria-hidden="true" tabindex="-1"></a>post_pred_no_pool <span class="op">=</span> pm.sample_posterior_predictive(trace_no_pool,model<span class="op">=</span>no_pool,progressbar<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb5-257"><a href="#cb5-257" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-258"><a href="#cb5-258" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-261"><a href="#cb5-261" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb5-262"><a href="#cb5-262" aria-hidden="true" tabindex="-1"></a><span class="co">#| id: d02a5510</span></span>
+<span id="cb5-263"><a href="#cb5-263" aria-hidden="true" tabindex="-1"></a><span class="co">#| colab: {base_uri: 'https://localhost:8080/', height: 596}</span></span>
+<span id="cb5-264"><a href="#cb5-264" aria-hidden="true" tabindex="-1"></a><span class="co">#| outputId: 6b02e48b-8fef-4232-cf7b-53762b9e231e</span></span>
+<span id="cb5-265"><a href="#cb5-265" aria-hidden="true" tabindex="-1"></a>f,ax <span class="op">=</span> plt.subplots(<span class="dv">4</span>,<span class="dv">4</span>,sharex<span class="op">=</span><span class="va">True</span>,sharey<span class="op">=</span><span class="va">True</span>,figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">6</span>))</span>
+<span id="cb5-266"><a href="#cb5-266" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-267"><a href="#cb5-267" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> sample <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">50</span>):</span>
+<span id="cb5-268"><a href="#cb5-268" aria-hidden="true" tabindex="-1"></a>    predictions <span class="op">=</span> np.array(post_pred_no_pool.posterior_predictive.y[<span class="dv">0</span>][sample].T)</span>
+<span id="cb5-269"><a href="#cb5-269" aria-hidden="true" tabindex="-1"></a>    ceiling <span class="op">=</span> n.T</span>
+<span id="cb5-270"><a href="#cb5-270" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-271"><a href="#cb5-271" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
+<span id="cb5-272"><a href="#cb5-272" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
+<span id="cb5-273"><a href="#cb5-273" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb5-274"><a href="#cb5-274" aria-hidden="true" tabindex="-1"></a>            proportions <span class="op">=</span> predictions[i<span class="op">*</span><span class="dv">4</span><span class="op">+</span>j] <span class="op">/</span> ceiling[i<span class="op">*</span><span class="dv">4</span><span class="op">+</span>j]</span>
+<span id="cb5-275"><a href="#cb5-275" aria-hidden="true" tabindex="-1"></a>            ax[i][j].plot(proportions,<span class="st">'o'</span>,alpha<span class="op">=</span><span class="fl">0.2</span>,color<span class="op">=</span><span class="st">'tab:orange'</span>)</span>
+<span id="cb5-276"><a href="#cb5-276" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb5-277"><a href="#cb5-277" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
+<span id="cb5-278"><a href="#cb5-278" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
+<span id="cb5-279"><a href="#cb5-279" aria-hidden="true" tabindex="-1"></a>        ax[i][j].plot(proportion_per_year.iloc[i<span class="op">*</span><span class="dv">4</span><span class="op">+</span>j].values,<span class="st">'-'</span>,markersize<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb5-280"><a href="#cb5-280" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-281"><a href="#cb5-281" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-282"><a href="#cb5-282" aria-hidden="true" tabindex="-1"></a>This plot displays the predicted proportion of formal papers in each year. Uncertainty is represented by the spread of the dots and their opacity.</span>
+<span id="cb5-283"><a href="#cb5-283" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-284"><a href="#cb5-284" aria-hidden="true" tabindex="-1"></a>One good check is whether the model captures a few plausible intuitive stories. For example, topic 11 is on row 3, column 4. It experiences huge growth in formal methods. This is decision theory. So it makes good sense that nearly half of papers published in this area are in the business of building models. (The other half are likely papers reflecting on the methodology or concepts of decision theory.)</span>
+<span id="cb5-285"><a href="#cb5-285" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-286"><a href="#cb5-286" aria-hidden="true" tabindex="-1"></a>One thing to notice is that uncertainty at the beginning of the period tends to be pretty large. This makes sense because we have very little data for the beginning of each period. Some of these topics only have a handful of papers published in them in the year 2000. So it's like the sample size is very small for the beginning. But it tends to grow in the later years so the estimate clamps down.</span>
+<span id="cb5-287"><a href="#cb5-287" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-288"><a href="#cb5-288" aria-hidden="true" tabindex="-1"></a>The high beginning uncertainty is also a reason why splitting the community into 16 topics might introduce some artifacts into the statistical analysis. In the year 2000, each subtopic was not as clearly distinguished as they were in, say, 2010. The common narrative is that philosophy of science sorta splintered into many sub-specialties at the end of the very end of the 20th century and then these subdisciplines consolidated during the early 2000s. So we should also expect more overlap in causal selective forces for the early years, something not reflected in this analysis. Instead, we get big initial uncertainty because each subtopic is not well-established yet.</span>
+<span id="cb5-289"><a href="#cb5-289" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-292"><a href="#cb5-292" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb5-293"><a href="#cb5-293" aria-hidden="true" tabindex="-1"></a><span class="co">#| id: '39165831'</span></span>
+<span id="cb5-294"><a href="#cb5-294" aria-hidden="true" tabindex="-1"></a><span class="co">#| colab: {base_uri: 'https://localhost:8080/', height: 601}</span></span>
+<span id="cb5-295"><a href="#cb5-295" aria-hidden="true" tabindex="-1"></a><span class="co">#| outputId: a3c5a898-b263-4bd5-c6f7-495f17613079</span></span>
+<span id="cb5-296"><a href="#cb5-296" aria-hidden="true" tabindex="-1"></a>a_means <span class="op">=</span> [np.array(trace_no_pool.posterior[<span class="st">'a'</span>][<span class="dv">0</span>][:,i].mean()) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">16</span>)]</span>
+<span id="cb5-297"><a href="#cb5-297" aria-hidden="true" tabindex="-1"></a>b_means <span class="op">=</span> [np.array(trace_no_pool.posterior[<span class="st">'b'</span>][<span class="dv">0</span>][:,i].mean()) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">16</span>)]</span>
+<span id="cb5-298"><a href="#cb5-298" aria-hidden="true" tabindex="-1"></a>a_means <span class="op">=</span> np.array(a_means)</span>
+<span id="cb5-299"><a href="#cb5-299" aria-hidden="true" tabindex="-1"></a>b_means <span class="op">=</span> np.array(b_means)</span>
+<span id="cb5-300"><a href="#cb5-300" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-301"><a href="#cb5-301" aria-hidden="true" tabindex="-1"></a>f,ax <span class="op">=</span> plt.subplots(<span class="dv">4</span>,<span class="dv">4</span>,sharex<span class="op">=</span><span class="va">True</span>,sharey<span class="op">=</span><span class="va">True</span>,figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">6</span>))</span>
+<span id="cb5-302"><a href="#cb5-302" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-303"><a href="#cb5-303" aria-hidden="true" tabindex="-1"></a>x_pred <span class="op">=</span> np.arange(<span class="dv">21</span>)</span>
+<span id="cb5-304"><a href="#cb5-304" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-305"><a href="#cb5-305" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
+<span id="cb5-306"><a href="#cb5-306" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
+<span id="cb5-307"><a href="#cb5-307" aria-hidden="true" tabindex="-1"></a>        a <span class="op">=</span> a_means[i<span class="op">*</span><span class="dv">4</span><span class="op">+</span>j] </span>
+<span id="cb5-308"><a href="#cb5-308" aria-hidden="true" tabindex="-1"></a>        b <span class="op">=</span> b_means[i<span class="op">*</span><span class="dv">4</span><span class="op">+</span>j]</span>
+<span id="cb5-309"><a href="#cb5-309" aria-hidden="true" tabindex="-1"></a>        p <span class="op">=</span> np.exp(a <span class="op">+</span> b<span class="op">*</span>x_pred) <span class="op">/</span> (<span class="dv">1</span> <span class="op">+</span> np.exp(a <span class="op">+</span> b<span class="op">*</span>x_pred))</span>
+<span id="cb5-310"><a href="#cb5-310" aria-hidden="true" tabindex="-1"></a>        ax[i][j].plot(p)</span>
+<span id="cb5-311"><a href="#cb5-311" aria-hidden="true" tabindex="-1"></a>        ax[i][j].plot(proportion_per_year.iloc[i<span class="op">*</span><span class="dv">4</span><span class="op">+</span>j].values,<span class="st">'o'</span>,markersize<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb5-312"><a href="#cb5-312" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-313"><a href="#cb5-313" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-314"><a href="#cb5-314" aria-hidden="true" tabindex="-1"></a>A second way of visualizing the model is to strip away the uncertainty and plot the best performing logistic curves for each community. These are what the model thinks the likely trend is in each place.</span>
+<span id="cb5-315"><a href="#cb5-315" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-316"><a href="#cb5-316" aria-hidden="true" tabindex="-1"></a><span class="fu"># Multi-level model analysis</span></span>
+<span id="cb5-317"><a href="#cb5-317" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-318"><a href="#cb5-318" aria-hidden="true" tabindex="-1"></a>Now time for the real focus.</span>
+<span id="cb5-319"><a href="#cb5-319" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-320"><a href="#cb5-320" aria-hidden="true" tabindex="-1"></a><span class="fu">## Prior simulation</span></span>
+<span id="cb5-321"><a href="#cb5-321" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-322"><a href="#cb5-322" aria-hidden="true" tabindex="-1"></a>Again I conduct a prior simulation. This time is tricker though because I have priors representing the overall population effects and the those priors shape the subsequent topic effects. So we want to get a prior simulation that allows for a wide range of possible population-topic relationships plus the old goal of giving each topic a range of plausible effects.</span>
+<span id="cb5-323"><a href="#cb5-323" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-326"><a href="#cb5-326" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb5-327"><a href="#cb5-327" aria-hidden="true" tabindex="-1"></a><span class="co">#| id: 57ddd095</span></span>
+<span id="cb5-328"><a href="#cb5-328" aria-hidden="true" tabindex="-1"></a><span class="co">#| colab: {base_uri: 'https://localhost:8080/', height: 596}</span></span>
+<span id="cb5-329"><a href="#cb5-329" aria-hidden="true" tabindex="-1"></a><span class="co">#| outputId: 0974fc6a-bf00-44b1-e356-7b3adb3fae05</span></span>
+<span id="cb5-330"><a href="#cb5-330" aria-hidden="true" tabindex="-1"></a><span class="co"># prior simulation</span></span>
+<span id="cb5-331"><a href="#cb5-331" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-332"><a href="#cb5-332" aria-hidden="true" tabindex="-1"></a>f,ax <span class="op">=</span> plt.subplots(<span class="dv">4</span>,<span class="dv">4</span>,sharex<span class="op">=</span><span class="va">True</span>,sharey<span class="op">=</span><span class="va">True</span>,figsize<span class="op">=</span>(<span class="dv">6</span>,<span class="dv">6</span>))</span>
+<span id="cb5-333"><a href="#cb5-333" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-334"><a href="#cb5-334" aria-hidden="true" tabindex="-1"></a>hamu <span class="op">=</span> stats.norm(<span class="dv">0</span>,<span class="dv">2</span>).rvs(<span class="dv">16</span>)</span>
+<span id="cb5-335"><a href="#cb5-335" aria-hidden="true" tabindex="-1"></a>hasig <span class="op">=</span> stats.expon(scale<span class="op">=</span><span class="dv">2</span>).rvs(<span class="dv">16</span>)</span>
+<span id="cb5-336"><a href="#cb5-336" aria-hidden="true" tabindex="-1"></a>hbmu <span class="op">=</span> stats.norm(<span class="dv">0</span>,<span class="fl">0.2</span>).rvs(<span class="dv">16</span>)</span>
+<span id="cb5-337"><a href="#cb5-337" aria-hidden="true" tabindex="-1"></a>hbsig <span class="op">=</span> stats.expon(scale<span class="op">=</span><span class="fl">0.7</span>).rvs(<span class="dv">16</span>)</span>
+<span id="cb5-338"><a href="#cb5-338" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-339"><a href="#cb5-339" aria-hidden="true" tabindex="-1"></a>x_prior <span class="op">=</span> np.arange(<span class="dv">21</span>)</span>
+<span id="cb5-340"><a href="#cb5-340" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-341"><a href="#cb5-341" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>): </span>
+<span id="cb5-342"><a href="#cb5-342" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
+<span id="cb5-343"><a href="#cb5-343" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb5-344"><a href="#cb5-344" aria-hidden="true" tabindex="-1"></a>        amu <span class="op">=</span> hamu[i<span class="op">*</span><span class="dv">4</span><span class="op">+</span>j]</span>
+<span id="cb5-345"><a href="#cb5-345" aria-hidden="true" tabindex="-1"></a>        asig <span class="op">=</span> hasig[i<span class="op">*</span><span class="dv">4</span><span class="op">+</span>j]</span>
+<span id="cb5-346"><a href="#cb5-346" aria-hidden="true" tabindex="-1"></a>        bmu <span class="op">=</span> hbmu[i<span class="op">*</span><span class="dv">4</span><span class="op">+</span>j]</span>
+<span id="cb5-347"><a href="#cb5-347" aria-hidden="true" tabindex="-1"></a>        bsig <span class="op">=</span> hbsig[i<span class="op">*</span><span class="dv">4</span><span class="op">+</span>j]</span>
+<span id="cb5-348"><a href="#cb5-348" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb5-349"><a href="#cb5-349" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> l <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">30</span>):</span>
+<span id="cb5-350"><a href="#cb5-350" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-351"><a href="#cb5-351" aria-hidden="true" tabindex="-1"></a>            a <span class="op">=</span> stats.norm(amu,asig).rvs()</span>
+<span id="cb5-352"><a href="#cb5-352" aria-hidden="true" tabindex="-1"></a>            b <span class="op">=</span> stats.norm(bmu,bsig).rvs()</span>
+<span id="cb5-353"><a href="#cb5-353" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-354"><a href="#cb5-354" aria-hidden="true" tabindex="-1"></a>            p <span class="op">=</span> np.exp(a <span class="op">+</span> b<span class="op">*</span>x_prior) <span class="op">/</span> (<span class="dv">1</span> <span class="op">+</span> np.exp(a <span class="op">+</span> b<span class="op">*</span>x_prior))</span>
+<span id="cb5-355"><a href="#cb5-355" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-356"><a href="#cb5-356" aria-hidden="true" tabindex="-1"></a>            ax[i][j].plot(p)</span>
+<span id="cb5-357"><a href="#cb5-357" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb5-358"><a href="#cb5-358" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-359"><a href="#cb5-359" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-360"><a href="#cb5-360" aria-hidden="true" tabindex="-1"></a><span class="fu">## Sampling</span></span>
+<span id="cb5-361"><a href="#cb5-361" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-364"><a href="#cb5-364" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb5-365"><a href="#cb5-365" aria-hidden="true" tabindex="-1"></a><span class="co">#| id: e1fe47ca</span></span>
+<span id="cb5-366"><a href="#cb5-366" aria-hidden="true" tabindex="-1"></a><span class="co">#| colab: {base_uri: 'https://localhost:8080/', height: 57}</span></span>
+<span id="cb5-367"><a href="#cb5-367" aria-hidden="true" tabindex="-1"></a><span class="co">#| outputId: 5b1d30b3-1c4e-47a6-8859-9d852f3f7986</span></span>
+<span id="cb5-368"><a href="#cb5-368" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-369"><a href="#cb5-369" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pm.Model() <span class="im">as</span> partial_pool:</span>
+<span id="cb5-370"><a href="#cb5-370" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-371"><a href="#cb5-371" aria-hidden="true" tabindex="-1"></a>    <span class="co"># hyperparameters</span></span>
+<span id="cb5-372"><a href="#cb5-372" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-373"><a href="#cb5-373" aria-hidden="true" tabindex="-1"></a>    hamu <span class="op">=</span> pm.Normal(<span class="st">'hamu'</span>,<span class="dv">0</span>,<span class="dv">2</span>)</span>
+<span id="cb5-374"><a href="#cb5-374" aria-hidden="true" tabindex="-1"></a>    hasig <span class="op">=</span> pm.Exponential(<span class="st">'hasig'</span>,<span class="dv">2</span>)</span>
+<span id="cb5-375"><a href="#cb5-375" aria-hidden="true" tabindex="-1"></a>    hbmu <span class="op">=</span> pm.Normal(<span class="st">'hbmu'</span>,<span class="dv">0</span>,<span class="fl">0.2</span>)</span>
+<span id="cb5-376"><a href="#cb5-376" aria-hidden="true" tabindex="-1"></a>    hbsig <span class="op">=</span> pm.Exponential(<span class="st">'hbsig'</span>,<span class="fl">0.7</span>)</span>
+<span id="cb5-377"><a href="#cb5-377" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-378"><a href="#cb5-378" aria-hidden="true" tabindex="-1"></a>    <span class="co"># regular parameters</span></span>
+<span id="cb5-379"><a href="#cb5-379" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-380"><a href="#cb5-380" aria-hidden="true" tabindex="-1"></a>    a <span class="op">=</span> pm.Normal(<span class="st">'a'</span>,hamu,hasig,shape<span class="op">=</span><span class="dv">16</span>)</span>
+<span id="cb5-381"><a href="#cb5-381" aria-hidden="true" tabindex="-1"></a>    b <span class="op">=</span> pm.Normal(<span class="st">'b'</span>,hbmu,hbsig,shape<span class="op">=</span><span class="dv">16</span>)</span>
+<span id="cb5-382"><a href="#cb5-382" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-383"><a href="#cb5-383" aria-hidden="true" tabindex="-1"></a>    <span class="co"># link function</span></span>
+<span id="cb5-384"><a href="#cb5-384" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-385"><a href="#cb5-385" aria-hidden="true" tabindex="-1"></a>    p <span class="op">=</span> pm.invlogit(a <span class="op">+</span> b<span class="op">*</span>x)</span>
+<span id="cb5-386"><a href="#cb5-386" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-387"><a href="#cb5-387" aria-hidden="true" tabindex="-1"></a>    <span class="co"># outcome distribution</span></span>
+<span id="cb5-388"><a href="#cb5-388" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-389"><a href="#cb5-389" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> pm.Binomial(<span class="st">'y'</span>,p<span class="op">=</span>p,n<span class="op">=</span>n,observed<span class="op">=</span>k)</span>
+<span id="cb5-390"><a href="#cb5-390" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-391"><a href="#cb5-391" aria-hidden="true" tabindex="-1"></a>    <span class="co"># sampler</span></span>
+<span id="cb5-392"><a href="#cb5-392" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-393"><a href="#cb5-393" aria-hidden="true" tabindex="-1"></a>    trace_partial_pool <span class="op">=</span> pm.sample(nuts_sampler<span class="op">=</span><span class="st">"nutpie"</span>,progressbar<span class="op">=</span><span class="va">False</span>)<span class="op">;</span></span>
+<span id="cb5-394"><a href="#cb5-394" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-395"><a href="#cb5-395" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-396"><a href="#cb5-396" aria-hidden="true" tabindex="-1"></a>Let's compare the slopes estimated with multi-level models with those estimated by 16 independent models.</span>
+<span id="cb5-397"><a href="#cb5-397" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-400"><a href="#cb5-400" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb5-401"><a href="#cb5-401" aria-hidden="true" tabindex="-1"></a><span class="co">#| id: f92b5c71</span></span>
+<span id="cb5-402"><a href="#cb5-402" aria-hidden="true" tabindex="-1"></a><span class="co">#| colab: {base_uri: 'https://localhost:8080/', height: 516}</span></span>
+<span id="cb5-403"><a href="#cb5-403" aria-hidden="true" tabindex="-1"></a><span class="co">#| outputId: 31cdba07-752f-482a-885e-7c10e42cba69</span></span>
+<span id="cb5-404"><a href="#cb5-404" aria-hidden="true" tabindex="-1"></a>az.plot_forest([trace_partial_pool,trace_no_pool],model_names<span class="op">=</span>[<span class="st">"partial pooling"</span>,<span class="st">"no pooling"</span>],var_names<span class="op">=</span><span class="st">'b'</span>,combined<span class="op">=</span><span class="va">True</span>,hdi_prob<span class="op">=</span><span class="fl">0.95</span>,quartiles<span class="op">=</span><span class="va">False</span>)<span class="op">;</span></span>
+<span id="cb5-405"><a href="#cb5-405" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-406"><a href="#cb5-406" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-407"><a href="#cb5-407" aria-hidden="true" tabindex="-1"></a>One thing to notice is that the level of uncertainty has shrunk across the board. In basically every place, the blue line (multi-level / partial pooling) is shorter than the orange line (no pooling). This is because multi-level models can use more information to inform the estimate in each topic. Information is pooled across topics to form better expectations about each individual topic. It's like we've increased our sample size but we never had to collect new data. We just had to use it more efficiently.</span>
+<span id="cb5-408"><a href="#cb5-408" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-409"><a href="#cb5-409" aria-hidden="true" tabindex="-1"></a>A second thing to notice is that that several topics either switched from a negative to positive slope or they moved closer to positivity. This suggests that the multi-level model is detecting even stronger selection for formal methods than the previous analysis is. Why would this be? I suspect it largely depends on the interaction effect between intercepts and slopes. When the intercept starts really low, we are more likely to estimate a positive slope. When the intercept starts higher up, we are more likely to estimate a neutral or negative slope. The multi-level model now starts most intercepts fairly low. Here's a comparison of the two estimates by intercept. The blue lines tend to be more starkly negative for topics 2, 8 and 12, allowing their slopes to head toward positivity.</span>
+<span id="cb5-410"><a href="#cb5-410" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-411"><a href="#cb5-411" aria-hidden="true" tabindex="-1"></a>I plot the intercept comparisons below.</span>
+<span id="cb5-412"><a href="#cb5-412" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-415"><a href="#cb5-415" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb5-416"><a href="#cb5-416" aria-hidden="true" tabindex="-1"></a><span class="co">#| id: 2616df92</span></span>
+<span id="cb5-417"><a href="#cb5-417" aria-hidden="true" tabindex="-1"></a><span class="co">#| colab: {base_uri: 'https://localhost:8080/', height: 516}</span></span>
+<span id="cb5-418"><a href="#cb5-418" aria-hidden="true" tabindex="-1"></a><span class="co">#| outputId: 207f27cb-1af8-4c64-d825-8c5a869d8b9e</span></span>
+<span id="cb5-419"><a href="#cb5-419" aria-hidden="true" tabindex="-1"></a>az.plot_forest([trace_partial_pool,trace_no_pool],model_names<span class="op">=</span>[<span class="st">"partial pooling"</span>,<span class="st">"no pooling"</span>],var_names<span class="op">=</span><span class="st">'a'</span>,combined<span class="op">=</span><span class="va">True</span>,hdi_prob<span class="op">=</span><span class="fl">0.95</span>,quartiles<span class="op">=</span><span class="va">False</span>)<span class="op">;</span></span>
+<span id="cb5-420"><a href="#cb5-420" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-421"><a href="#cb5-421" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-422"><a href="#cb5-422" aria-hidden="true" tabindex="-1"></a><span class="fu">## Posterior predictive checking</span></span>
+<span id="cb5-423"><a href="#cb5-423" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-424"><a href="#cb5-424" aria-hidden="true" tabindex="-1"></a>Let's look at the prediction plots now and see what changed once we introduced partial pooling.</span>
+<span id="cb5-425"><a href="#cb5-425" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-428"><a href="#cb5-428" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb5-429"><a href="#cb5-429" aria-hidden="true" tabindex="-1"></a><span class="co">#| id: d6ce9d38</span></span>
+<span id="cb5-430"><a href="#cb5-430" aria-hidden="true" tabindex="-1"></a><span class="co">#| colab: {base_uri: 'https://localhost:8080/', height: 37}</span></span>
+<span id="cb5-431"><a href="#cb5-431" aria-hidden="true" tabindex="-1"></a><span class="co">#| outputId: 496f409e-1167-40bf-f35c-942c797116e4</span></span>
+<span id="cb5-432"><a href="#cb5-432" aria-hidden="true" tabindex="-1"></a>post_pred_partial_pool <span class="op">=</span> pm.sample_posterior_predictive(trace_partial_pool,model<span class="op">=</span>partial_pool,progressbar<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb5-433"><a href="#cb5-433" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-434"><a href="#cb5-434" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-437"><a href="#cb5-437" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb5-438"><a href="#cb5-438" aria-hidden="true" tabindex="-1"></a><span class="co">#| id: 5330a432</span></span>
+<span id="cb5-439"><a href="#cb5-439" aria-hidden="true" tabindex="-1"></a><span class="co">#| colab: {base_uri: 'https://localhost:8080/', height: 596}</span></span>
+<span id="cb5-440"><a href="#cb5-440" aria-hidden="true" tabindex="-1"></a><span class="co">#| outputId: 7b42f1dd-9b66-4572-fcea-a59a855f8cc2</span></span>
+<span id="cb5-441"><a href="#cb5-441" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-442"><a href="#cb5-442" aria-hidden="true" tabindex="-1"></a>f,ax <span class="op">=</span> plt.subplots(<span class="dv">4</span>,<span class="dv">4</span>,sharex<span class="op">=</span><span class="va">True</span>,sharey<span class="op">=</span><span class="va">True</span>,figsize<span class="op">=</span>(<span class="dv">6</span>,<span class="dv">6</span>))</span>
+<span id="cb5-443"><a href="#cb5-443" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-444"><a href="#cb5-444" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">50</span>):</span>
+<span id="cb5-445"><a href="#cb5-445" aria-hidden="true" tabindex="-1"></a>    predictions <span class="op">=</span> np.array(post_pred_partial_pool.posterior_predictive.y[<span class="dv">0</span>][k].T)</span>
+<span id="cb5-446"><a href="#cb5-446" aria-hidden="true" tabindex="-1"></a>    ceiling <span class="op">=</span> np.transpose(n)</span>
+<span id="cb5-447"><a href="#cb5-447" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-448"><a href="#cb5-448" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
+<span id="cb5-449"><a href="#cb5-449" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
+<span id="cb5-450"><a href="#cb5-450" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb5-451"><a href="#cb5-451" aria-hidden="true" tabindex="-1"></a>            proportions <span class="op">=</span> predictions[i<span class="op">*</span><span class="dv">4</span><span class="op">+</span>j] <span class="op">/</span> ceiling[i<span class="op">*</span><span class="dv">4</span><span class="op">+</span>j]</span>
+<span id="cb5-452"><a href="#cb5-452" aria-hidden="true" tabindex="-1"></a>            ax[i][j].plot(proportions,<span class="st">'o'</span>,alpha<span class="op">=</span><span class="fl">0.2</span>,color<span class="op">=</span><span class="st">'tab:orange'</span>)</span>
+<span id="cb5-453"><a href="#cb5-453" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb5-454"><a href="#cb5-454" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
+<span id="cb5-455"><a href="#cb5-455" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
+<span id="cb5-456"><a href="#cb5-456" aria-hidden="true" tabindex="-1"></a>        ax[i][j].plot(proportion_per_year.iloc[i<span class="op">*</span><span class="dv">4</span><span class="op">+</span>j].values,<span class="st">'-'</span>,markersize<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb5-457"><a href="#cb5-457" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-458"><a href="#cb5-458" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-459"><a href="#cb5-459" aria-hidden="true" tabindex="-1"></a>One thing to notice that there is less initial uncertainty in many of these plots. This highlights on the advantages of multi-level models - less uncertainty in the intercepts means more plausible estimates of the slope.</span>
+<span id="cb5-460"><a href="#cb5-460" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-463"><a href="#cb5-463" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb5-464"><a href="#cb5-464" aria-hidden="true" tabindex="-1"></a><span class="co">#| id: d662628c</span></span>
+<span id="cb5-465"><a href="#cb5-465" aria-hidden="true" tabindex="-1"></a><span class="co">#| colab: {base_uri: 'https://localhost:8080/', height: 601}</span></span>
+<span id="cb5-466"><a href="#cb5-466" aria-hidden="true" tabindex="-1"></a><span class="co">#| outputId: ad774b6d-cdb6-4cd5-afd6-664e148e6677</span></span>
+<span id="cb5-467"><a href="#cb5-467" aria-hidden="true" tabindex="-1"></a>a_means_pp <span class="op">=</span> [np.array(trace_partial_pool.posterior[<span class="st">'a'</span>][<span class="dv">0</span>][:,i].mean()) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">16</span>)]</span>
+<span id="cb5-468"><a href="#cb5-468" aria-hidden="true" tabindex="-1"></a>b_means_pp <span class="op">=</span> [np.array(trace_partial_pool.posterior[<span class="st">'b'</span>][<span class="dv">0</span>][:,i].mean()) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">16</span>)]</span>
+<span id="cb5-469"><a href="#cb5-469" aria-hidden="true" tabindex="-1"></a>a_means_pp <span class="op">=</span> np.array(a_means_pp)</span>
+<span id="cb5-470"><a href="#cb5-470" aria-hidden="true" tabindex="-1"></a>b_means_pp <span class="op">=</span> np.array(b_means_pp)</span>
+<span id="cb5-471"><a href="#cb5-471" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-472"><a href="#cb5-472" aria-hidden="true" tabindex="-1"></a>f,ax <span class="op">=</span> plt.subplots(<span class="dv">4</span>,<span class="dv">4</span>,sharex<span class="op">=</span><span class="va">True</span>,sharey<span class="op">=</span><span class="va">True</span>,figsize<span class="op">=</span>(<span class="dv">6</span>,<span class="dv">6</span>))</span>
+<span id="cb5-473"><a href="#cb5-473" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-474"><a href="#cb5-474" aria-hidden="true" tabindex="-1"></a>x_pred <span class="op">=</span> np.arange(<span class="dv">21</span>)</span>
+<span id="cb5-475"><a href="#cb5-475" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-476"><a href="#cb5-476" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
+<span id="cb5-477"><a href="#cb5-477" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
+<span id="cb5-478"><a href="#cb5-478" aria-hidden="true" tabindex="-1"></a>        a <span class="op">=</span> a_means_pp[i<span class="op">*</span><span class="dv">4</span><span class="op">+</span>j] </span>
+<span id="cb5-479"><a href="#cb5-479" aria-hidden="true" tabindex="-1"></a>        b <span class="op">=</span> b_means_pp[i<span class="op">*</span><span class="dv">4</span><span class="op">+</span>j]</span>
+<span id="cb5-480"><a href="#cb5-480" aria-hidden="true" tabindex="-1"></a>        p <span class="op">=</span> np.exp(a <span class="op">+</span> b<span class="op">*</span>x_pred) <span class="op">/</span> (<span class="dv">1</span> <span class="op">+</span> np.exp(a <span class="op">+</span> b<span class="op">*</span>x_pred))</span>
+<span id="cb5-481"><a href="#cb5-481" aria-hidden="true" tabindex="-1"></a>        ax[i][j].plot(p)</span>
+<span id="cb5-482"><a href="#cb5-482" aria-hidden="true" tabindex="-1"></a>        ax[i][j].plot(proportion_per_year.iloc[i<span class="op">*</span><span class="dv">4</span><span class="op">+</span>j].values,<span class="st">'o'</span>,markersize<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb5-483"><a href="#cb5-483" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-484"><a href="#cb5-484" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-485"><a href="#cb5-485" aria-hidden="true" tabindex="-1"></a>There are small divergences in the trend lines. I'll zoom in one difference in the last section.</span>
+<span id="cb5-486"><a href="#cb5-486" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-487"><a href="#cb5-487" aria-hidden="true" tabindex="-1"></a>Finally, we have the trend line for the entire population of studies. It is subtly but confidently positive, suggesting an overall tendency to select for formal methods in philosophy of science over the last several years. The observed trends are plotted and faded behind it.</span>
+<span id="cb5-488"><a href="#cb5-488" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-491"><a href="#cb5-491" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb5-492"><a href="#cb5-492" aria-hidden="true" tabindex="-1"></a><span class="co">#| id: 6f002b9d</span></span>
+<span id="cb5-493"><a href="#cb5-493" aria-hidden="true" tabindex="-1"></a><span class="co">#| colab: {base_uri: 'https://localhost:8080/', height: 384}</span></span>
+<span id="cb5-494"><a href="#cb5-494" aria-hidden="true" tabindex="-1"></a><span class="co">#| outputId: 4abe95f9-d128-4893-bfdc-08f81353a077</span></span>
+<span id="cb5-495"><a href="#cb5-495" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> np.array(trace_partial_pool.posterior[<span class="st">'hamu'</span>].mean((<span class="st">"chain"</span>,<span class="st">"draw"</span>)))</span>
+<span id="cb5-496"><a href="#cb5-496" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> np.array(trace_partial_pool.posterior[<span class="st">'hbmu'</span>].mean((<span class="st">"chain"</span>,<span class="st">"draw"</span>)))</span>
+<span id="cb5-497"><a href="#cb5-497" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-498"><a href="#cb5-498" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> np.exp(a <span class="op">+</span> b<span class="op">*</span>x_pred) <span class="op">/</span> (<span class="dv">1</span> <span class="op">+</span> np.exp(a <span class="op">+</span> b<span class="op">*</span>x_pred))</span>
+<span id="cb5-499"><a href="#cb5-499" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-500"><a href="#cb5-500" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
+<span id="cb5-501"><a href="#cb5-501" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
+<span id="cb5-502"><a href="#cb5-502" aria-hidden="true" tabindex="-1"></a>        plt.plot(proportion_per_year.iloc[i<span class="op">*</span><span class="dv">4</span><span class="op">+</span>j].values,<span class="st">'-'</span>,alpha<span class="op">=</span><span class="fl">0.4</span>)</span>
+<span id="cb5-503"><a href="#cb5-503" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-504"><a href="#cb5-504" aria-hidden="true" tabindex="-1"></a>plt.plot(p,color<span class="op">=</span><span class="st">"black"</span>)</span>
+<span id="cb5-505"><a href="#cb5-505" aria-hidden="true" tabindex="-1"></a>plt.ylim([<span class="dv">0</span>,<span class="dv">1</span>])<span class="op">;</span></span>
+<span id="cb5-506"><a href="#cb5-506" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-507"><a href="#cb5-507" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-508"><a href="#cb5-508" aria-hidden="true" tabindex="-1"></a>Ventura's analysis noted that there was no overall selection for formal methods across philosophy of science. Interestingly, my analysis finds a small and very confident positive slope for the population-level effect. The population-level slope is 0.018 with the bottom of the credibility interval at 0.002 and the top at 0.034. So under classical statistics, this would be like a statistically significant effect. </span>
+<span id="cb5-509"><a href="#cb5-509" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-510"><a href="#cb5-510" aria-hidden="true" tabindex="-1"></a>Should we prefer the multi-level trend estimate? I suspect so but the reason lies in how multi-level models handle each individual cluster. So I'll turn to that next.</span>
+<span id="cb5-511"><a href="#cb5-511" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-512"><a href="#cb5-512" aria-hidden="true" tabindex="-1"></a><span class="fu"># Comparing partial pooling and unpooled analysis</span></span>
+<span id="cb5-513"><a href="#cb5-513" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-514"><a href="#cb5-514" aria-hidden="true" tabindex="-1"></a>I want to provide one more illustration of why multi-level models are really helpful in this context. This time, we'll zoom in one one particular topic and study how the two different modeling strategies handle it. Consider topic 8 (metaphysics). When I first estimated this cluster with the unpooled model, the slope was solidly negative. The mean was -0.054 and the edges of the credibility interval were also mostly negative. But when we estimated the partially pooled model, the slope switched to -0.018 and the credibility interval that includes negative and positive values. Meanwhile, the intercept moved around too, from -3.3 to -3.8. The plot below illustrates what these look like along side the data.</span>
+<span id="cb5-515"><a href="#cb5-515" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-518"><a href="#cb5-518" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb5-519"><a href="#cb5-519" aria-hidden="true" tabindex="-1"></a><span class="co">#| id: 8b906acb</span></span>
+<span id="cb5-520"><a href="#cb5-520" aria-hidden="true" tabindex="-1"></a><span class="co">#| colab: {base_uri: 'https://localhost:8080/', height: 453}</span></span>
+<span id="cb5-521"><a href="#cb5-521" aria-hidden="true" tabindex="-1"></a><span class="co">#| outputId: eda22feb-3365-4790-f274-c175c327fc84</span></span>
+<span id="cb5-522"><a href="#cb5-522" aria-hidden="true" tabindex="-1"></a>cluster <span class="op">=</span> <span class="dv">8</span></span>
+<span id="cb5-523"><a href="#cb5-523" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-524"><a href="#cb5-524" aria-hidden="true" tabindex="-1"></a><span class="co"># load relevant subset of data</span></span>
+<span id="cb5-525"><a href="#cb5-525" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-526"><a href="#cb5-526" aria-hidden="true" tabindex="-1"></a>quant_count_cluster <span class="op">=</span> cluster_quant_count.iloc[cluster][<span class="dv">1</span>:].values</span>
+<span id="cb5-527"><a href="#cb5-527" aria-hidden="true" tabindex="-1"></a>total_count_cluster <span class="op">=</span> cluster_count_by_year.iloc[cluster][<span class="dv">1</span>:].values</span>
+<span id="cb5-528"><a href="#cb5-528" aria-hidden="true" tabindex="-1"></a>plt.plot(quant_count_cluster <span class="op">/</span> total_count_cluster,<span class="st">'o'</span>,color<span class="op">=</span><span class="st">'black'</span>)</span>
+<span id="cb5-529"><a href="#cb5-529" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-530"><a href="#cb5-530" aria-hidden="true" tabindex="-1"></a><span class="co"># load model parameters</span></span>
+<span id="cb5-531"><a href="#cb5-531" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-532"><a href="#cb5-532" aria-hidden="true" tabindex="-1"></a>plt.plot(np.exp(a_means[cluster] <span class="op">+</span>  b_means[cluster]<span class="op">*</span>x_pred) <span class="op">/</span> (<span class="dv">1</span> <span class="op">+</span> np.exp(a_means[cluster] <span class="op">+</span>  b_means[cluster]<span class="op">*</span>x_pred)),label<span class="op">=</span><span class="st">"unpooled"</span>)</span>
+<span id="cb5-533"><a href="#cb5-533" aria-hidden="true" tabindex="-1"></a>plt.plot(np.exp(a_means_pp[cluster] <span class="op">+</span>  b_means_pp[cluster]<span class="op">*</span>x_pred) <span class="op">/</span> (<span class="dv">1</span> <span class="op">+</span> np.exp(a_means_pp[cluster] <span class="op">+</span>  b_means_pp[cluster]<span class="op">*</span>x_pred)),label<span class="op">=</span><span class="st">"partially pooled"</span>)</span>
+<span id="cb5-534"><a href="#cb5-534" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb5-535"><a href="#cb5-535" aria-hidden="true" tabindex="-1"></a>plt.ylim([<span class="op">-</span><span class="fl">0.02</span>,<span class="fl">0.5</span>])<span class="op">;</span></span>
+<span id="cb5-536"><a href="#cb5-536" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-537"><a href="#cb5-537" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"old intercept:"</span>,a_means[cluster])</span>
+<span id="cb5-538"><a href="#cb5-538" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"new intercept:"</span>,a_means_pp[cluster]) </span>
+<span id="cb5-539"><a href="#cb5-539" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"old slope:"</span>,b_means[cluster])</span>
+<span id="cb5-540"><a href="#cb5-540" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"new slope:"</span>,b_means_pp[cluster])</span>
+<span id="cb5-541"><a href="#cb5-541" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-542"><a href="#cb5-542" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-543"><a href="#cb5-543" aria-hidden="true" tabindex="-1"></a>On first glance, the partially pooled model does worse. Both models fit the data after 2005 just fine. But the unpooled model accommodates the starting points better. So why prefer the multi-level model?</span>
+<span id="cb5-544"><a href="#cb5-544" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-545"><a href="#cb5-545" aria-hidden="true" tabindex="-1"></a>One of the basic goals of regression is to help us distinguish between anomalous features of the data and regular ones. Regular features are supposed to represent some underlying causal pattern. Anomalous features represent random noise that is not a part of the underlying pattern. But how do you decide what is an anomaly and what is a pattern? The modeling assumptions are what makes those decisions.</span>
+<span id="cb5-546"><a href="#cb5-546" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-547"><a href="#cb5-547" aria-hidden="true" tabindex="-1"></a>Now here's the question, are the data points before 2005 an anomaly or part of our pattern? The multi-level model and the unpooled model make different decisions on this question. The unpooled model tries to accommodate them. The multi-level model basically ignores them. The reason the multi-level model ignores them is because it can see all the other topics as well and draw information from them. One thing it learns from studying the other models is that it is very rare for a topic to have a high initial intercept. So when it approaches this topic, it is skeptical of high intercept parameters. It confidently starts low and then sets the slope parameter wherever it needs to get a good match on the remaining data.</span>
+<span id="cb5-548"><a href="#cb5-548" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-549"><a href="#cb5-549" aria-hidden="true" tabindex="-1"></a>The unpooled model has less information for starting points so it sets it's slope parameter higher and then picks a negative slope to try to accommodate the later years.</span>
+<span id="cb5-550"><a href="#cb5-550" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-551"><a href="#cb5-551" aria-hidden="true" tabindex="-1"></a>Why then should we prefer the multi-level model in the end? It probably fits each individual cluster a bit worse than the unpooled model. But it uses the total sum of the information more efficiently because pay attention to the population-subpopulation structure. So we should expect the multi-level model is picking out the underlying pattern with more accuracy. Once it gets the intercepts low across the board, it can latch onto more positive slopes, too. If the slope estimates turn more positive for each cluster, then the overall trend has a better estimate too.</span>
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

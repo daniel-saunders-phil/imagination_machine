@@ -3,8 +3,6 @@ project:
   output-dir: _site
   render:
     - "*.qmd"
-    - "!excluded/*.qmd"  # Files in the excluded directory won't be rendered
-    - "!draft-*.qmd"     # Files starting with draft- won't be rendered
 
 website:
   title: "Imagination Machine"

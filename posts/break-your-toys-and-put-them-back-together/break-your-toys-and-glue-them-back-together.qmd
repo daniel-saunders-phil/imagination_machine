@@ -2,6 +2,7 @@
 title: Break your toys and glue them back together
 author: Daniel Saunders
 date: 2023-09-13
+description: "More science, even less p-values."
 bibliography: dissertation_bibliography.bib
 execute:
   freeze: true

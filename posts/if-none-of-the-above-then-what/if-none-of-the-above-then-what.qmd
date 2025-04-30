@@ -3,6 +3,7 @@ title: If none of the above, then what?
 author: Daniel Saunders
 date: 2023-07-19
 bibliography: dissertation_bibliography.bib
+description: "(Finally) A positive vision for science after p-values."
 execute:
   freeze: true
   echo: false

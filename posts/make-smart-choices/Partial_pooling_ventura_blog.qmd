@@ -2,6 +2,7 @@
 title: Make Smart Choices, Use Multi-Level Models
 author: Daniel Saunders
 date: 2022-12-22
+description: "The truth is out there. Only the multi-level model can find it."
 execute:
   echo: false
   freeze: true

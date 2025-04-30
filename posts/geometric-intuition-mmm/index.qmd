@@ -1,8 +1,10 @@
 ---
 title: "Geometric intuition for media mix models"
+author: Daniel Saunders
 jupyter: python3
 date: 2025-04-21
 toc: true
+description: "Not just fancy linear regressions."
 execute:
   echo: false
 format:

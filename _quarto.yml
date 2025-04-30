@@ -9,7 +9,8 @@ website:
   site-url: https://daniel-saunders-phil.github.io/imagination_machine/
   navbar:
     right:
-      - about.qmd
+      - text: "About"
+        href: about.html
       - icon: github
         href: https://github.com/daniel-saunders-phil
   page-footer:

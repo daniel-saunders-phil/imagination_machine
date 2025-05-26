@@ -1,21 +1,34 @@
 ---
-title: "How to sample a mmm as fast as possible"
+title: "How to sample an mmm as fast as possible"
 author: Daniel Saunders
 jupyter: python3
-date: 
+# date: 
 toc: true
 description: "And learn about HMC's mass matrix along the way."
 execute:
   echo: false
 format:
   html:
-    code-fold: true
-image: 
+    code-fold: false
+image: image.png
 ---
+
+*So there are at. In a gorgeous Airbnb, that you have hidden behind a blurry virtual background of your actual office. You are embarrassed. You forgot to tell your boss you booked a vacation. They asked for preliminary results they can share with their boss tomorrow morning. You just needed 1000 usable samples of the posterior of this MMM. But you don't have them. Hamiltonian Monte Carlo glided through the parameter space like a snail on a hot sidewalk. The progress bar told you 10 minutes. Then 10 hours. You ended up waiting an hour and half for these samples. When your results came back, the effective sample size diagnostic said you only have 80 good samples. You don't know what to tell you boss. You don't know what to tell your Stakeholders. You asked for 1000 samples! Your palms are sweaty. You crank the number of draws up to 10,000, slam `ctrl+enter`, and pray the inference doesn't cook your processor overnight.*
+
+The promise of probabilistic programming systems is that modelers can focus on the model and ignore the messy details of inference. This puts modelers in an awkward spot when the sampler underperforms. You have been told to pretty much always use the default settings of the sampler and have developed an learning about the details of how Hamiltonian Monte Carlo (HMC) actually works. You know the folk theorem of statistical computing, "the problem isn't the sampler, the problem is your model", blah blah blah. But you cannot change the model. The Stakeholders asked for an MMM and an MMM shall be delivered.
+
+I think it's actually pretty common the MMMs need non-default settings for inference. The challenges with sampling them do not arise from the usual places you can make tweaks:
+choices of prior families, parameterizations, that sort of stuff. This is exactly the edge case where the modeler does need to know the details of how inference works and use non-default settings. Unfortunately, if you follow the folk theorem too stringently, you'll waste hours trying to "fix" the model.
+
+Our plan is to figure out where those 920 missing samples went. I'll show you that the default inference settings struggle with the posterior geometry of MMMs (even in really simple models with good data). MMMs naturally have posterior correlations between their parameters. Strong correlations are difficult to sample from. That will lead us to a conversation about how to optimize HMC for MMMs and some nice intuitions for the behaviour of different mass matrix adaption schemes.
 
 # Dude, where's my samples?
 
+You have a healthy quantity and distribution of data for a single channel. You'll model the behaviour of the channel with a Michaelis-Menten function. 
+Here is what the data looks like and the corresponding likelihood surface over the two primary parameters. A blue dot marks the true location of the parameters.
+
 ```{python}
+# | fig-cap: "Take note of the diagonal directions in the likelihood surface. The correlations in the likelihood surface will manifest as correlations in the posterior."
 import numpy as np
 import pymc as pm
 import matplotlib.pyplot as plt
@@ -24,16 +37,16 @@ from scipy import stats
 import arviz as az
 
 def saturation(x,b,c):
-    return b * ((1 - np.exp(-c*x)) / (1 + np.exp(-c*x)))
+    return (b * x) / (c + x)
 
-f, ax = plt.subplots(1,2,figsize=(12,4))
+f, ax = plt.subplots(1,2,figsize=(7,4),tight_layout=True)
 
 x = np.linspace(0,2,50)
 
 b = 0.7
-c = 3
+c = 0.5
 
-np.random.seed(42)
+seed = np.random.seed(42)
 
 mu = saturation(x=x,b=b,c=c)
 y = np.random.normal(loc=mu,scale=0.05)
@@ -43,7 +56,7 @@ ax[0].set_xlabel("Marketing spend")
 ax[0].set_ylabel("Sales")
 
 bs = np.linspace(0,1,100)
-cs = np.linspace(0,4,100)
+cs = np.linspace(0.01,2,100)
 
 B, C = np.meshgrid(bs,cs)
 
@@ -56,12 +69,17 @@ likelihood_surface = stats.norm(loc=mu,scale=0.05).logpdf(ys).sum(axis=0)
 
 ax[1].contour(B,C,likelihood_surface,levels=40)
 ax[1].plot(b,c,'o')
-ax[1].annotate("true parameter value", (b,c), xytext=(10,10), textcoords='offset points', fontsize=8)
+ax[1].annotate("true parameter value", (b,c), xytext=(-60,10), textcoords='offset points', fontsize=8)
 ax[1].set_xlabel("b (saturation point)")
-ax[1].set_ylabel("lam (efficiency)")
+ax[1].set_ylabel("lam (inverse efficiency)")
 plt.colorbar(mappable=ax[1].collections[0], ax=ax[1], label='Log Likelihood');
-f.suptitle("Likelihood surface for logistic saturation function");
+f.suptitle("Likelihood surface for Michealis-Menten saturation function");
 ```
+
+Here's a simple Bayesian model to estimate those parameters. I'm putting uniform priors over our main parameters to only exaggerate the problem. 
+Today, inference will be driven entirely by the shape of the likelihood surface[^non_uniform].
+
+[^non_uniform]: A cool and non-obvious reason to use non-uniform priors is precisely because it mitigates the problem I'm exploring in this post. The correlation in the posterior is entirely driven by the correlation in the likelihood surface. The priors on these parameters are independent so including at least some curvature partially de-correlates the posterior.
 
 ```{python}
 #| echo: true
@@ -75,13 +93,16 @@ with pm.Model() as m0:
 compiled_model = nutpie.compile_pymc_model(m0)
 ```
 
+If you ask an HMC algorithm for 10,000 draws from the posterior, the effective sample size diagnostic tells you only about 20% of them are any good.
 ```{python}
 trace_diagonal = nutpie.sample(
     compiled_model,
+    seed=seed,
     chains=1,
+    tune=1000,
     draws=10_000,
     low_rank_modified_mass_matrix=False,
-    progress)
+    progress_bar=False)
 
 ess_table = az.ess(trace_diagonal)[["efficiency","saturation_point"]]
 print("\nEffective Sample Size (ESS) Statistics:")
@@ -90,8 +111,85 @@ print(f"Efficiency ESS:        {ess_table['efficiency']:,.0f} / 10,000")
 print(f"Saturation Point ESS:  {ess_table['saturation_point']:,.0f} / 10,000")
 ```
 
+Effective sample size depends on the amount of auto-correlation between samples. In the ideal Markov Chain Monte Carlo, the location of the first sample has no impact on the probable locations for the second parameter. In practice, MCMC algorithms tend to have easier time sampling neighboring locations over distant ones. MCMC tuning aims to minimize that tendency. ESS, then, is what it says on the label - how many samples do you have, effectively, after discounting your samples by the amount of autocorrelation? If you wouldn't trust a survey with 30 respondents, then you shouldn't trust a chain with 30 effective samples.
+
+ESS is not really a problem about getting a biased sample. Unlike with the survey, you can just run the chain longer. If you run it long enough, the auto-correlation will wash out. But it is a problem for speed. You should think about posterior sampling speed in terms of "what is the minimal amount of time I have to run the algorithm to get the desired number of samples"? If you need 1000 effective samples and that requires taking 5000 draws, then there is major room for improvement in runtime. One easy way to speed up an MCMC algorithm is to just take fewer draws but ensure every draw counts.
+
 # What's a mass matrix?
 
-{{< video hmc_on_differing_variance_mvnormal.gif >}}
+You can quickly get an intuition for the connection between the ESS and correlated posteriors by looking at a slightly different problem. Suppose that you are sampling from two normal distributions but they have different scales (one distribution has scale = 1 and the other has scale = 5). How big should the step size of the HMC sampler be? It is a tricky question because of each dimension would prefer a different step size. In the horizontal direction, you want small steps. You need to be able to track the quickly changing curvature from east to west. In the vertical direction, you want big steps. You have to cross a large distance to get from north to south.
+
+![The first 15 draws on an HMC run on a two-dimensional normal distribution where each dimension has a different scale. Notice how the trajectories ping-pong back and forth from east to west but don't explore the north or south poles. For every gif here, set the step size to 0.1 and ran it for 9 steps.](hmc_on_differing_variance_mvnormal.gif) 
+
+Unfortunately, HMC has only a single step size parameter. Absent intervention, tuning will push it downward to accommodate the smaller dimensions. That's a problem for two reasons:
+
+1. Auto-correlation. If you cannot take big steps then you cannot de-correlate the samples! Your current location will probably influence your next location.
+2. Gradient evaluations. When the step size is small, you have to take more steps to cover the same distance. More steps means more gradient evaluations and those are the major computational expense of running HMC.
+
+A well-tune HMC should do exactly the opposite - a few big steps per draw.
+
+There is a trick to solve this problem. The mass matrix adaption. HMC takes a draw from a multivariate normal distribution at the beginning of a new trajectory. This draw tells us the starting momentum vector. The idea of the mass matrix adaption is that HMC should typically draw larger momenta in the north-south direction than it does in the east-west direction. So we pass (or estimate during tuning) a covariance matrix to that multivariate normal. In the basic case, the covariance matrix just has diagonal entries and they represent the scale of the parameter scale in that direction. In other words, we can just use this mass matrix to generate the momentums:
+
+$$
+\begin{bmatrix}
+5 & 0 \\
+0 & 1
+\end{bmatrix}
+$$
+
+![The first 15 draws except now there is a mass matrix adapted to the differing scales. Notice how easily the trajectories move across the vertical.](hmc_on_differing_variance_mvnormal_mass_matrix.gif) 
+
+The mass matrix solves answers the initial riddle about the best step size. Each step covers more vertical distance than it does horizontal distance. HMC can return to running with a small number of big steps. Auto-correlation disappears.
+
+We can generalize mass matrix strategy to handle posterior correlation. Suppose my distribution was a multivariate normal with this covariance matrix:
+
+$$
+\begin{bmatrix}
+1 & 0.9 \\
+0.9 & 1
+\end{bmatrix}
+$$
+
+Naive HMC never leaves the upper right quadrant. These samples will be autocorrelated. This is precisely the reason ESS is so bad on the MMM in the section above.
+
+![HMC on a correlated distribution with only a diagonal mass matrix adaption.](hmc_on_correlation_mvnormal.gif)
+
+By default, in most probabilistic programming libraries[^examples] the mass matrix adaption only tries to adjust for scale differences, not for covariances. In other words, it will adjust the diagonal entries the mass matrix and leaves the off-diagonal as zeros. But if you change the settings, you can get a *dense* mass matrix adjustment. It samples this distribution beautifully.
+
+[^examples]: At least Stan, Nutpie, PyMC, and Numpyro have this default.
+
+![A correlated distribution with a dense mass matrix adaption.](hmc_on_correlated_mvnormal_dense_mass_matrix.gif)
+
+> **This is all about HMC. What about variational inference?**
+>
+> Look, HMC is the beautiful and variational inference is the damned. But if you must know, variational inference has an analog to the diagonal vs dense mass matrix distinction. The mean-field approximation is like a diagonal mass matrix while the full-rank approximation is like a dense mass matrix. tldr: MMMs must use the full-rank approximation.
 
 # Dude, here's your samples
+
+Here's the story so far: MMMs have a correlated posterior by default. HMC doesn't adapt for that by default. So we should expect sampling to be a bit rough. But if we turn on a dense adaption, we now get to keep every sample.
+
+```{python}
+trace_low_rank = nutpie.sample(
+    compiled_model,
+    seed=seed,
+    chains=1,
+    draws=10_000,
+    low_rank_modified_mass_matrix=True,
+    mass_matrix_eigval_cutoff=1.0, # fully dense. We cut off no eigenvalues.
+    progress_bar=False,
+)
+
+ess_table = az.ess(trace_low_rank)[["efficiency","saturation_point"]]
+print("\nEffective Sample Size (ESS) Statistics:")
+print("=====================================")
+print(f"Efficiency ESS:        {ess_table['efficiency']:,.0f} / 10,000")
+print(f"Saturation Point ESS:  {ess_table['saturation_point']:,.0f} / 10,000")
+```
+Comically, it tells us we have more effective samples than we asked for. It arises because our draws our anti-correlated and, [I'm told](https://mc-stan.org/docs/reference-manual/analysis.html#definition-of-effective-sample-size), that is not a problem.
+
+The speed-up is even better. In the original MMM example, it took about 15 gradient evaluations per draw (or 15 steps). In this example, we've double our step size and are now taking 3 steps per draw.
+
+# A note about scaling
+
+- GPUs and a big mass matrix
+- Correlated marketing channels (multi-channel ad campaigns are [now recommended strategy](https://www.fluency.inc/blog/four-actionable-ways-to-operationalize-your-multichannel-strategy))

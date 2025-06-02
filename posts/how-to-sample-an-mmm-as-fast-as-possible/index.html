@@ -756,13 +756,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb4-157"><a href="#cb4-157" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-158"><a href="#cb4-158" aria-hidden="true" tabindex="-1"></a>Naive HMC never leaves the upper right quadrant. These samples will be autocorrelated. This is precisely the reason ESS is so bad on the MMM in the section above.</span>
 <span id="cb4-159"><a href="#cb4-159" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-160"><a href="#cb4-160" aria-hidden="true" tabindex="-1"></a><span class="al">![HMC on a correlated distribution with only a diagonal mass matrix adaption.](hmc_on_correlation_mvnormal.gif)</span></span>
+<span id="cb4-160"><a href="#cb4-160" aria-hidden="true" tabindex="-1"></a><span class="al">![HMC on a correlated distribution with only a diagonal mass matrix adaption. Notice that the trajectories tend to spiral around in tight bundles and stay in the upper right quadrant.](hmc_on_correlation_mvnormal.gif)</span></span>
 <span id="cb4-161"><a href="#cb4-161" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-162"><a href="#cb4-162" aria-hidden="true" tabindex="-1"></a>By default, in most probabilistic programming libraries<span class="ot">[^examples]</span>, the mass matrix adaptation only tries to adjust for scale differences, not for covariances. In other words, it will adjust the diagonal entries of the mass matrix and leave the off-diagonal as zeros. But if you change the settings, you can get a *dense* mass matrix adjustment where the mass matrix includes off-diagonal entries to capture correlation. It samples this distribution beautifully.</span>
 <span id="cb4-163"><a href="#cb4-163" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-164"><a href="#cb4-164" aria-hidden="true" tabindex="-1"></a><span class="ot">[^examples]: </span>At least Stan, Nutpie, PyMC, and Numpyro have this default.</span>
 <span id="cb4-165"><a href="#cb4-165" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-166"><a href="#cb4-166" aria-hidden="true" tabindex="-1"></a><span class="al">![A correlated distribution with a dense mass matrix adaption.](hmc_on_correlated_mvnormal_dense_mass_matrix.gif)</span></span>
+<span id="cb4-166"><a href="#cb4-166" aria-hidden="true" tabindex="-1"></a><span class="al">![A correlated distribution with a dense mass matrix adaption. Notice that the trajectories move easily across the diagonal. Notice also that the initial trajectory also tends to have diagonal-directed momentum so it tends to avoid bouncing off the tails of the distribution.](hmc_on_correlated_mvnormal_dense_mass_matrix.gif)</span></span>
 <span id="cb4-167"><a href="#cb4-167" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-168"><a href="#cb4-168" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; **This is all about HMC. What about variational inference?**</span></span>
 <span id="cb4-169"><a href="#cb4-169" aria-hidden="true" tabindex="-1"></a><span class="at">&gt;</span></span>

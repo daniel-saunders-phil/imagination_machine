@@ -22,7 +22,6 @@ Ideas for forthcoming blog posts:
 - - Saturation priors that reduce to linear regressions in the absence of information
 - - Adstock that reduces to linear regression in the absence of information
 - Marginal effects for interpreting co-efficients
-- Centered / non-centered reparameterization tricks for positively constrained parameters.
 - When exchangeability fails
 - Centered / non-centered reparameterization tricks for 0-1 constrained parameters.
 - Partially centered and non-centered parameterizations

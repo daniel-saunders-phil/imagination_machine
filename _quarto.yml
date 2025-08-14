@@ -3,6 +3,8 @@ project:
   output-dir: _site
   render:
     - "*.qmd"
+    - "!drafts/"
+    - "posts/**/*.qmd"
 
 website:
   title: "Imagination Machine"

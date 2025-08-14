@@ -1,6 +1,16 @@
 ---
-title: The trouble with positive-constrained hierarchical parameters
+title: "A positive constrained non-centered prior that sparks joy"
+author: Daniel Saunders
 jupyter: python3
+date: 2025-08-14
+toc: true
+description: "Unsurprisingly, it makes MMMs faster and more stable."
+execute:
+  echo: false
+format:
+  html:
+    code-fold: false
+# image: 
 ---
 
 ```{python}
@@ -10,7 +20,12 @@ import matplotlib.pyplot as plt
 import pymc as pm
 import arviz as az
 import pandas as pd
+import nutpie
 from pymc_extras.prior import Prior
+
+import warnings
+warnings.filterwarnings('ignore')
+
 ```
 
 
@@ -18,17 +33,19 @@ from pymc_extras.prior import Prior
 ## 1. They can funnel just like hierarchical normals
 
 ```{python}
+#| echo: true
 with pm.Model() as m0:
     sigma = pm.Gamma('sigma',mu=1.0,sigma=1.0)
     phi = pm.LogNormal('phi',mu=1.0,sigma=sigma)
     
-    t0 = pm.sample()
+compiled_model = nutpie.compile_pymc_model(m0)
+t0 = nutpie.sample(compiled_model,chains=4,tune=1000,draws=1000,progress_bar=False);
 ```
 
 ```{python}
 az.plot_pair(t0,divergences=True,var_names=["phi","sigma"])
 plt.xlim(-1,10)
-plt.yscale("log")
+plt.yscale("log");
 ```
 
 ## 2. Parameterizing in log space makes it hard to control the mean and variance of your distribution
@@ -36,6 +53,7 @@ plt.yscale("log")
 One strategy is to just work in log space. There, you can build a normal model that is unconstrained. This gives you access to familiar reparameterization techniques like non-centering. Then you exponential transform everything to enforce the positivity constraint.
 
 ```{python}
+#| echo: true
 mu = 1
 
 with pm.Model() as m1:
@@ -48,13 +66,14 @@ with pm.Model() as m1:
     # make it positive
     phi = pm.Deterministic("phi",pm.math.exp(log_phi))
     
-    t1 = pm.sample()
+compiled_model = nutpie.compile_pymc_model(m1)
+t1 = nutpie.sample(compiled_model,chains=4,tune=1000,draws=1000,progress_bar=False)
 ```
 
 ```{python}
 az.plot_pair(t1,divergences=True,var_names=["phi","sigma"])
 plt.xlim(-1,10)
-plt.yscale("log")
+plt.yscale("log");
 ```
 
 The problem is that we quickly lose control over the mean and variance. The exponential transform introduces a very long tail behaviour which blows the distribution up. Check out that mean and standard deviation:
@@ -80,6 +99,7 @@ $$\sigma^2 = \ln(1 + \frac{\sigma_{X}^2}{\mu_{X}^2})$$
 If we put these formulae inside a pymc model, we can make the appropriate correction for every combination of hyperparameters. Here's a class, in the style of the [Prior class](https://www.pymc.io/projects/extras/en/stable/generated/pymc_extras.prior.Prior.html), that implements this approach.
 
 ```{python}
+#| echo: true
 from pytensor.tensor import TensorVariable
 from pymc_extras.prior import create_dim_handler
 
@@ -103,14 +123,27 @@ class LogNormalExp:
             for param, value in self.parameters.items()
         }
         # transformation trick to constrain the mu and sigma
-        mu_log = pt.log(parameters['mu']**2 / pt.sqrt(parameters['mu']**2 + parameters['sigma']**2))
-        sigma_log = pt.sqrt(pt.log(1 + (parameters['sigma']**2 / parameters['mu']**2)))
+        mu_log = pt.log(
+            parameters['mu']**2 / pt.sqrt(parameters['mu']**2 + parameters['sigma']**2)
+        )
+        sigma_log = pt.sqrt(
+            pt.log(1 + (parameters['sigma']**2 / parameters['mu']**2))
+        )
 
         if self.centered:
-            log_phi = pm.Normal(name+ "_log", mu=mu_log, sigma=sigma_log, dims=self.dims)
+            log_phi = pm.Normal(
+                name+ "_log", 
+                mu=mu_log, 
+                sigma=sigma_log, 
+                dims=self.dims
+            )
 
         else:
-            log_phi_z = pm.Normal(name + "_log" + "_offset", mu=0, sigma=1, dims=self.dims) 
+            log_phi_z = pm.Normal(
+                name + "_log" + "_offset", 
+                mu=0, 
+                sigma=1, 
+                dims=self.dims) 
             log_phi = mu_log + log_phi_z * sigma_log
 
         phi = pm.math.exp(log_phi)
@@ -126,6 +159,7 @@ LogNormalExp(mu=1, sigma=1);
 I just want to explore one more approach that doesn't work because it makes it vivid just how effective this approach is. You might be tempted to take the desired mean and standard, push them through the formula, and then build your hyperparameters around the desired values. Suppose you want a hierarchical model where group-level parameters have a mean of 1.5 and a standard deviation of 0.5. One option is:
 
 ```{python}
+#| echo: true
 desired_mean = 1.5
 desired_std = 0.5
 
@@ -136,13 +170,14 @@ mu_log, sigma_log
 ```
 
 ```{python}
+#| echo: true
 coords ={
-    "groups": np.arange(5)
+    "groups": np.arange(4)
 }
 
 with pm.Model(coords=coords) as model_standard:
-    mu = pm.Gamma("mu", mu=mu_log, sigma=0.25) # i'm centering around 0.35ish with a little bit of wiggle room
-    sigma = pm.Gamma("sigma", mu=sigma_log, sigma=0.25) # same here for standard deviation
+    mu = pm.Gamma("mu", mu=mu_log, sigma=0.25)
+    sigma = pm.Gamma("sigma", mu=sigma_log, sigma=0.25)
     
     log_phi = pm.Normal("log_phi", mu=mu, sigma=sigma, dims="groups")
     phi = pm.Deterministic("phi", pt.exp(log_phi))
@@ -151,6 +186,7 @@ with pm.Model(coords=coords) as model_standard:
 
 az.plot_density(
     prior.prior,
+    grid=(2,2),
     var_names=["phi"],
     shade=0.8
 )
@@ -169,8 +205,9 @@ az.summary(
 By contrast, if we use the internal transformation, we apply the same transform to every value of the hyper-parameters, expected or not. You'll notice that the standard deviation and mean adhere very closely to our desired values.
 
 ```{python}
+#| echo: true
 coords ={
-    "groups": np.arange(5)
+    "groups": np.arange(4)
 }
 
 with pm.Model(coords=coords) as model_special:
@@ -182,6 +219,7 @@ with pm.Model(coords=coords) as model_special:
 
 az.plot_density(
     prior.prior,
+    grid=(2,2),
     var_names=["phi"],
     shade=0.8
 );
@@ -207,20 +245,21 @@ The example looks pretty clean because I worked really hard on it[^1]. But it wa
 Let's redo that model and you can see how smooth this prior can be. The multi-modality issue doesn't go away entirely (It's just a part of the parameter space in MMMs after all :() but you start out on better footing. Using the default target accept leaves you with 2 divergences and you don't have to push as high before they disappear entirely, like I show here.
 
 ```{python}
-data_df = pd.read_csv("mmm_multidimensional_example.csv", parse_dates=["date"])
-data_df.head()
+data_df = pd.read_csv("mmm_multidimensional_example.csv", parse_dates=["date"]);
 ```
 
 ```{python}
+#| echo: true
 beta_prior = LogNormalExp(
     mu=Prior("Gamma", mu=0.25, sigma=0.10, dims=("channel")),
     sigma=Prior("Exponential", scale=0.10, dims=("channel")),
     dims=("channel", "geo"),
     centered=False,
-)
+);
 ```
 
 ```{python}
+#| echo: true
 from pymc_marketing.mmm import GeometricAdstock, LogisticSaturation
 from pymc_marketing.mmm.multidimensional import MMM
 
@@ -272,10 +311,11 @@ mmm = MMM(
     saturation=saturation,
     yearly_seasonality=2,
     model_config=model_config,
-)
+);
 ```
 
 ```{python}
+#| echo: true
 x_train = data_df.drop(columns=["y"])
 y_train = data_df["y"]
 
@@ -289,41 +329,3 @@ try:
 except:
     print("You still need to finish the class")
 ```
-
-```{python}
-az.summary(
-    mmm.idata,
-    var_names=[
-        "adstock_alpha",
-        "gamma_control",
-        "gamma_fourier",
-        "intercept_contribution",
-        "saturation_beta",
-        "saturation_beta_mu",
-        "saturation_beta_sigma",
-        "saturation_lam",
-        "y_sigma",
-    ],
-)
-```
-
-```{python}
-_ = az.plot_trace(
-    data=mmm.idata,
-    var_names=[
-        "adstock_alpha",
-        "gamma_control",
-        "gamma_fourier",
-        "intercept_contribution",
-        "saturation_beta",
-        "saturation_beta_mu",
-        "saturation_beta_sigma",
-        "saturation_lam",
-        "y_sigma",
-    ],
-    compact=True,
-    backend_kwargs={"figsize": (15, 15), "layout": "constrained"},
-)
-plt.gcf().suptitle("Model Trace", fontsize=16, fontweight="bold", y=1.03);
-```
-

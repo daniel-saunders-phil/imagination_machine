@@ -1,0 +1,15 @@
+---
+title: "Minor modes and major pain"
+author: Daniel Saunders
+jupyter: python3
+# date: 
+toc: true
+description: "Media mix models are multi-modal."
+execute:
+  echo: false
+format:
+  html:
+    code-fold: false
+# image: 
+---
+

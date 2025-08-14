@@ -2,7 +2,7 @@
 title: "How to sample an MMM as fast as possible"
 author: Daniel Saunders
 jupyter: python3
-# date: 
+date: 2025-05-31
 toc: true
 description: "And learn about HMC's mass matrix along the way."
 execute:
@@ -151,13 +151,13 @@ $$
 
 Naive HMC never leaves the upper right quadrant. These samples will be autocorrelated. This is precisely the reason ESS is so bad on the MMM in the section above.
 
-![HMC on a correlated distribution with only a diagonal mass matrix adaption.](hmc_on_correlation_mvnormal.gif)
+![HMC on a correlated distribution with only a diagonal mass matrix adaption. Notice that the trajectories tend to spiral around in tight bundles and stay in the upper right quadrant.](hmc_on_correlation_mvnormal.gif)
 
 By default, in most probabilistic programming libraries[^examples], the mass matrix adaptation only tries to adjust for scale differences, not for covariances. In other words, it will adjust the diagonal entries of the mass matrix and leave the off-diagonal as zeros. But if you change the settings, you can get a *dense* mass matrix adjustment where the mass matrix includes off-diagonal entries to capture correlation. It samples this distribution beautifully.
 
 [^examples]: At least Stan, Nutpie, PyMC, and Numpyro have this default.
 
-![A correlated distribution with a dense mass matrix adaption.](hmc_on_correlated_mvnormal_dense_mass_matrix.gif)
+![A correlated distribution with a dense mass matrix adaption. Notice that the trajectories move easily across the diagonal. Notice also that the initial trajectory also tends to have diagonal-directed momentum so it tends to avoid bouncing off the tails of the distribution.](hmc_on_correlated_mvnormal_dense_mass_matrix.gif)
 
 > **This is all about HMC. What about variational inference?**
 >

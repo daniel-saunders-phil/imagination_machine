@@ -109,21 +109,21 @@
     "href": "posts/a-positive-constrained-non-centered-prior-that-sparks-joy/index.html",
     "title": "A positive constrained non-centered prior that sparks joy",
     "section": "",
-    "text": "with pm.Model() as m0:\n    sigma = pm.Gamma('sigma',mu=1.0,sigma=1.0)\n    phi = pm.LogNormal('phi',mu=1.0,sigma=sigma)\n    \ncompiled_model = nutpie.compile_pymc_model(m0)\nt0 = nutpie.sample(compiled_model,chains=4,tune=1000,draws=1000,progress_bar=False);"
+    "text": "I’ve always found it frustrating to work with positive constrained parameters. There are two main problems:"
   },
   {
     "objectID": "posts/a-positive-constrained-non-centered-prior-that-sparks-joy/index.html#they-can-funnel-just-like-hierarchical-normals",
     "href": "posts/a-positive-constrained-non-centered-prior-that-sparks-joy/index.html#they-can-funnel-just-like-hierarchical-normals",
     "title": "A positive constrained non-centered prior that sparks joy",
-    "section": "",
-    "text": "with pm.Model() as m0:\n    sigma = pm.Gamma('sigma',mu=1.0,sigma=1.0)\n    phi = pm.LogNormal('phi',mu=1.0,sigma=sigma)\n    \ncompiled_model = nutpie.compile_pymc_model(m0)\nt0 = nutpie.sample(compiled_model,chains=4,tune=1000,draws=1000,progress_bar=False);"
+    "section": "1. They can funnel just like hierarchical normals",
+    "text": "1. They can funnel just like hierarchical normals\n\nwith pm.Model() as m0:\n    sigma = pm.Gamma('sigma',mu=1.0,sigma=1.0)\n    phi = pm.LogNormal('phi',mu=1.0,sigma=sigma)\n    \ncompiled_model = nutpie.compile_pymc_model(m0)\nt0 = nutpie.sample(compiled_model,chains=4,tune=1000,draws=1000,progress_bar=False);"
   },
   {
     "objectID": "posts/a-positive-constrained-non-centered-prior-that-sparks-joy/index.html#parameterizing-in-log-space-makes-it-hard-to-control-the-mean-and-variance-of-your-distribution",
     "href": "posts/a-positive-constrained-non-centered-prior-that-sparks-joy/index.html#parameterizing-in-log-space-makes-it-hard-to-control-the-mean-and-variance-of-your-distribution",
     "title": "A positive constrained non-centered prior that sparks joy",
     "section": "2. Parameterizing in log space makes it hard to control the mean and variance of your distribution",
-    "text": "2. Parameterizing in log space makes it hard to control the mean and variance of your distribution\nOne strategy is to just work in log space. There, you can build a normal model that is unconstrained. This gives you access to familiar reparameterization techniques like non-centering. Then you exponential transform everything to enforce the positivity constraint.\n\nmu = 1\n\nwith pm.Model() as m1:\n    sigma = pm.Gamma('sigma',mu=1,sigma=1)\n\n    # non-centered trick\n    log_phi_z = pm.Normal(\"phi_offset\",mu=0,sigma=1) \n    log_phi = mu + log_phi_z * sigma\n\n    # make it positive\n    phi = pm.Deterministic(\"phi\",pm.math.exp(log_phi))\n    \ncompiled_model = nutpie.compile_pymc_model(m1)\nt1 = nutpie.sample(compiled_model,chains=4,tune=1000,draws=1000,progress_bar=False)\n\n\n\n\n\n\nThe problem is that we quickly lose control over the mean and variance. The exponential transform introduces a very long tail behaviour which blows the distribution up. Check out that mean and standard deviation:\n\n\n\n\n\n\n\n\n\nmean\nsd\nhdi_3%\nhdi_97%\nmcse_mean\nmcse_sd\ness_bulk\ness_tail\nr_hat\n\n\n\n\nphi\n1400.664\n75282.985\n0.0\n17.085\n1188.202\n37115.777\n2589.0\n2713.0\n1.0"
+    "text": "2. Parameterizing in log space makes it hard to control the mean and variance of your distribution\nOne strategy is to just work in log space. There, you can build a normal model that is unconstrained. This gives you access to familiar reparameterization techniques like non-centering. Then you exponential transform everything to enforce the positivity constraint.\n\nmu = 1\n\nwith pm.Model() as m1:\n    sigma = pm.Gamma('sigma',mu=1,sigma=1)\n\n    # non-centered trick\n    log_phi_z = pm.Normal(\"phi_offset\",mu=0,sigma=1) \n    log_phi = mu + log_phi_z * sigma\n\n    # make it positive\n    phi = pm.Deterministic(\"phi\",pm.math.exp(log_phi))\n    \ncompiled_model = nutpie.compile_pymc_model(m1)\nt1 = nutpie.sample(compiled_model,chains=4,tune=1000,draws=1000,progress_bar=False)\n\n\n\n\n\n\nThe problem is that we quickly lose control over the mean and variance. The exponential transform introduces a very long tail behaviour which blows the distribution up. Check out that mean and standard deviation:\n\n\n\n\n\n\n\n\n\nmean\nsd\nhdi_3%\nhdi_97%\nmcse_mean\nmcse_sd\ness_bulk\ness_tail\nr_hat\n\n\n\n\nphi\n262319.952\n1.657491e+07\n0.0\n20.916\n261546.607\n8266694.932\n2072.0\n2296.0\n1.0"
   },
   {
     "objectID": "posts/a-positive-constrained-non-centered-prior-that-sparks-joy/index.html#footnotes",

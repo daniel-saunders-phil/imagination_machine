@@ -1,10 +1,10 @@
 ---
-title: "A positive constrained non-centered prior that sparks joy"
+title: "A positive constrained hierarchical prior that sparks joy"
 author: Daniel Saunders
 jupyter: python3
 date: 2025-08-14
 toc: true
-description: "Unsurprisingly, it makes MMMs faster and more stable."
+description: "They make sampling an MMM so much more delightful."
 execute:
   echo: false
 format:
@@ -26,11 +26,16 @@ from pymc_extras.prior import Prior
 import warnings
 warnings.filterwarnings('ignore')
 
+seed = 1234
+rng = np.random.default_rng(seed)
+
 ```
 
-
+I've always found it frustrating to work with positive constrained parameters. Bayesian love to make hierarchical models out of everything. But with hierarchical positive-constrained priors, there are two main problems:
 
 ## 1. They can funnel just like hierarchical normals
+
+Here's a simple case. If you have a variance parameter inside some group-level parameter, the prior geometry will be a funnel. It is the same mechanism that generates the funnel shape in normal priors.
 
 ```{python}
 #| echo: true
@@ -39,7 +44,7 @@ with pm.Model() as m0:
     phi = pm.LogNormal('phi',mu=1.0,sigma=sigma)
     
 compiled_model = nutpie.compile_pymc_model(m0)
-t0 = nutpie.sample(compiled_model,chains=4,tune=1000,draws=1000,progress_bar=False);
+t0 = nutpie.sample(compiled_model,chains=4,tune=1000,draws=1000,progress_bar=False,seed=seed);
 ```
 
 ```{python}
@@ -50,7 +55,7 @@ plt.yscale("log");
 
 ## 2. Parameterizing in log space makes it hard to control the mean and variance of your distribution
 
-One strategy is to just work in log space. There, you can build a normal model that is unconstrained. This gives you access to familiar reparameterization techniques like non-centering. Then you exponential transform everything to enforce the positivity constraint.
+One strategy is to just work in log space. There, you can build a normal model that is unconstrained. This gives you access to familiar reparameterization techniques like non-centering. Then you exponential transform everything to enforce the positivity constraint. Divergences are virtually eliminated.
 
 ```{python}
 #| echo: true
@@ -67,7 +72,7 @@ with pm.Model() as m1:
     phi = pm.Deterministic("phi",pm.math.exp(log_phi))
     
 compiled_model = nutpie.compile_pymc_model(m1)
-t1 = nutpie.sample(compiled_model,chains=4,tune=1000,draws=1000,progress_bar=False)
+t1 = nutpie.sample(compiled_model,chains=4,tune=1000,draws=1000,progress_bar=False,seed=seed)
 ```
 
 ```{python}
@@ -87,16 +92,18 @@ az.summary(t1,var_names=["phi"])
 One can easily get lost trying to guess how to generate the desired distribution in the positive space. A tempting line of thinking is that you can just take the log of your desired mean and variance and then pass those to the normal.
 
 Taking the logs or any number of other heuristic approaches runs into two main problems:
+
 1. Applying exponentiation will entangle a distribution's mean and variance. If the mean gets larger, so does the variance. If the variance gets larger, so does the mean. So your distribution will have some huge values in its typical set. If you run away from those huge values by reducing the mean and variance, you'll get a distribution tightly bunched around 0. This will probably be too strongly informative to recover the values you are interested in. 
+
 2. Even if you can get the mean that you want, we aren't working with a single value here. We have a distribution of parameters. We'd also need to find a way to make sure our distribution is well-behaved for all parameters in the typical set of our hyperparameters. 
 
-The modeler who works on heuristics is not prepared to handle the mystical transformative powers of exponentiation. [Wikipedia](https://en.wikipedia.org/wiki/Log-normal_distribution#Definitions), however, operates on the wisdom of generations and offers a path through the mists. To generate a log-normal distribution with our desired mean ($\mu_{X}$) and variance ($\sigma_{X}^2$), we have these formulae:
+The modeler who operates on vibes is not prepared to handle the mystical transformative powers of exponentiation. [Wikipedia](https://en.wikipedia.org/wiki/Log-normal_distribution#Definitions), however, operates on the wisdom of generations and offers a path through the mists. To generate a log-normal distribution with our desired mean ($\mu_{X}$) and variance ($\sigma_{X}^2$), we have these formulae:
 
 $$\mu = \ln(\frac{\mu_{X}^2}{\sqrt{\mu_{X}^2 + \sigma_{X}^2}})$$
 
 $$\sigma^2 = \ln(1 + \frac{\sigma_{X}^2}{\mu_{X}^2})$$
 
-If we put these formulae inside a pymc model, we can make the appropriate correction for every combination of hyperparameters. Here's a class, in the style of the [Prior class](https://www.pymc.io/projects/extras/en/stable/generated/pymc_extras.prior.Prior.html), that implements this approach.
+If we put these formulae inside a pymc model, we can make the appropriate correction for every combination of hyperparameters. Then we can pass the corrected parameters to a standard non-centered normal distribution and exponentiate the result. It is the best of both worlds - control over the mean and variance while also getting to toggle between centered and non-centered. Here's a class, in the style of the [Prior class](https://www.pymc.io/projects/extras/en/stable/generated/pymc_extras.prior.Prior.html), that implements this approach.
 
 ```{python}
 #| echo: true
@@ -150,13 +157,45 @@ class LogNormalExp:
         phi = pm.Deterministic(name, phi, dims=self.dims)
         
         return phi
+    
+    def to_dict(self):
+        """
+        """
+        data = {
+            "dist": "LogNormalExp",
+        }
+        if self.parameters:
 
-LogNormalExp(mu=1, sigma=1);
+            def handle_value(value):
+                if isinstance(value, Prior):
+                    return value.to_dict()
+
+                if isinstance(value, pt.TensorVariable):
+                    value = value.eval()
+
+                if isinstance(value, np.ndarray):
+                    return value.tolist()
+
+                if hasattr(value, "to_dict"):
+                    return value.to_dict()
+
+                return value
+
+            data["kwargs"] = {
+                param: handle_value(value) for param, value in self.parameters.items()
+            }
+        if not self.centered:
+            data["centered"] = False
+
+        if self.dims:
+            data["dims"] = self.dims
+
+        return data
 ```
 
 # Benefits of the class over alternatives
 
-I just want to explore one more approach that doesn't work because it makes it vivid just how effective this approach is. You might be tempted to take the desired mean and standard, push them through the formula, and then build your hyperparameters around the desired values. Suppose you want a hierarchical model where group-level parameters have a mean of 1.5 and a standard deviation of 0.5. One option is:
+I just want to explore one more approach that doesn't work because it makes it vivid just how effective the class above really is. You might be tempted to take the desired mean and standard, push them through the formulae, and then build your hyperparameters around the desired values. Suppose you want a hierarchical model where group-level parameters have a mean of 1.5 and a standard deviation of 0.5. One option is:
 
 ```{python}
 #| echo: true
@@ -182,7 +221,7 @@ with pm.Model(coords=coords) as model_standard:
     log_phi = pm.Normal("log_phi", mu=mu, sigma=sigma, dims="groups")
     phi = pm.Deterministic("phi", pt.exp(log_phi))
 
-    prior = pm.sample_prior_predictive()
+    prior = pm.sample_prior_predictive(random_seed=seed)
 
 az.plot_density(
     prior.prior,
@@ -202,7 +241,7 @@ az.summary(
 )
 ```
 
-By contrast, if we use the internal transformation, we apply the same transform to every value of the hyper-parameters, expected or not. You'll notice that the standard deviation and mean adhere very closely to our desired values.
+By contrast, if we use the internal transformation, we apply the same transform to every value of the hyperparameters, expected or not. You'll notice that the standard deviation and mean adhere very closely to our desired values.
 
 ```{python}
 #| echo: true
@@ -215,7 +254,7 @@ with pm.Model(coords=coords) as model_special:
     sigma = pm.Gamma("sigma", mu=desired_std, sigma=0.25)
     phi = LogNormalExp(mu=mu, sigma=sigma, dims="groups").create_variable("phi")
 
-    prior = pm.sample_prior_predictive()
+    prior = pm.sample_prior_predictive(random_seed=seed)
 
 az.plot_density(
     prior.prior,
@@ -238,94 +277,104 @@ This prior really shines in MMMs. They have positive constrained parameters (eff
 
 In the current (or forthcoming, depending on when you are reading this), hierarchical model in [pymc-marketing examples](https://www.pymc-marketing.io/en/stable/notebooks/mmm/mmm_multidimensional_example.html), we use the naive exponentiated non-centered normal distribution to solve that problem. 
 
-The example looks pretty clean because I worked really hard on it[^1]. But it was quite difficult to fit. One problem with the long-tailedness of the naive approach is that it introduces a sort of multi-modal behaviour. If you have consistent marketing over time and you move beta up, the average sales over time goes up. But average sales over time is what the intercept is supposed to represent. So the intercept and beta can generate some nasty interactions. You don't have much control over them because your prior ensures you will explore some unusual beta values. When the sampler jumps into the beta heavens, the curvature of the parameter space can shift abruptly for all parameters, HMC's step size will not be tuned for this rough patch, and it will register as a divergence.
+The example looks pretty clean because I worked really hard on it[^1]. But it was quite difficult to fit. One problem with the long-tailedness of the naive approach is that it introduces a sort of multi-modal behaviour. If you have consistent marketing over time and you move beta up, the average sales over time goes up. But average sales over time is what the intercept is supposed to represent. So your model will be overparameterized with respect to the average sales over time. Sometimes you can solve this sort of problem by partially fixing each of those parameters. Maybe you know average sales should be 1000 and a media channel contributes, at most 200 daily sales. This sort of prior information can break the interaction between the two parameters. But it requires you to have a fair bit of control over the parameters. In the long-tailed case, you don't have much control over them because your prior ensures you will explore some unusual beta values. When the sampler jumps into the beta heavens, the curvature of the parameter space can shift abruptly for all parameters, HMC's step size will not be tuned for this rough patch, and it will register as a divergence.
 
 [^1]: Farmed random seeds to get synthetic data that was easy + cranked the `target_accept` way up, both practices I'm not proud of.
 
-Let's redo that model and you can see how smooth this prior can be. The multi-modality issue doesn't go away entirely (It's just a part of the parameter space in MMMs after all :() but you start out on better footing. Using the default target accept leaves you with 2 divergences and you don't have to push as high before they disappear entirely, like I show here.
+Let's redo that model and you can see how smooth this prior can be. Here's what sampling looks like with the new prior.
 
 ```{python}
+from pymc_marketing.mmm import GeometricAdstock, LogisticSaturation
+from pymc_marketing.mmm.multidimensional import MMM
+
 data_df = pd.read_csv("mmm_multidimensional_example.csv", parse_dates=["date"]);
+
+def build_and_fit(beta_prior):
+    saturation = LogisticSaturation(
+        priors={
+            "beta": beta_prior,
+            "lam": Prior(
+                "Gamma",
+                mu=0.5,
+                sigma=0.25,
+                dims=("channel"),
+            ),
+        }
+    )
+
+    adstock = GeometricAdstock(
+        priors={"alpha": Prior("Beta", alpha=2, beta=5, dims=("geo", "channel"))}, l_max=8
+    )
+
+    model_config = {
+        "intercept": Prior("Gamma", mu=0.5, sigma=0.25, dims="geo"),
+        "gamma_control": Prior("Normal", mu=0, sigma=0.5, dims="control"),
+        "gamma_fourier": Prior(
+            "Normal",
+            mu=0,
+            sigma=Prior("HalfNormal", sigma=0.2),
+            dims=("geo", "fourier_mode"),
+            centered=False,
+        ),
+        "likelihood": Prior(
+            "Normal",
+            sigma=Prior("HalfNormal", sigma=1.5),
+            dims=("date", "geo"),
+        ),
+    }
+
+    mmm = MMM(
+        date_column="date",
+        target_column="y",
+        channel_columns=["x1", "x2"],
+        control_columns=["event_1", "event_2"],
+        dims=("geo",),
+        scaling={
+            "channel": {"method": "max", "dims": ()},
+            "target": {"method": "max", "dims": ()},
+        },
+        adstock=adstock,
+        saturation=saturation,
+        yearly_seasonality=2,
+        model_config=model_config,
+    );
+
+    x_train = data_df.drop(columns=["y"])
+    y_train = data_df["y"]
+
+    mmm.build_model(
+        X=x_train,
+        y=y_train,
+    )
+
+    compiled_model = nutpie.compile_pymc_model(mmm.model,backend="jax")
+    trace = nutpie.sample(compiled_model,target_accept=0.925,tune=1000,seed=seed)
 ```
 
 ```{python}
 #| echo: true
-beta_prior = LogNormalExp(
+beta_prior_log_normal_exp = LogNormalExp(
     mu=Prior("Gamma", mu=0.25, sigma=0.10, dims=("channel")),
     sigma=Prior("Exponential", scale=0.10, dims=("channel")),
     dims=("channel", "geo"),
     centered=False,
-);
+)
+
+build_and_fit(beta_prior=beta_prior_log_normal_exp)
 ```
+
+Here's the old priors for comparison. They are clearly worse - more divergences, smaller step sizes, longer sampling times. The multi-modality doesn't go away entirely. It is just a part of the parameter space in MMMs after all. But you start out on better footing when using the new prior.
 
 ```{python}
 #| echo: true
-from pymc_marketing.mmm import GeometricAdstock, LogisticSaturation
-from pymc_marketing.mmm.multidimensional import MMM
-
-saturation = LogisticSaturation(
-    priors={
-        "beta": beta_prior,
-        "lam": Prior(
-            "Gamma",
-            mu=0.5,
-            sigma=0.25,
-            dims=("channel"),
-        ),
-    }
+beta_prior = Prior(
+    "Normal",
+    mu=Prior("Normal", mu=-1.5, sigma=0.5, dims=("channel")),
+    sigma=Prior("Exponential", scale=0.25, dims=("channel")),
+    dims=("channel", "geo"),
+    transform="exp",
+    centered=False,
 )
 
-adstock = GeometricAdstock(
-    priors={"alpha": Prior("Beta", alpha=2, beta=5, dims=("geo", "channel"))}, l_max=8
-)
-
-model_config = {
-    "intercept": Prior("Gamma", mu=0.5, sigma=0.25, dims="geo"),
-    "gamma_control": Prior("Normal", mu=0, sigma=0.5, dims="control"),
-    "gamma_fourier": Prior(
-        "Normal",
-        mu=0,
-        sigma=Prior("HalfNormal", sigma=0.2),
-        dims=("geo", "fourier_mode"),
-        centered=False,
-    ),
-    "likelihood": Prior(
-        "TruncatedNormal",
-        lower=0,
-        sigma=Prior("HalfNormal", sigma=1.5),
-        dims=("date", "geo"),
-    ),
-}
-
-mmm = MMM(
-    date_column="date",
-    target_column="y",
-    channel_columns=["x1", "x2"],
-    control_columns=["event_1", "event_2"],
-    dims=("geo",),
-    scaling={
-        "channel": {"method": "max", "dims": ()},
-        "target": {"method": "max", "dims": ()},
-    },
-    adstock=adstock,
-    saturation=saturation,
-    yearly_seasonality=2,
-    model_config=model_config,
-);
-```
-
-```{python}
-#| echo: true
-x_train = data_df.drop(columns=["y"])
-y_train = data_df["y"]
-
-try:
-    mmm.fit(
-        X=x_train,
-        y=y_train,
-        chains=4,
-        target_accept=0.95,
-    )
-except:
-    print("You still need to finish the class")
+build_and_fit(beta_prior=beta_prior)
 ```

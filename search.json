@@ -95,7 +95,7 @@
     "href": "index.html",
     "title": "Imagination Machine",
     "section": "",
-    "text": "A positive constrained non-centered prior that sparks joy\n\n\n\n\n\nUnsurprisingly, it makes MMMs faster and more stable.\n\n\n\n\n\n\nAug 14, 2025\n\n\nDaniel Saunders\n\n\n\n\n\n\n  \n\n\n\n\nHow to sample an MMM as fast as possible\n\n\n\n\n\nAnd learn about HMC’s mass matrix along the way.\n\n\n\n\n\n\nMay 31, 2025\n\n\nDaniel Saunders\n\n\n\n\n\n\n  \n\n\n\n\nGeometric intuition for media mix models\n\n\n\n\n\nNot just fancy linear regressions.\n\n\n\n\n\n\nApr 21, 2025\n\n\nDaniel Saunders\n\n\n\n\n\n\n  \n\n\n\n\nBreak your toys and glue them back together\n\n\n\n\n\nMore science, even less p-values.\n\n\n\n\n\n\nSep 13, 2023\n\n\nDaniel Saunders\n\n\n\n\n\n\n  \n\n\n\n\nIf none of the above, then what?\n\n\n\n\n\n(Finally) A positive vision for science after p-values.\n\n\n\n\n\n\nJul 19, 2023\n\n\nDaniel Saunders\n\n\n\n\n\n\n  \n\n\n\n\nMake Smart Choices, Use Multi-Level Models\n\n\n\n\n\nThe truth is out there. Only the multi-level model can find it.\n\n\n\n\n\n\nDec 22, 2022\n\n\nDaniel Saunders\n\n\n\n\n\n\nNo matching items"
+    "text": "A positive constrained hierarchical prior that sparks joy\n\n\n\n\n\nThey make sampling an MMM so much more delightful.\n\n\n\n\n\n\nAug 14, 2025\n\n\nDaniel Saunders\n\n\n\n\n\n\n  \n\n\n\n\nHow to sample an MMM as fast as possible\n\n\n\n\n\nAnd learn about HMC’s mass matrix along the way.\n\n\n\n\n\n\nMay 31, 2025\n\n\nDaniel Saunders\n\n\n\n\n\n\n  \n\n\n\n\nGeometric intuition for media mix models\n\n\n\n\n\nNot just fancy linear regressions.\n\n\n\n\n\n\nApr 21, 2025\n\n\nDaniel Saunders\n\n\n\n\n\n\n  \n\n\n\n\nBreak your toys and glue them back together\n\n\n\n\n\nMore science, even less p-values.\n\n\n\n\n\n\nSep 13, 2023\n\n\nDaniel Saunders\n\n\n\n\n\n\n  \n\n\n\n\nIf none of the above, then what?\n\n\n\n\n\n(Finally) A positive vision for science after p-values.\n\n\n\n\n\n\nJul 19, 2023\n\n\nDaniel Saunders\n\n\n\n\n\n\n  \n\n\n\n\nMake Smart Choices, Use Multi-Level Models\n\n\n\n\n\nThe truth is out there. Only the multi-level model can find it.\n\n\n\n\n\n\nDec 22, 2022\n\n\nDaniel Saunders\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "about.html",
@@ -107,28 +107,28 @@
   {
     "objectID": "posts/a-positive-constrained-non-centered-prior-that-sparks-joy/index.html",
     "href": "posts/a-positive-constrained-non-centered-prior-that-sparks-joy/index.html",
-    "title": "A positive constrained non-centered prior that sparks joy",
+    "title": "A positive constrained hierarchical prior that sparks joy",
     "section": "",
-    "text": "I’ve always found it frustrating to work with positive constrained parameters. There are two main problems:"
+    "text": "I’ve always found it frustrating to work with positive constrained parameters. Bayesian love to make hierarchical models out of everything. But with hierarchical positive-constrained priors, there are two main problems:"
   },
   {
     "objectID": "posts/a-positive-constrained-non-centered-prior-that-sparks-joy/index.html#they-can-funnel-just-like-hierarchical-normals",
     "href": "posts/a-positive-constrained-non-centered-prior-that-sparks-joy/index.html#they-can-funnel-just-like-hierarchical-normals",
-    "title": "A positive constrained non-centered prior that sparks joy",
+    "title": "A positive constrained hierarchical prior that sparks joy",
     "section": "1. They can funnel just like hierarchical normals",
-    "text": "1. They can funnel just like hierarchical normals\n\nwith pm.Model() as m0:\n    sigma = pm.Gamma('sigma',mu=1.0,sigma=1.0)\n    phi = pm.LogNormal('phi',mu=1.0,sigma=sigma)\n    \ncompiled_model = nutpie.compile_pymc_model(m0)\nt0 = nutpie.sample(compiled_model,chains=4,tune=1000,draws=1000,progress_bar=False);"
+    "text": "1. They can funnel just like hierarchical normals\nHere’s a simple case. If you have a variance parameter inside some group-level parameter, the prior geometry will be a funnel. It is the same mechanism that generates the funnel shape in normal priors.\n\nwith pm.Model() as m0:\n    sigma = pm.Gamma('sigma',mu=1.0,sigma=1.0)\n    phi = pm.LogNormal('phi',mu=1.0,sigma=sigma)\n    \ncompiled_model = nutpie.compile_pymc_model(m0)\nt0 = nutpie.sample(compiled_model,chains=4,tune=1000,draws=1000,progress_bar=False,seed=seed);"
   },
   {
     "objectID": "posts/a-positive-constrained-non-centered-prior-that-sparks-joy/index.html#parameterizing-in-log-space-makes-it-hard-to-control-the-mean-and-variance-of-your-distribution",
     "href": "posts/a-positive-constrained-non-centered-prior-that-sparks-joy/index.html#parameterizing-in-log-space-makes-it-hard-to-control-the-mean-and-variance-of-your-distribution",
-    "title": "A positive constrained non-centered prior that sparks joy",
+    "title": "A positive constrained hierarchical prior that sparks joy",
     "section": "2. Parameterizing in log space makes it hard to control the mean and variance of your distribution",
-    "text": "2. Parameterizing in log space makes it hard to control the mean and variance of your distribution\nOne strategy is to just work in log space. There, you can build a normal model that is unconstrained. This gives you access to familiar reparameterization techniques like non-centering. Then you exponential transform everything to enforce the positivity constraint.\n\nmu = 1\n\nwith pm.Model() as m1:\n    sigma = pm.Gamma('sigma',mu=1,sigma=1)\n\n    # non-centered trick\n    log_phi_z = pm.Normal(\"phi_offset\",mu=0,sigma=1) \n    log_phi = mu + log_phi_z * sigma\n\n    # make it positive\n    phi = pm.Deterministic(\"phi\",pm.math.exp(log_phi))\n    \ncompiled_model = nutpie.compile_pymc_model(m1)\nt1 = nutpie.sample(compiled_model,chains=4,tune=1000,draws=1000,progress_bar=False)\n\n\n\n\n\n\nThe problem is that we quickly lose control over the mean and variance. The exponential transform introduces a very long tail behaviour which blows the distribution up. Check out that mean and standard deviation:\n\n\n\n\n\n\n\n\n\nmean\nsd\nhdi_3%\nhdi_97%\nmcse_mean\nmcse_sd\ness_bulk\ness_tail\nr_hat\n\n\n\n\nphi\n262319.952\n1.657491e+07\n0.0\n20.916\n261546.607\n8266694.932\n2072.0\n2296.0\n1.0"
+    "text": "2. Parameterizing in log space makes it hard to control the mean and variance of your distribution\nOne strategy is to just work in log space. There, you can build a normal model that is unconstrained. This gives you access to familiar reparameterization techniques like non-centering. Then you exponential transform everything to enforce the positivity constraint. Divergences are virtually eliminated.\n\nmu = 1\n\nwith pm.Model() as m1:\n    sigma = pm.Gamma('sigma',mu=1,sigma=1)\n\n    # non-centered trick\n    log_phi_z = pm.Normal(\"phi_offset\",mu=0,sigma=1) \n    log_phi = mu + log_phi_z * sigma\n\n    # make it positive\n    phi = pm.Deterministic(\"phi\",pm.math.exp(log_phi))\n    \ncompiled_model = nutpie.compile_pymc_model(m1)\nt1 = nutpie.sample(compiled_model,chains=4,tune=1000,draws=1000,progress_bar=False,seed=seed)\n\n\n\n\n\n\nThe problem is that we quickly lose control over the mean and variance. The exponential transform introduces a very long tail behaviour which blows the distribution up. Check out that mean and standard deviation:\n\n\n\n\n\n\n\n\n\nmean\nsd\nhdi_3%\nhdi_97%\nmcse_mean\nmcse_sd\ness_bulk\ness_tail\nr_hat\n\n\n\n\nphi\n31.774\n502.444\n0.0\n15.74\n8.484\n136.71\n2718.0\n2625.0\n1.0"
   },
   {
     "objectID": "posts/a-positive-constrained-non-centered-prior-that-sparks-joy/index.html#footnotes",
     "href": "posts/a-positive-constrained-non-centered-prior-that-sparks-joy/index.html#footnotes",
-    "title": "A positive constrained non-centered prior that sparks joy",
+    "title": "A positive constrained hierarchical prior that sparks joy",
     "section": "Footnotes",
     "text": "Footnotes\n\n\nFarmed random seeds to get synthetic data that was easy + cranked the target_accept way up, both practices I’m not proud of.↩︎"
   },

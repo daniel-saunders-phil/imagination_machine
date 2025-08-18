@@ -98,7 +98,7 @@ plt.yscale("log");
 The problem is that we quickly lose control over the mean and variance. The exponential transform introduces a very long tail behaviour which blows the distribution up. Check out that mean and standard deviation:
 
 ```{python}
-az.summary(t1,var_names=["phi"],kinds="stats")
+az.summary(t1,var_names=["phi"],kind="stats")
 ```
 
 # The class
@@ -252,7 +252,7 @@ You'll notice that the means of these the prior samples are slightly above the d
 az.summary(
     prior.prior,
     var_names=["phi"],
-    kinds="stats",
+    kind="stats",
 )
 ```
 
@@ -283,7 +283,7 @@ az.plot_density(
 az.summary(
     prior.prior,
     var_names=["phi"],
-    kinds="stats",
+    kind="stats",
 )
 ```
 

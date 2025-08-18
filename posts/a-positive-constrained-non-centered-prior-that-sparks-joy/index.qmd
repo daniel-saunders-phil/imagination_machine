@@ -44,7 +44,14 @@ with pm.Model() as m0:
     phi = pm.LogNormal('phi',mu=1.0,sigma=sigma)
     
 compiled_model = nutpie.compile_pymc_model(m0)
-t0 = nutpie.sample(compiled_model,chains=4,tune=1000,draws=1000,progress_bar=False,seed=seed);
+t0 = nutpie.sample(
+    compiled_model,
+    chains=4,
+    tune=1000,
+    draws=1000,
+    progress_bar=False,
+    seed=seed,
+)
 ```
 
 ```{python}
@@ -72,7 +79,14 @@ with pm.Model() as m1:
     phi = pm.Deterministic("phi",pm.math.exp(log_phi))
     
 compiled_model = nutpie.compile_pymc_model(m1)
-t1 = nutpie.sample(compiled_model,chains=4,tune=1000,draws=1000,progress_bar=False,seed=seed)
+t1 = nutpie.sample(
+    compiled_model,
+    chains=4,
+    tune=1000,
+    draws=1000,
+    progress_bar=False,
+    seed=seed,
+)
 ```
 
 ```{python}
@@ -84,7 +98,7 @@ plt.yscale("log");
 The problem is that we quickly lose control over the mean and variance. The exponential transform introduces a very long tail behaviour which blows the distribution up. Check out that mean and standard deviation:
 
 ```{python}
-az.summary(t1,var_names=["phi"])
+az.summary(t1,var_names=["phi"],kinds="stats")
 ```
 
 # The class
@@ -238,6 +252,7 @@ You'll notice that the means of these the prior samples are slightly above the d
 az.summary(
     prior.prior,
     var_names=["phi"],
+    kinds="stats",
 )
 ```
 
@@ -268,6 +283,7 @@ az.plot_density(
 az.summary(
     prior.prior,
     var_names=["phi"],
+    kinds="stats",
 )
 ```
 

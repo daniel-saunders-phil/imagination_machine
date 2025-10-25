@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.433">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Daniel Saunders">
+<meta name="dcterms.date" content="2025-10-25">
+<meta name="description" content="The art of PyTensor and reusable model components.">
+
+<title>Imagination Machine - A Bayesian decision theory workflow</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Imagination Machine</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html" rel="" target="">
+ <span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/daniel-saunders-phil" rel="" target=""><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools">
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#define-a-model-simulate-data-do-inference-with-a-few-lines-of-code" id="toc-define-a-model-simulate-data-do-inference-with-a-few-lines-of-code" class="nav-link active" data-scroll-target="#define-a-model-simulate-data-do-inference-with-a-few-lines-of-code">Define a model, simulate data, do inference with a few lines of code</a></li>
+  <li><a href="#build-bespoke-optimizers-out-of-model-components" id="toc-build-bespoke-optimizers-out-of-model-components" class="nav-link" data-scroll-target="#build-bespoke-optimizers-out-of-model-components">Build bespoke optimizers out of model components</a></li>
+  <li><a href="#write-optimizers-that-are-semi-agnostic-to-the-functions-they-are-optimizing" id="toc-write-optimizers-that-are-semi-agnostic-to-the-functions-they-are-optimizing" class="nav-link" data-scroll-target="#write-optimizers-that-are-semi-agnostic-to-the-functions-they-are-optimizing">Write optimizers that are semi-agnostic to the functions they are optimizing</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title">A Bayesian decision theory workflow</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+</div>
+
+<div>
+  <div class="description">
+    The art of PyTensor and reusable model components.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Daniel Saunders </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">October 25, 2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<p>The Bayesian framework appeals to my sense of tidiness. Model building, inference, and decision-making are all conceptually separate activities. You are permitted to think hard about each and solve them in isolation. In scientific teams, you can even have different people working on each part and each person progresses at a different pace. The inference person doesn’t need to know whether the model is a reasonable representation of reality; they can still find a parameterization or a sampler that is efficient and accurate. The decision-making person doesn’t need to know whether the posterior is any good. They can still figure out the expected utility of various actions, given that posterior, and write an optimization algorithm to find the best actions. (It is a nice contrast to some Frequentist practices where inference, model, and decision-making are conceptually entangled: a significance test is a procedure for making decisions, rather than a procedure for forming beliefs, and a utility function is invoked to justify the inference algorithm<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>.)</p>
+<p>The tidy division of labour often falls apart at the software level. While conceptually separate activities, they are not practically separate. Each party needs to have some code-based representation of the model that they can work on. All of those representations need to stay in sync: if the modeler decides to change something, the inference person, and the decision-making person also need to update their code. It gets worse as the project goes on longer. Just as the final touches are put on the decision-making algorithm, the data engineering team reports some of the data was wrong, and the modelers needs to rethink some of their decisions. That, in turn, means the underlying function that we are trying to optimize also changes. This unfortunate state of affairs is the normal case. Teams, as a rule, try to continuously iterate and respond to feedback. Data changes as more is collected, or quality concerns are discovered<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>. So everyone stays busy keeping their code in sync with everyone else’s and the project never quite finishes.</p>
+<p>The promise of probabilistic programming languages (PPLs) is that they can enforce a clean division of labour at the code level between modeling and inference. So long as the modeling code is written in this language<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>, they can just be dropped into an inference algorithm and the computer goes brrr. Decision-making, however, has not yet received the same care<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a>. What often has to happen is that someone takes the posterior output by the PPL as data and then rewrites the model in some language amenable to a numerical optimizer.</p>
+<p>Enter <a href="https://pytensor.readthedocs.io/en/latest/gallery/introduction/pytensor_intro.html">PyTensor</a>. It offers a clean division of labour at the software level between the decision-making algorithm and the rest. There is a workflow I’ve become quite fond of where you can extract optimizable functions out of PyMC models while being (mostly) agnostic to which specific operations comprise the model. This lets you make independent decisions about how much utility to assign to certain actions, which numerical optimizer is appropriate, and where the decision problem departs from the inference problem. I’ll unpack how all that works with a simple problem: what is the profit-maximizing price of a good?</p>
+<section id="define-a-model-simulate-data-do-inference-with-a-few-lines-of-code" class="level1">
+<h1>Define a model, simulate data, do inference with a few lines of code</h1>
+<p>Our intrepid consumer good change price every day<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a>.</p>
+<div class="cell" data-execution_count="1">
+<div class="cell-output cell-output-display">
+<p><img src="index_files/figure-html/cell-2-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>In PyMC, we write the basic dynamics of the relationship between price and demand. We expect that relationship to be multiplicative - we think about it in terms of doubling and halving rather than adding and subtracting. For example, you might think that if you double the price, you will cut demand in half. Or, if you cut price in half, demand doubles. One function that could capture that sort of relationship is:</p>
+<p><span class="math display">\[y = ax^b\]</span></p>
+<p>where <span class="math inline">\(y\)</span> is demand, <span class="math inline">\(a\)</span> is baseline demand, <span class="math inline">\(b\)</span> is the elasticity and <span class="math inline">\(x\)</span> is price. So the elasticity that captures our doubling relationships is -1.</p>
+<div class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># dividing by the mean is like subtracting the mean in additive</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># models - it decorrelates intercept and predictor</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>prices_centered <span class="op">=</span> prices <span class="op">/</span> np.mean(prices)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pm.Model() <span class="im">as</span> model:</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    a <span class="op">=</span> pm.Gamma(<span class="st">"a"</span>, mu<span class="op">=</span><span class="dv">100</span>, sigma<span class="op">=</span><span class="dv">40</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    b <span class="op">=</span> pm.Normal(<span class="st">"b"</span>, mu<span class="op">=</span><span class="dv">0</span>, sigma<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    sigma <span class="op">=</span> pm.HalfNormal(<span class="st">"sigma"</span>, sigma<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    prices_pt <span class="op">=</span> pm.Data(<span class="st">'x'</span>,prices_centered)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    mu <span class="op">=</span> pm.Deterministic(<span class="st">'mu'</span>,a <span class="op">*</span> prices_pt <span class="op">**</span> b)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> pm.Normal(<span class="st">"sales"</span>, mu<span class="op">=</span>mu, sigma<span class="op">=</span>sigma)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We can generate some hypothetical sales data under the assumption that baseline demand is 100 goods per day and the price elasticity is -1.1 At that elasticity, halving price will do a bit more than double sales.</p>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>a_true <span class="op">=</span> <span class="dv">100</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>b_true <span class="op">=</span> <span class="op">-</span><span class="fl">1.1</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>intervention_model <span class="op">=</span> pm.do(model,{<span class="st">'a'</span>:a_true,<span class="st">'b'</span>:b_true})</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>observed_sales <span class="op">=</span> pm.draw(intervention_model.sales)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Train a model. Get a posterior.</p>
+<div class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pm.observe(model,{<span class="st">"sales"</span>:observed_sales}):</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    trace <span class="op">=</span> pm.sample(nuts_sampler<span class="op">=</span><span class="st">"nutpie"</span>,progressbar<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Confirm, for good measure, that the posterior contains the true parameter values.</p>
+<div class="cell" data-execution_count="5">
+<div class="cell-output cell-output-display" data-execution_count="18">
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">mean</th>
+<th data-quarto-table-cell-role="th">sd</th>
+<th data-quarto-table-cell-role="th">hdi_3%</th>
+<th data-quarto-table-cell-role="th">hdi_97%</th>
+<th data-quarto-table-cell-role="th">mcse_mean</th>
+<th data-quarto-table-cell-role="th">mcse_sd</th>
+<th data-quarto-table-cell-role="th">ess_bulk</th>
+<th data-quarto-table-cell-role="th">ess_tail</th>
+<th data-quarto-table-cell-role="th">r_hat</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">a</td>
+<td>99.975</td>
+<td>0.057</td>
+<td>99.874</td>
+<td>100.082</td>
+<td>0.001</td>
+<td>0.001</td>
+<td>5171.0</td>
+<td>3293.0</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">b</td>
+<td>-1.100</td>
+<td>0.006</td>
+<td>-1.111</td>
+<td>-1.088</td>
+<td>0.000</td>
+<td>0.000</td>
+<td>5124.0</td>
+<td>3245.0</td>
+<td>1.0</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>While we know the true parameters, for optimization, we are going to pretend that all we know are the posterior distributions. That’s the core of Bayesian decision theory - find the action that maximizes expected utility by averaging over uncertainty in the utility function.</p>
+</section>
+<section id="build-bespoke-optimizers-out-of-model-components" class="level1">
+<h1>Build bespoke optimizers out of model components</h1>
+<p>PyTensor is a peculiar package. It sits somewhere in between a symbolic computing library (like Sympy) and a compiler + autodiff library (like Jax). The neat thing about it is that you represent your model symbolically, as a tree of operations. Take the expression:</p>
+<p><span class="math display">\[(a + b) * (c + d)\]</span></p>
+<p>We can think of it as a tree. The trunk is the final result. The trunk branches in two. Each side represents one side the multiplication. On the left branch, you have the result of the addition <span class="math inline">\(a + b\)</span>. The addition is also a branch and has two leaves: <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span>. When doing these sorts of problems in grade school, you learn to start with the leaves and do the additions. Then you work your way down toward the trunk, by doing the multiplications. PyTensor represents variables and operations with this weird little visual:</p>
+<div class="cell" data-execution_count="6">
+<div class="cell-output cell-output-stdout">
+<pre><code>Mul [id A]
+ ├─ Add [id B]
+ │  ├─ a [id C]
+ │  └─ b [id D]
+ └─ Add [id E]
+    ├─ c [id F]
+    └─ d [id G]</code></pre>
+</div>
+</div>
+<p>If you stare at the 1980s printer paper output for long enough, you’ll see the tree logic described above.</p>
+<p>The elegance of PyTensor is that, once you have this abstract representation of the model, you can reuse it in various ways. Compile functions out of sub-parts of the tree, delete operations, insert operations, replace variables with numbers. Replace numbers with variables. This facilitates the desired division of labour because you can define the core logic of the model in one place (where the modeler works) and then you can reuse that core logic all over a project while retaining the flexibility to make small modifications.</p>
+<p>The PyMC model is also a PyTensor tree. It looks hideous, but I don’t make the rules.</p>
+<div class="cell" data-execution_count="7">
+<div class="cell-output cell-output-stdout">
+<pre><code>normal_rv{"(),()-&gt;()"}.1 [id A] 'sales'
+ ├─ RNG(&lt;Generator(PCG64) at 0x220A5CFE960&gt;) [id B]
+ ├─ NoneConst{None} [id C]
+ ├─ Identity [id D] 'mu'
+ │  └─ Mul [id E]
+ │     ├─ ExpandDims{axis=0} [id F]
+ │     │  └─ gamma_rv{"(),()-&gt;()"}.1 [id G] 'a'
+ │     │     ├─ RNG(&lt;Generator(PCG64) at 0x220A5CFCF20&gt;) [id H]
+ │     │     ├─ NoneConst{None} [id C]
+ │     │     ├─ Mul [id I]
+ │     │     │  ├─ 6.25 [id J]
+ │     │     │  └─ Sign [id K]
+ │     │     │     └─ 40 [id L]
+ │     │     └─ Reciprocal [id M]
+ │     │        └─ 0.0625 [id N]
+ │     └─ Pow [id O]
+ │        ├─ x [id P]
+ │        └─ ExpandDims{axis=0} [id Q]
+ │           └─ normal_rv{"(),()-&gt;()"}.1 [id R] 'b'
+ │              ├─ RNG(&lt;Generator(PCG64) at 0x220A5CFDEE0&gt;) [id S]
+ │              ├─ NoneConst{None} [id C]
+ │              ├─ 0 [id T]
+ │              └─ 1 [id U]
+ └─ ExpandDims{axis=0} [id V]
+    └─ halfnormal_rv{"(),()-&gt;()"}.1 [id W] 'sigma'
+       ├─ RNG(&lt;Generator(PCG64) at 0x220A5CFE0A0&gt;) [id X]
+       ├─ NoneConst{None} [id C]
+       ├─ 0.0 [id Y]
+       └─ 1 [id Z]</code></pre>
+</div>
+</div>
+<p>To find the optimal price, we need to do a few things. Each of the things shows off a different way to reuse-while-modifying model components.</p>
+<ol type="1">
+<li>Build a profit function. Right now, we only have a function for demand. But it is no good optimizing for demand though. That’s trivia - set price to 0 and the goods will fly off the shelf. To calculate profit, we need to introduce some notion of unit cost.</li>
+<li>Replace the random variables with posterior information. We only have samples from the posterior so those variables with the ugly <code>Generator</code> need to go and vectors of samples need to come.</li>
+<li>Modify the function so we can take the expectation over posterior samples. We want the expected utility rather than the distribution of possible utilities.</li>
+<li>Replace the observed price take with some optimizable variable.</li>
+</ol>
+<p>Here’s step one: we are adding some operations under the root of the tree to generate a profit function.</p>
+<div class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># convert demand function to profit function</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># multipying by profit * demand</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># profits = price - cost</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># this is a new piece of information. The production cost.</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>c <span class="op">=</span> pt.as_tensor(<span class="fl">0.3</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co"># this bit is the profits: (model.x - c)</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co"># this bit is the demand: model.mu</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>objective <span class="op">=</span> (model.x <span class="op">-</span> c) <span class="op">*</span> model.mu</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="co"># flip sign for optimization</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>objective <span class="op">=</span> <span class="op">-</span><span class="dv">1</span> <span class="op">*</span> objective</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Here’s step two: we are replacing all the random variables with posterior samples.</p>
+<div class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pymc <span class="im">import</span> vectorize_over_posterior</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>objective <span class="op">=</span> vectorize_over_posterior(</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    outputs <span class="op">=</span> [objective],</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    posterior <span class="op">=</span> trace.posterior,</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    input_rvs<span class="op">=</span>[model.a,model.b]</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>)[<span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Step three is adding an expectation underneath the profit function. So we have a tree for the <em>expected</em> profit now.</p>
+<div class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>objective <span class="op">=</span> pt.mean(objective)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>In step four, we replace the observed spend data with the optimizable variable.</p>
+<div class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pytensor.graph <span class="im">import</span> graph_replace</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>optimizable_x <span class="op">=</span> pt.dvector(<span class="st">'opt_x'</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>objective <span class="op">=</span> graph_replace(objective,replace<span class="op">=</span>{model.x:optimizable_x})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Finally, we can do neat things like get the gradients of our new function and compile both of them into efficient C code.</p>
+<div class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># build gradient and objective function</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>objective_grad <span class="op">=</span> pt.grad(objective, wrt<span class="op">=</span>optimizable_x)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>objective_fn <span class="op">=</span> pytensor.function([optimizable_x], [objective, objective_grad])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>I’m happy to admit all the above procedure looks fairly strange. It is deeply unintuitive if you come from the world of numpy computing where everything is either a number or a function. This lets abstract over numbers and functions to operate on sequences of computations. The payoff is that you can simply plug your hard work into the scipy optimizer and it tells you to lower the price, by a couple bucks.</p>
+<div class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.optimize <span class="im">import</span> minimize</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>res <span class="op">=</span> minimize(</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    objective_fn,</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    jac<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    x0 <span class="op">=</span> [<span class="fl">1.00</span>],</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    bounds <span class="op">=</span> [(<span class="dv">0</span>, <span class="va">None</span>)]</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"optimal price: "</span>, res.x[<span class="dv">0</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>optimal price:  3.308639631102817</code></pre>
+</div>
+</div>
+</section>
+<section id="write-optimizers-that-are-semi-agnostic-to-the-functions-they-are-optimizing" class="level1">
+<h1>Write optimizers that are semi-agnostic to the functions they are optimizing</h1>
+<p>The workflow presented above captures the desirata we are after. The person coding up the decision-making algorithm doesn’t have to know all the details of how sales are modeled. They just need to know an entry point into the tree (the optimizable price variable) and the endpoint (the sales variable). If the modeling team makes changes in between those two points, our abstraction will automatically pick up on those. Maybe they want to add controls, cross-price elasticities, or transform the price data in unusual ways. The decision-making team retains the capacity to modify the computational tree: adding a cost variable, generating a profit function, flipping the sign of the function and inserting an expectation operation.</p>
+<p>This price elasticity model is fairly simple. You don’t need a numerical optimizer to find a solution. It is trivial to duplicate the core logic of the model in two places. However, as models grow in size and complexity, the decision-making team will appreciate not having to keep track of every change or experiment in the core model logic. Meanwhile, they can quickly experiment with the logic that is core to the optimizer. They can experiment with different numerical solvers. When the modeling team finally wraps up their work, the chosen solver is already ready to go. They can also work with business expertise to build custom utility functions or incorporate notions of risk-aversion. Going out of business is a problem you cannot come back from so it is worth prioritizing that over other goals, like doubling profits. The decision-making team can work out the logic and code for risk-averse optimization without knowing exactly where the modeling team will land. Utility and probability are conceptually distinct, and we need our workflows to mirror these distinctions.</p>
+
+
+<!-- -->
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>As usual, I confess I don’t understand what frequentists actually do. But I gather that setting an alpha level is justified by comparing the utility of type 1 and type 2 errors. Those utilities only make sense if you think there is some bad thing that results if you act on the basis of a false positive.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>Nobody even knows their data is wonky until they start to model it so, rest assured, data quality issues will be discovered with each iteration cycle.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>You can imagine the pain points here: maybe the model was written 30 years ago in Fortran and nobody is brave enough to rewrite it in Stan.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p>You can see an example on the <a href="https://mc-stan.org/docs/stan-users-guide/decision-analysis.html">Stan documentation</a>. It is doable in pure Stan but they also picked an easy problem. The utility of each outcome is quantity that can be calculated as by-product of things you already compute during inference. There are 4 discrete actions to try and they have data on each of them. My decision theory problems are not this easy. If you have a continuous action space, the optimal action may not have been explored in the training data and you are not going to get utilities as a by-product of inference.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn5"><p>It is one of these consumer-facing software companies where they let the data scientists do the financials.<a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb13" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "A Bayesian decision theory workflow"</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> Daniel Saunders</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="an">jupyter:</span><span class="co"> python3</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> 2025-10-25</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="an">toc:</span><span class="co"> true</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> "The art of PyTensor and reusable model components."</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="co">  echo: false</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="co">    code-fold: false</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="an">image:</span><span class="co"> image.png</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>The Bayesian framework appeals to my sense of tidiness. Model building, inference, and decision-making are all conceptually separate activities. You are permitted to think hard about each and solve them in isolation. In scientific teams, you can even have different people working on each part and each person progresses at a different pace. The inference person doesn't need to know whether the model is a reasonable representation of reality; they can still find a parameterization or a sampler that is efficient and accurate. The decision-making person doesn't need to know whether the posterior is any good. They can still figure out the expected utility of various actions, given that posterior, and write an optimization algorithm to find the best actions. (It is a nice contrast to some Frequentist practices where inference, model, and decision-making are conceptually entangled: a significance test is a procedure for making decisions, rather than a procedure for forming beliefs, and a utility function is invoked to justify the inference algorithm<span class="ot">[^1]</span>.)</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="ot">[^1]: </span>As usual, I confess I don't understand what frequentists actually do. But I gather that setting an alpha level is justified by comparing the utility of type 1 and type 2 errors. Those utilities only make sense if you think there is some bad thing that results if you act on the basis of a false positive.</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>The tidy division of labour often falls apart at the software level. While conceptually separate activities, they are not practically separate. Each party needs to have some code-based representation of the model that they can work on. All of those representations need to stay in sync: if the modeler decides to change something, the inference person, and the decision-making person also need to update their code. It gets worse as the project goes on longer. Just as the final touches are put on the decision-making algorithm, the data engineering team reports some of the data was wrong, and the modelers needs to rethink some of their decisions. That, in turn, means the underlying function that we are trying to optimize also changes. This unfortunate state of affairs is the normal case. Teams, as a rule, try to continuously iterate and respond to feedback. Data changes as more is collected, or quality concerns are discovered<span class="ot">[^2]</span>. So everyone stays busy keeping their code in sync with everyone else's and the project never quite finishes.</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a><span class="ot">[^2]: </span>Nobody even knows their data is wonky until they start to model it so, rest assured, data quality issues will be discovered with each iteration cycle.</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>The promise of probabilistic programming languages (PPLs) is that they can enforce a clean division of labour at the code level between modeling and inference. So long as the modeling code is written in this language<span class="ot">[^3]</span>, they can just be dropped into an inference algorithm and the computer goes brrr. Decision-making, however, has not yet received the same care<span class="ot">[^4]</span>. What often has to happen is that someone takes the posterior output by the PPL as data and then rewrites the model in some language amenable to a numerical optimizer.</span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>Enter <span class="co">[</span><span class="ot">PyTensor</span><span class="co">](https://pytensor.readthedocs.io/en/latest/gallery/introduction/pytensor_intro.html)</span>. It offers a clean division of labour at the software level between the decision-making algorithm and the rest. There is a workflow I've become quite fond of where you can extract optimizable functions out of PyMC models while being (mostly) agnostic to which specific operations comprise the model. This lets you make independent decisions about how much utility to assign to certain actions, which numerical optimizer is appropriate, and where the decision problem departs from the inference problem. I'll unpack how all that works with a simple problem: what is the profit-maximizing price of a good?</span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a><span class="ot">[^3]: </span>You can imagine the pain points here: maybe the model was written 30 years ago in Fortran and nobody is brave enough to rewrite it in Stan.</span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a><span class="ot">[^4]: </span>You can see an example on the <span class="co">[</span><span class="ot">Stan documentation</span><span class="co">](https://mc-stan.org/docs/stan-users-guide/decision-analysis.html)</span>. It is doable in pure Stan but they also picked an easy problem. The utility of each outcome is quantity that can be calculated as by-product of things you already compute during inference. There are 4 discrete actions to try and they have data on each of them. My decision theory problems are not this easy. If you have a continuous action space, the optimal action may not have been explored in the training data and you are not going to get utilities as a by-product of inference.</span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a><span class="fu"># Define a model, simulate data, do inference with a few lines of code</span></span>
+<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a>Our intrepid consumer good change price every day<span class="ot">[^5]</span>.</span>
+<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a><span class="ot">[^5]: </span>It is one of these consumer-facing software companies where they let the data scientists do the financials.</span>
+<span id="cb13-36"><a href="#cb13-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-39"><a href="#cb13-39" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb13-40"><a href="#cb13-40" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb13-41"><a href="#cb13-41" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb13-42"><a href="#cb13-42" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pymc <span class="im">as</span> pm</span>
+<span id="cb13-43"><a href="#cb13-43" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> arviz <span class="im">as</span> az</span>
+<span id="cb13-44"><a href="#cb13-44" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pytensor</span>
+<span id="cb13-45"><a href="#cb13-45" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pytensor.tensor <span class="im">as</span> pt</span>
+<span id="cb13-46"><a href="#cb13-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-47"><a href="#cb13-47" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> build_ar_process(</span>
+<span id="cb13-48"><a href="#cb13-48" aria-hidden="true" tabindex="-1"></a>    n_days<span class="op">=</span><span class="dv">100</span>,</span>
+<span id="cb13-49"><a href="#cb13-49" aria-hidden="true" tabindex="-1"></a>    noise<span class="op">=</span><span class="fl">0.3</span>,</span>
+<span id="cb13-50"><a href="#cb13-50" aria-hidden="true" tabindex="-1"></a>    initial_price<span class="op">=</span><span class="fl">5.0</span></span>
+<span id="cb13-51"><a href="#cb13-51" aria-hidden="true" tabindex="-1"></a>):</span>
+<span id="cb13-52"><a href="#cb13-52" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb13-53"><a href="#cb13-53" aria-hidden="true" tabindex="-1"></a><span class="co">    Build an autoregressive process with repulsion away from 0.</span></span>
+<span id="cb13-54"><a href="#cb13-54" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb13-55"><a href="#cb13-55" aria-hidden="true" tabindex="-1"></a>    rng <span class="op">=</span> np.random.default_rng(<span class="dv">1234</span>)</span>
+<span id="cb13-56"><a href="#cb13-56" aria-hidden="true" tabindex="-1"></a>    noise <span class="op">=</span> rng.normal(<span class="dv">0</span>, noise, n_days)</span>
+<span id="cb13-57"><a href="#cb13-57" aria-hidden="true" tabindex="-1"></a>    beta <span class="op">=</span> <span class="fl">0.95</span></span>
+<span id="cb13-58"><a href="#cb13-58" aria-hidden="true" tabindex="-1"></a>    repulsion_strength <span class="op">=</span> <span class="fl">0.1</span></span>
+<span id="cb13-59"><a href="#cb13-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-60"><a href="#cb13-60" aria-hidden="true" tabindex="-1"></a>    prices <span class="op">=</span> np.zeros(n_days)</span>
+<span id="cb13-61"><a href="#cb13-61" aria-hidden="true" tabindex="-1"></a>    prices[<span class="dv">0</span>] <span class="op">=</span> initial_price</span>
+<span id="cb13-62"><a href="#cb13-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-63"><a href="#cb13-63" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, n_days):</span>
+<span id="cb13-64"><a href="#cb13-64" aria-hidden="true" tabindex="-1"></a>        repulsive_force <span class="op">=</span> repulsion_strength <span class="op">/</span> prices[i<span class="op">-</span><span class="dv">1</span>]<span class="op">**</span><span class="dv">2</span></span>
+<span id="cb13-65"><a href="#cb13-65" aria-hidden="true" tabindex="-1"></a>        prices[i] <span class="op">=</span> prices[i<span class="op">-</span><span class="dv">1</span>] <span class="op">+</span> beta <span class="op">*</span> noise[i] <span class="op">+</span> repulsive_force</span>
+<span id="cb13-66"><a href="#cb13-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-67"><a href="#cb13-67" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> prices</span>
+<span id="cb13-68"><a href="#cb13-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-69"><a href="#cb13-69" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">4</span>))</span>
+<span id="cb13-70"><a href="#cb13-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-71"><a href="#cb13-71" aria-hidden="true" tabindex="-1"></a>prices <span class="op">=</span> build_ar_process(noise<span class="op">=</span><span class="fl">0.1</span>,)</span>
+<span id="cb13-72"><a href="#cb13-72" aria-hidden="true" tabindex="-1"></a>plt.plot(prices, linewidth<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb13-73"><a href="#cb13-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-74"><a href="#cb13-74" aria-hidden="true" tabindex="-1"></a>last_value <span class="op">=</span> prices[<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb13-75"><a href="#cb13-75" aria-hidden="true" tabindex="-1"></a>plt.text(</span>
+<span id="cb13-76"><a href="#cb13-76" aria-hidden="true" tabindex="-1"></a>    <span class="dv">99</span>,</span>
+<span id="cb13-77"><a href="#cb13-77" aria-hidden="true" tabindex="-1"></a>    last_value<span class="op">*</span><span class="fl">1.01</span>, <span class="co"># slightly shift up</span></span>
+<span id="cb13-78"><a href="#cb13-78" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f'$</span><span class="sc">{</span><span class="bu">round</span>(last_value,<span class="dv">2</span>)<span class="sc">}</span><span class="ss">'</span>, <span class="co"># round for more lisibility</span></span>
+<span id="cb13-79"><a href="#cb13-79" aria-hidden="true" tabindex="-1"></a>    fontsize<span class="op">=</span><span class="dv">10</span>,</span>
+<span id="cb13-80"><a href="#cb13-80" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-81"><a href="#cb13-81" aria-hidden="true" tabindex="-1"></a>first_value <span class="op">=</span> prices[<span class="dv">0</span>]</span>
+<span id="cb13-82"><a href="#cb13-82" aria-hidden="true" tabindex="-1"></a>plt.text(</span>
+<span id="cb13-83"><a href="#cb13-83" aria-hidden="true" tabindex="-1"></a>    <span class="dv">0</span>,</span>
+<span id="cb13-84"><a href="#cb13-84" aria-hidden="true" tabindex="-1"></a>    first_value<span class="op">*</span><span class="fl">0.975</span>, <span class="co"># slightly shift up</span></span>
+<span id="cb13-85"><a href="#cb13-85" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f'$</span><span class="sc">{</span><span class="bu">round</span>(first_value,<span class="dv">2</span>)<span class="sc">}</span><span class="ss">'</span>, <span class="co"># round for more lisibility</span></span>
+<span id="cb13-86"><a href="#cb13-86" aria-hidden="true" tabindex="-1"></a>    fontsize<span class="op">=</span><span class="dv">10</span>,</span>
+<span id="cb13-87"><a href="#cb13-87" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-88"><a href="#cb13-88" aria-hidden="true" tabindex="-1"></a>plt.gca().spines[<span class="st">'top'</span>].set_visible(<span class="va">False</span>)</span>
+<span id="cb13-89"><a href="#cb13-89" aria-hidden="true" tabindex="-1"></a>plt.gca().spines[<span class="st">'right'</span>].set_visible(<span class="va">False</span>)</span>
+<span id="cb13-90"><a href="#cb13-90" aria-hidden="true" tabindex="-1"></a>plt.gca().spines[<span class="st">'bottom'</span>].set_visible(<span class="va">False</span>)</span>
+<span id="cb13-91"><a href="#cb13-91" aria-hidden="true" tabindex="-1"></a>plt.gca().spines[<span class="st">'left'</span>].set_visible(<span class="va">False</span>)</span>
+<span id="cb13-92"><a href="#cb13-92" aria-hidden="true" tabindex="-1"></a>plt.xticks([])</span>
+<span id="cb13-93"><a href="#cb13-93" aria-hidden="true" tabindex="-1"></a>plt.yticks([])</span>
+<span id="cb13-94"><a href="#cb13-94" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"The price over time of a hypothetical good"</span>)<span class="op">;</span></span>
+<span id="cb13-95"><a href="#cb13-95" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-96"><a href="#cb13-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-97"><a href="#cb13-97" aria-hidden="true" tabindex="-1"></a>In PyMC, we write the basic dynamics of the relationship between price and demand. We expect that relationship to be multiplicative - we think about it in terms of doubling and halving rather than adding and subtracting. For example, you might think that if you double the price, you will cut demand in half. Or, if you cut price in half, demand doubles. One function that could capture that sort of relationship is:</span>
+<span id="cb13-98"><a href="#cb13-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-99"><a href="#cb13-99" aria-hidden="true" tabindex="-1"></a>$$y = ax^b$$</span>
+<span id="cb13-100"><a href="#cb13-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-101"><a href="#cb13-101" aria-hidden="true" tabindex="-1"></a>where $y$ is demand, $a$ is baseline demand, $b$ is the elasticity and $x$ is price. So the elasticity that captures our doubling relationships is -1.</span>
+<span id="cb13-102"><a href="#cb13-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-105"><a href="#cb13-105" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb13-106"><a href="#cb13-106" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb13-107"><a href="#cb13-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-108"><a href="#cb13-108" aria-hidden="true" tabindex="-1"></a><span class="co"># dividing by the mean is like subtracting the mean in additive</span></span>
+<span id="cb13-109"><a href="#cb13-109" aria-hidden="true" tabindex="-1"></a><span class="co"># models - it decorrelates intercept and predictor</span></span>
+<span id="cb13-110"><a href="#cb13-110" aria-hidden="true" tabindex="-1"></a>prices_centered <span class="op">=</span> prices <span class="op">/</span> np.mean(prices)</span>
+<span id="cb13-111"><a href="#cb13-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-112"><a href="#cb13-112" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pm.Model() <span class="im">as</span> model:</span>
+<span id="cb13-113"><a href="#cb13-113" aria-hidden="true" tabindex="-1"></a>    a <span class="op">=</span> pm.Gamma(<span class="st">"a"</span>, mu<span class="op">=</span><span class="dv">100</span>, sigma<span class="op">=</span><span class="dv">40</span>)</span>
+<span id="cb13-114"><a href="#cb13-114" aria-hidden="true" tabindex="-1"></a>    b <span class="op">=</span> pm.Normal(<span class="st">"b"</span>, mu<span class="op">=</span><span class="dv">0</span>, sigma<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb13-115"><a href="#cb13-115" aria-hidden="true" tabindex="-1"></a>    sigma <span class="op">=</span> pm.HalfNormal(<span class="st">"sigma"</span>, sigma<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb13-116"><a href="#cb13-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-117"><a href="#cb13-117" aria-hidden="true" tabindex="-1"></a>    prices_pt <span class="op">=</span> pm.Data(<span class="st">'x'</span>,prices_centered)</span>
+<span id="cb13-118"><a href="#cb13-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-119"><a href="#cb13-119" aria-hidden="true" tabindex="-1"></a>    mu <span class="op">=</span> pm.Deterministic(<span class="st">'mu'</span>,a <span class="op">*</span> prices_pt <span class="op">**</span> b)</span>
+<span id="cb13-120"><a href="#cb13-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-121"><a href="#cb13-121" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> pm.Normal(<span class="st">"sales"</span>, mu<span class="op">=</span>mu, sigma<span class="op">=</span>sigma)</span>
+<span id="cb13-122"><a href="#cb13-122" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-123"><a href="#cb13-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-124"><a href="#cb13-124" aria-hidden="true" tabindex="-1"></a>We can generate some hypothetical sales data under the assumption that baseline demand is 100 goods per day and the price elasticity is -1.1 At that elasticity, halving price will do a bit more than double sales.</span>
+<span id="cb13-125"><a href="#cb13-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-128"><a href="#cb13-128" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb13-129"><a href="#cb13-129" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb13-130"><a href="#cb13-130" aria-hidden="true" tabindex="-1"></a>a_true <span class="op">=</span> <span class="dv">100</span></span>
+<span id="cb13-131"><a href="#cb13-131" aria-hidden="true" tabindex="-1"></a>b_true <span class="op">=</span> <span class="op">-</span><span class="fl">1.1</span></span>
+<span id="cb13-132"><a href="#cb13-132" aria-hidden="true" tabindex="-1"></a>intervention_model <span class="op">=</span> pm.do(model,{<span class="st">'a'</span>:a_true,<span class="st">'b'</span>:b_true})</span>
+<span id="cb13-133"><a href="#cb13-133" aria-hidden="true" tabindex="-1"></a>observed_sales <span class="op">=</span> pm.draw(intervention_model.sales)</span>
+<span id="cb13-134"><a href="#cb13-134" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-135"><a href="#cb13-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-136"><a href="#cb13-136" aria-hidden="true" tabindex="-1"></a>Train a model. Get a posterior.</span>
+<span id="cb13-137"><a href="#cb13-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-140"><a href="#cb13-140" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb13-141"><a href="#cb13-141" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb13-142"><a href="#cb13-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-143"><a href="#cb13-143" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pm.observe(model,{<span class="st">"sales"</span>:observed_sales}):</span>
+<span id="cb13-144"><a href="#cb13-144" aria-hidden="true" tabindex="-1"></a>    trace <span class="op">=</span> pm.sample(nuts_sampler<span class="op">=</span><span class="st">"nutpie"</span>,progressbar<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb13-145"><a href="#cb13-145" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-146"><a href="#cb13-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-147"><a href="#cb13-147" aria-hidden="true" tabindex="-1"></a>Confirm, for good measure, that the posterior contains the true parameter values.</span>
+<span id="cb13-148"><a href="#cb13-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-151"><a href="#cb13-151" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb13-152"><a href="#cb13-152" aria-hidden="true" tabindex="-1"></a>az.summary(trace,var_names<span class="op">=</span>[<span class="st">'a'</span>,<span class="st">'b'</span>])</span>
+<span id="cb13-153"><a href="#cb13-153" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-154"><a href="#cb13-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-155"><a href="#cb13-155" aria-hidden="true" tabindex="-1"></a>While we know the true parameters, for optimization, we are going to pretend that all we know are the posterior distributions. That's the core of Bayesian decision theory - find the action that maximizes expected utility by averaging over uncertainty in the utility function.</span>
+<span id="cb13-156"><a href="#cb13-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-157"><a href="#cb13-157" aria-hidden="true" tabindex="-1"></a><span class="fu"># Build bespoke optimizers out of model components</span></span>
+<span id="cb13-158"><a href="#cb13-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-159"><a href="#cb13-159" aria-hidden="true" tabindex="-1"></a>PyTensor is a peculiar package. It sits somewhere in between a symbolic computing library (like Sympy) and a compiler + autodiff library (like Jax). The neat thing about it is that you represent your model symbolically, as a tree of operations. Take the expression:</span>
+<span id="cb13-160"><a href="#cb13-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-161"><a href="#cb13-161" aria-hidden="true" tabindex="-1"></a>$$(a + b) * (c + d)$$</span>
+<span id="cb13-162"><a href="#cb13-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-163"><a href="#cb13-163" aria-hidden="true" tabindex="-1"></a>We can think of it as a tree. The trunk is the final result. The trunk branches in two. Each side represents one side the multiplication. On the left branch, you have the result of the addition $a + b$. The addition is also a branch and has two leaves: $a$ and $b$. When doing these sorts of problems in grade school, you learn to start with the leaves and do the additions. Then you work your way down toward the trunk, by doing the multiplications. PyTensor represents variables and operations with this weird little visual:</span>
+<span id="cb13-164"><a href="#cb13-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-167"><a href="#cb13-167" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb13-168"><a href="#cb13-168" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> pt.scalar(<span class="st">'a'</span>)</span>
+<span id="cb13-169"><a href="#cb13-169" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> pt.scalar(<span class="st">'b'</span>)</span>
+<span id="cb13-170"><a href="#cb13-170" aria-hidden="true" tabindex="-1"></a>c <span class="op">=</span> pt.scalar(<span class="st">'c'</span>)</span>
+<span id="cb13-171"><a href="#cb13-171" aria-hidden="true" tabindex="-1"></a>d <span class="op">=</span> pt.scalar(<span class="st">'d'</span>)</span>
+<span id="cb13-172"><a href="#cb13-172" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-173"><a href="#cb13-173" aria-hidden="true" tabindex="-1"></a>expr <span class="op">=</span> (a <span class="op">+</span> b) <span class="op">*</span> (c <span class="op">+</span> d)</span>
+<span id="cb13-174"><a href="#cb13-174" aria-hidden="true" tabindex="-1"></a>expr.dprint()<span class="op">;</span></span>
+<span id="cb13-175"><a href="#cb13-175" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-176"><a href="#cb13-176" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-177"><a href="#cb13-177" aria-hidden="true" tabindex="-1"></a>If you stare at the 1980s printer paper output for long enough, you'll see the tree logic described above.</span>
+<span id="cb13-178"><a href="#cb13-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-179"><a href="#cb13-179" aria-hidden="true" tabindex="-1"></a>The elegance of PyTensor is that, once you have this abstract representation of the model, you can reuse it in various ways. Compile functions out of sub-parts of the tree, delete operations, insert operations, replace variables with numbers. Replace numbers with variables. This facilitates the desired division of labour because you can define the core logic of the model in one place (where the modeler works) and then you can reuse that core logic all over a project while retaining the flexibility to make small modifications.</span>
+<span id="cb13-180"><a href="#cb13-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-181"><a href="#cb13-181" aria-hidden="true" tabindex="-1"></a>The PyMC model is also a PyTensor tree. It looks hideous, but I don't make the rules.</span>
+<span id="cb13-182"><a href="#cb13-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-185"><a href="#cb13-185" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb13-186"><a href="#cb13-186" aria-hidden="true" tabindex="-1"></a>model.sales.dprint()<span class="op">;</span></span>
+<span id="cb13-187"><a href="#cb13-187" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-188"><a href="#cb13-188" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-189"><a href="#cb13-189" aria-hidden="true" tabindex="-1"></a>To find the optimal price, we need to do a few things. Each of the things shows off a different way to reuse-while-modifying model components.</span>
+<span id="cb13-190"><a href="#cb13-190" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-191"><a href="#cb13-191" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Build a profit function. Right now, we only have a function for demand. But it is no good optimizing for demand though. That's trivia - set price to 0 and the goods will fly off the shelf. To calculate profit, we need to introduce some notion of unit cost.</span>
+<span id="cb13-192"><a href="#cb13-192" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Replace the random variables with posterior information. We only have samples from the posterior so those variables with the ugly <span class="in">`Generator`</span> need to go and vectors of samples need to come.</span>
+<span id="cb13-193"><a href="#cb13-193" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Modify the function so we can take the expectation over posterior samples. We want the expected utility rather than the distribution of possible utilities.</span>
+<span id="cb13-194"><a href="#cb13-194" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Replace the observed price take with some optimizable variable.</span>
+<span id="cb13-195"><a href="#cb13-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-196"><a href="#cb13-196" aria-hidden="true" tabindex="-1"></a>Here's step one: we are adding some operations under the root of the tree to generate a profit function.</span>
+<span id="cb13-197"><a href="#cb13-197" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-200"><a href="#cb13-200" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb13-201"><a href="#cb13-201" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb13-202"><a href="#cb13-202" aria-hidden="true" tabindex="-1"></a><span class="co"># convert demand function to profit function</span></span>
+<span id="cb13-203"><a href="#cb13-203" aria-hidden="true" tabindex="-1"></a><span class="co"># unit_profit = unit_price - unit_cost</span></span>
+<span id="cb13-204"><a href="#cb13-204" aria-hidden="true" tabindex="-1"></a><span class="co"># total_profit = unit_profit * demand</span></span>
+<span id="cb13-205"><a href="#cb13-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-206"><a href="#cb13-206" aria-hidden="true" tabindex="-1"></a><span class="co"># c is the unit_cost</span></span>
+<span id="cb13-207"><a href="#cb13-207" aria-hidden="true" tabindex="-1"></a>c <span class="op">=</span> pt.as_tensor(<span class="fl">0.3</span>)</span>
+<span id="cb13-208"><a href="#cb13-208" aria-hidden="true" tabindex="-1"></a>unit_profit <span class="op">=</span> (model.x <span class="op">-</span> c)</span>
+<span id="cb13-209"><a href="#cb13-209" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-210"><a href="#cb13-210" aria-hidden="true" tabindex="-1"></a><span class="co"># model.mu is the demand</span></span>
+<span id="cb13-211"><a href="#cb13-211" aria-hidden="true" tabindex="-1"></a>objective <span class="op">=</span> unit_profit <span class="op">*</span> model.mu</span>
+<span id="cb13-212"><a href="#cb13-212" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-213"><a href="#cb13-213" aria-hidden="true" tabindex="-1"></a><span class="co"># flip sign for optimization</span></span>
+<span id="cb13-214"><a href="#cb13-214" aria-hidden="true" tabindex="-1"></a>objective <span class="op">=</span> <span class="op">-</span><span class="dv">1</span> <span class="op">*</span> objective</span>
+<span id="cb13-215"><a href="#cb13-215" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-216"><a href="#cb13-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-217"><a href="#cb13-217" aria-hidden="true" tabindex="-1"></a>Here's step two: we are replacing all the random variables with posterior samples.</span>
+<span id="cb13-218"><a href="#cb13-218" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-221"><a href="#cb13-221" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb13-222"><a href="#cb13-222" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb13-223"><a href="#cb13-223" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pymc <span class="im">import</span> vectorize_over_posterior</span>
+<span id="cb13-224"><a href="#cb13-224" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-225"><a href="#cb13-225" aria-hidden="true" tabindex="-1"></a>objective <span class="op">=</span> vectorize_over_posterior(</span>
+<span id="cb13-226"><a href="#cb13-226" aria-hidden="true" tabindex="-1"></a>    outputs <span class="op">=</span> [objective],</span>
+<span id="cb13-227"><a href="#cb13-227" aria-hidden="true" tabindex="-1"></a>    posterior <span class="op">=</span> trace.posterior,</span>
+<span id="cb13-228"><a href="#cb13-228" aria-hidden="true" tabindex="-1"></a>    input_rvs<span class="op">=</span>[model.a,model.b]</span>
+<span id="cb13-229"><a href="#cb13-229" aria-hidden="true" tabindex="-1"></a>)[<span class="dv">0</span>]</span>
+<span id="cb13-230"><a href="#cb13-230" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-231"><a href="#cb13-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-232"><a href="#cb13-232" aria-hidden="true" tabindex="-1"></a>Step three is adding an expectation underneath the profit function. So we have a tree for the *expected* profit now.</span>
+<span id="cb13-233"><a href="#cb13-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-236"><a href="#cb13-236" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb13-237"><a href="#cb13-237" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb13-238"><a href="#cb13-238" aria-hidden="true" tabindex="-1"></a>objective <span class="op">=</span> pt.mean(objective)</span>
+<span id="cb13-239"><a href="#cb13-239" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-240"><a href="#cb13-240" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-241"><a href="#cb13-241" aria-hidden="true" tabindex="-1"></a>In step four, we replace the observed spend data with the optimizable variable.</span>
+<span id="cb13-242"><a href="#cb13-242" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-245"><a href="#cb13-245" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb13-246"><a href="#cb13-246" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb13-247"><a href="#cb13-247" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pytensor.graph <span class="im">import</span> graph_replace</span>
+<span id="cb13-248"><a href="#cb13-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-249"><a href="#cb13-249" aria-hidden="true" tabindex="-1"></a>optimizable_x <span class="op">=</span> pt.dvector(<span class="st">'opt_x'</span>)</span>
+<span id="cb13-250"><a href="#cb13-250" aria-hidden="true" tabindex="-1"></a>objective <span class="op">=</span> graph_replace(objective,replace<span class="op">=</span>{model.x:optimizable_x})</span>
+<span id="cb13-251"><a href="#cb13-251" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-252"><a href="#cb13-252" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-253"><a href="#cb13-253" aria-hidden="true" tabindex="-1"></a>Finally, we can do neat things like get the gradients of our new function and compile both of them into efficient C code.</span>
+<span id="cb13-254"><a href="#cb13-254" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-257"><a href="#cb13-257" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb13-258"><a href="#cb13-258" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb13-259"><a href="#cb13-259" aria-hidden="true" tabindex="-1"></a><span class="co"># build gradient and objective function</span></span>
+<span id="cb13-260"><a href="#cb13-260" aria-hidden="true" tabindex="-1"></a>objective_grad <span class="op">=</span> pt.grad(objective, wrt<span class="op">=</span>optimizable_x)</span>
+<span id="cb13-261"><a href="#cb13-261" aria-hidden="true" tabindex="-1"></a>objective_fn <span class="op">=</span> pytensor.function([optimizable_x], [objective, objective_grad])</span>
+<span id="cb13-262"><a href="#cb13-262" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-263"><a href="#cb13-263" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-264"><a href="#cb13-264" aria-hidden="true" tabindex="-1"></a>I'm happy to admit all the above procedure looks fairly strange. It is deeply unintuitive if you come from the world of numpy computing where everything is either a number or a function. This lets abstract over numbers and functions to operate on sequences of computations. The payoff is that you can simply plug your hard work into the scipy optimizer and it tells you to lower the price, by a couple bucks.</span>
+<span id="cb13-265"><a href="#cb13-265" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-268"><a href="#cb13-268" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb13-269"><a href="#cb13-269" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb13-270"><a href="#cb13-270" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-271"><a href="#cb13-271" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.optimize <span class="im">import</span> minimize</span>
+<span id="cb13-272"><a href="#cb13-272" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-273"><a href="#cb13-273" aria-hidden="true" tabindex="-1"></a>res <span class="op">=</span> minimize(</span>
+<span id="cb13-274"><a href="#cb13-274" aria-hidden="true" tabindex="-1"></a>    objective_fn,</span>
+<span id="cb13-275"><a href="#cb13-275" aria-hidden="true" tabindex="-1"></a>    jac<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb13-276"><a href="#cb13-276" aria-hidden="true" tabindex="-1"></a>    x0 <span class="op">=</span> [<span class="fl">1.00</span>],</span>
+<span id="cb13-277"><a href="#cb13-277" aria-hidden="true" tabindex="-1"></a>    bounds <span class="op">=</span> [(<span class="dv">0</span>, <span class="va">None</span>)]</span>
+<span id="cb13-278"><a href="#cb13-278" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-279"><a href="#cb13-279" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"optimal price: "</span>, res.x[<span class="dv">0</span>])</span>
+<span id="cb13-280"><a href="#cb13-280" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-281"><a href="#cb13-281" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-282"><a href="#cb13-282" aria-hidden="true" tabindex="-1"></a><span class="fu"># Write optimizers that are semi-agnostic to the functions they are optimizing</span></span>
+<span id="cb13-283"><a href="#cb13-283" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-284"><a href="#cb13-284" aria-hidden="true" tabindex="-1"></a>The workflow presented above captures the desirata we are after. The person coding up the decision-making algorithm doesn't have to know all the details of how sales are modeled. They just need to know an entry point into the tree (the optimizable price variable) and the endpoint (the sales variable). If the modeling team makes changes in between those two points, our abstraction will automatically pick up on those. Maybe they want to add controls, cross-price elasticities, or transform the price data in unusual ways. The decision-making team retains the capacity to modify the computational tree: adding a cost variable, generating a profit function, flipping the sign of the function and inserting an expectation operation.</span>
+<span id="cb13-285"><a href="#cb13-285" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-286"><a href="#cb13-286" aria-hidden="true" tabindex="-1"></a>This price elasticity model is fairly simple. You don't need a numerical optimizer to find a solution. It is trivial to duplicate the core logic of the model in two places. However, as models grow in size and complexity, the decision-making team will appreciate not having to keep track of every change or experiment in the core model logic. Meanwhile, they can quickly experiment with the logic that is core to the optimizer. They can experiment with different numerical solvers. When the modeling team finally wraps up their work, the chosen solver is already ready to go. They can also work with business expertise to build custom utility functions or incorporate notions of risk-aversion. Going out of business is a problem you cannot come back from so it is worth prioritizing that over other goals, like doubling profits. The decision-making team can work out the logic and code for risk-averse optimization without knowing exactly where the modeling team will land. Utility and probability are conceptually distinct, and we need our workflows to mirror these distinctions.</span>
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">© 2024, Daniel Saunders</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">Built with <a href="https://quarto.org/">Quarto</a></div>
+  </div>
+</footer>
+
+
+
+</body></html>

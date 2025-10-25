@@ -72,10 +72,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -192,12 +192,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 <p>The Bayesian framework appeals to my sense of tidiness. Model building, inference, and decision-making are all conceptually separate activities. You are permitted to think hard about each and solve them in isolation. In scientific teams, you can even have different people working on each part and each person progresses at a different pace. The inference person doesn’t need to know whether the model is a reasonable representation of reality; they can still find a parameterization or a sampler that is efficient and accurate. The decision-making person doesn’t need to know whether the posterior is any good. They can still figure out the expected utility of various actions, given that posterior, and write an optimization algorithm to find the best actions. (It is a nice contrast to some Frequentist practices where inference, model, and decision-making are conceptually entangled: a significance test is a procedure for making decisions, rather than a procedure for forming beliefs, and a utility function is invoked to justify the inference algorithm<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>.)</p>
-<p>The tidy division of labour often falls apart at the software level. While conceptually separate activities, they are not practically separate. Each party needs to have some code-based representation of the model that they can work on. All of those representations need to stay in sync: if the modeler decides to change something, the inference person, and the decision-making person also need to update their code. It gets worse as the project goes on longer. Just as the final touches are put on the decision-making algorithm, the data engineering team reports some of the data was wrong, and the modelers needs to rethink some of their decisions. That, in turn, means the underlying function that we are trying to optimize also changes. This unfortunate state of affairs is the normal case. Teams, as a rule, try to continuously iterate and respond to feedback. Data changes as more is collected, or quality concerns are discovered<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>. So everyone stays busy keeping their code in sync with everyone else’s and the project never quite finishes.</p>
+<p>The tidy division of labour often falls apart at the software level. While conceptually separate activities, they are not practically separate. Each party needs to have some code-based representation of the model that they can work on. All of those representations need to stay in sync: if the modeler decides to change something, the inference person, and the decision-making person also need to update their code. It gets worse as the project goes on longer. Just as the final touches are put on the decision-making algorithm, the data engineering team reports some of the data was wrong, and the modelers need to rethink some of their decisions. That, in turn, means the underlying function that we are trying to optimize also changes. This unfortunate state of affairs is the normal case. Teams, as a rule, try to continuously iterate and respond to feedback. Data changes as more is collected, or quality concerns are discovered<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>. So everyone stays busy keeping their code in sync with everyone else’s and the project never quite finishes.</p>
 <p>The promise of probabilistic programming languages (PPLs) is that they can enforce a clean division of labour at the code level between modeling and inference. So long as the modeling code is written in this language<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>, they can just be dropped into an inference algorithm and the computer goes brrr. Decision-making, however, has not yet received the same care<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a>. What often has to happen is that someone takes the posterior output by the PPL as data and then rewrites the model in some language amenable to a numerical optimizer.</p>
 <p>Enter <a href="https://pytensor.readthedocs.io/en/latest/gallery/introduction/pytensor_intro.html">PyTensor</a>. It offers a clean division of labour at the software level between the decision-making algorithm and the rest. There is a workflow I’ve become quite fond of where you can extract optimizable functions out of PyMC models while being (mostly) agnostic to which specific operations comprise the model. This lets you make independent decisions about how much utility to assign to certain actions, which numerical optimizer is appropriate, and where the decision problem departs from the inference problem. I’ll unpack how all that works with a simple problem: what is the profit-maximizing price of a good?</p>
 <section id="define-a-model-simulate-data-do-inference-with-a-few-lines-of-code" class="level1">
 <h1>Define a model, simulate data, do inference with a few lines of code</h1>
-<p>Our intrepid consumer good change price every day<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a>.</p>
+<p>Our intrepid consumer good changes price every day<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a>.</p>
 <div class="cell" data-execution_count="1">
 <div class="cell-output cell-output-display">
 <p><img src="index_files/figure-html/cell-2-output-1.png" class="img-fluid"></p>
@@ -222,7 +222,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> pm.Normal(<span class="st">"sales"</span>, mu<span class="op">=</span>mu, sigma<span class="op">=</span>sigma)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>We can generate some hypothetical sales data under the assumption that baseline demand is 100 goods per day and the price elasticity is -1.1 At that elasticity, halving price will do a bit more than double sales.</p>
+<p>We can generate some hypothetical sales data under the assumption that baseline demand is 100 goods per day and the price elasticity is -1.1. At that elasticity, halving price will do a bit more than double sales.</p>
 <div class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>a_true <span class="op">=</span> <span class="dv">100</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>b_true <span class="op">=</span> <span class="op">-</span><span class="fl">1.1</span></span>
@@ -236,7 +236,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>Confirm, for good measure, that the posterior contains the true parameter values.</p>
 <div class="cell" data-execution_count="5">
-<div class="cell-output cell-output-display" data-execution_count="18">
+<div class="cell-output cell-output-display" data-execution_count="5">
 <div>
 
 
@@ -258,26 +258,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">a</td>
-<td>99.975</td>
-<td>0.057</td>
-<td>99.874</td>
-<td>100.082</td>
-<td>0.001</td>
-<td>0.001</td>
-<td>5171.0</td>
-<td>3293.0</td>
+<td>99.998</td>
+<td>0.006</td>
+<td>99.986</td>
+<td>100.009</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>5721.0</td>
+<td>3442.0</td>
 <td>1.0</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">b</td>
+<td>-1.101</td>
+<td>0.001</td>
+<td>-1.102</td>
 <td>-1.100</td>
-<td>0.006</td>
-<td>-1.111</td>
-<td>-1.088</td>
-<td>0.000</td>
-<td>0.000</td>
-<td>5124.0</td>
-<td>3245.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>5691.0</td>
+<td>3299.0</td>
 <td>1.0</td>
 </tr>
 </tbody>
@@ -290,9 +290,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="build-bespoke-optimizers-out-of-model-components" class="level1">
 <h1>Build bespoke optimizers out of model components</h1>
-<p>PyTensor is a peculiar package. It sits somewhere in between a symbolic computing library (like Sympy) and a compiler + autodiff library (like Jax). The neat thing about it is that you represent your model symbolically, as a tree of operations. Take the expression:</p>
+<p>PyTensor is a peculiar package. It sits somewhere in between a symbolic computing library (like SymPy) and a compiler + autodiff library (like JAX). The neat thing about it is that you represent your model symbolically, as a tree of operations. Take the expression:</p>
 <p><span class="math display">\[(a + b) * (c + d)\]</span></p>
-<p>We can think of it as a tree. The trunk is the final result. The trunk branches in two. Each side represents one side the multiplication. On the left branch, you have the result of the addition <span class="math inline">\(a + b\)</span>. The addition is also a branch and has two leaves: <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span>. When doing these sorts of problems in grade school, you learn to start with the leaves and do the additions. Then you work your way down toward the trunk, by doing the multiplications. PyTensor represents variables and operations with this weird little visual:</p>
+<p>We can think of it as a tree. The trunk is the final result. The trunk branches in two. Each side represents one side of the multiplication. On the left branch, you have the result of the addition <span class="math inline">\(a + b\)</span>. The addition is also a branch and has two leaves: <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span>. When doing these sorts of problems in grade school, you learn to start with the leaves and do the additions. Then you work your way down toward the trunk, by doing the multiplications. PyTensor represents variables and operations with this weird little visual:</p>
 <div class="cell" data-execution_count="6">
 <div class="cell-output cell-output-stdout">
 <pre><code>Mul [id A]
@@ -310,13 +310,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell" data-execution_count="7">
 <div class="cell-output cell-output-stdout">
 <pre><code>normal_rv{"(),()-&gt;()"}.1 [id A] 'sales'
- ├─ RNG(&lt;Generator(PCG64) at 0x220A5CFE960&gt;) [id B]
+ ├─ RNG(&lt;Generator(PCG64) at 0x206DCC2D2A0&gt;) [id B]
  ├─ NoneConst{None} [id C]
  ├─ Identity [id D] 'mu'
  │  └─ Mul [id E]
  │     ├─ ExpandDims{axis=0} [id F]
  │     │  └─ gamma_rv{"(),()-&gt;()"}.1 [id G] 'a'
- │     │     ├─ RNG(&lt;Generator(PCG64) at 0x220A5CFCF20&gt;) [id H]
+ │     │     ├─ RNG(&lt;Generator(PCG64) at 0x206DCC2DA80&gt;) [id H]
  │     │     ├─ NoneConst{None} [id C]
  │     │     ├─ Mul [id I]
  │     │     │  ├─ 6.25 [id J]
@@ -328,13 +328,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  │        ├─ x [id P]
  │        └─ ExpandDims{axis=0} [id Q]
  │           └─ normal_rv{"(),()-&gt;()"}.1 [id R] 'b'
- │              ├─ RNG(&lt;Generator(PCG64) at 0x220A5CFDEE0&gt;) [id S]
+ │              ├─ RNG(&lt;Generator(PCG64) at 0x206DCC2E420&gt;) [id S]
  │              ├─ NoneConst{None} [id C]
  │              ├─ 0 [id T]
  │              └─ 1 [id U]
  └─ ExpandDims{axis=0} [id V]
     └─ halfnormal_rv{"(),()-&gt;()"}.1 [id W] 'sigma'
-       ├─ RNG(&lt;Generator(PCG64) at 0x220A5CFE0A0&gt;) [id X]
+       ├─ RNG(&lt;Generator(PCG64) at 0x206DCC2D9A0&gt;) [id X]
        ├─ NoneConst{None} [id C]
        ├─ 0.0 [id Y]
        └─ 1 [id Z]</code></pre>
@@ -345,20 +345,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>Build a profit function. Right now, we only have a function for demand. But it is no good optimizing for demand though. That’s trivia - set price to 0 and the goods will fly off the shelf. To calculate profit, we need to introduce some notion of unit cost.</li>
 <li>Replace the random variables with posterior information. We only have samples from the posterior so those variables with the ugly <code>Generator</code> need to go and vectors of samples need to come.</li>
 <li>Modify the function so we can take the expectation over posterior samples. We want the expected utility rather than the distribution of possible utilities.</li>
-<li>Replace the observed price take with some optimizable variable.</li>
+<li>Replace the observed price with some optimizable variable.</li>
 </ol>
 <p>Here’s step one: we are adding some operations under the root of the tree to generate a profit function.</p>
 <div class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># convert demand function to profit function</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># multipying by profit * demand</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># profits = price - cost</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># unit_profit = unit_price - unit_cost</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># total_profit = unit_profit * demand</span></span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># this is a new piece of information. The production cost.</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># c is the unit_cost</span></span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>c <span class="op">=</span> pt.as_tensor(<span class="fl">0.3</span>)</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co"># this bit is the profits: (model.x - c)</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co"># this bit is the demand: model.mu</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>objective <span class="op">=</span> (model.x <span class="op">-</span> c) <span class="op">*</span> model.mu</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>unit_profit <span class="op">=</span> (model.x <span class="op">-</span> c)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co"># model.mu is the demand</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>objective <span class="op">=</span> unit_profit <span class="op">*</span> model.mu</span>
 <span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="co"># flip sign for optimization</span></span>
 <span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>objective <span class="op">=</span> <span class="op">-</span><span class="dv">1</span> <span class="op">*</span> objective</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -390,7 +390,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>objective_grad <span class="op">=</span> pt.grad(objective, wrt<span class="op">=</span>optimizable_x)</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>objective_fn <span class="op">=</span> pytensor.function([optimizable_x], [objective, objective_grad])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>I’m happy to admit all the above procedure looks fairly strange. It is deeply unintuitive if you come from the world of numpy computing where everything is either a number or a function. This lets abstract over numbers and functions to operate on sequences of computations. The payoff is that you can simply plug your hard work into the scipy optimizer and it tells you to lower the price, by a couple bucks.</p>
+<p>I’m happy to admit all the above procedure looks fairly strange. It is deeply unintuitive if you come from the world of NumPy computing where everything is either a number or a function. This lets abstract over numbers and functions to operate on sequences of computations. The payoff is that you can simply plug your hard work into the SciPy optimizer and it tells you to lower the price, by a couple bucks.</p>
 <div class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.optimize <span class="im">import</span> minimize</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -402,13 +402,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"optimal price: "</span>, res.x[<span class="dv">0</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>optimal price:  3.308639631102817</code></pre>
+<pre><code>optimal price:  3.275488346343822</code></pre>
 </div>
 </div>
 </section>
 <section id="write-optimizers-that-are-semi-agnostic-to-the-functions-they-are-optimizing" class="level1">
 <h1>Write optimizers that are semi-agnostic to the functions they are optimizing</h1>
-<p>The workflow presented above captures the desirata we are after. The person coding up the decision-making algorithm doesn’t have to know all the details of how sales are modeled. They just need to know an entry point into the tree (the optimizable price variable) and the endpoint (the sales variable). If the modeling team makes changes in between those two points, our abstraction will automatically pick up on those. Maybe they want to add controls, cross-price elasticities, or transform the price data in unusual ways. The decision-making team retains the capacity to modify the computational tree: adding a cost variable, generating a profit function, flipping the sign of the function and inserting an expectation operation.</p>
+<p>The workflow presented above captures the desiderata we are after. The person coding up the decision-making algorithm doesn’t have to know all the details of how sales are modeled. They just need to know an entry point into the tree (the optimizable price variable) and the endpoint (the sales variable). If the modeling team makes changes in between those two points, our abstraction will automatically pick up on those. Maybe they want to add controls, cross-price elasticities, or transform the price data in unusual ways. The decision-making team retains the capacity to modify the computational tree: adding a cost variable, generating a profit function, flipping the sign of the function and inserting an expectation operation.</p>
 <p>This price elasticity model is fairly simple. You don’t need a numerical optimizer to find a solution. It is trivial to duplicate the core logic of the model in two places. However, as models grow in size and complexity, the decision-making team will appreciate not having to keep track of every change or experiment in the core model logic. Meanwhile, they can quickly experiment with the logic that is core to the optimizer. They can experiment with different numerical solvers. When the modeling team finally wraps up their work, the chosen solver is already ready to go. They can also work with business expertise to build custom utility functions or incorporate notions of risk-aversion. Going out of business is a problem you cannot come back from so it is worth prioritizing that over other goals, like doubling profits. The decision-making team can work out the logic and code for risk-averse optimization without knowing exactly where the modeling team will land. Utility and probability are conceptually distinct, and we need our workflows to mirror these distinctions.</p>
 
 
@@ -423,7 +423,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li id="fn1"><p>As usual, I confess I don’t understand what frequentists actually do. But I gather that setting an alpha level is justified by comparing the utility of type 1 and type 2 errors. Those utilities only make sense if you think there is some bad thing that results if you act on the basis of a false positive.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn2"><p>Nobody even knows their data is wonky until they start to model it so, rest assured, data quality issues will be discovered with each iteration cycle.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn3"><p>You can imagine the pain points here: maybe the model was written 30 years ago in Fortran and nobody is brave enough to rewrite it in Stan.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn4"><p>You can see an example on the <a href="https://mc-stan.org/docs/stan-users-guide/decision-analysis.html">Stan documentation</a>. It is doable in pure Stan but they also picked an easy problem. The utility of each outcome is quantity that can be calculated as by-product of things you already compute during inference. There are 4 discrete actions to try and they have data on each of them. My decision theory problems are not this easy. If you have a continuous action space, the optimal action may not have been explored in the training data and you are not going to get utilities as a by-product of inference.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p>You can see an example on the <a href="https://mc-stan.org/docs/stan-users-guide/decision-analysis.html">Stan documentation</a>. It is doable in pure Stan but they also picked an easy problem. The utility of each outcome is a quantity that can be calculated as a by-product of things you already compute during inference. There are 4 discrete actions to try and they have data on each of them. My decision theory problems are not this easy. If you have a continuous action space, the optimal action may not have been explored in the training data and you are not going to get utilities as a by-product of inference.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn5"><p>It is one of these consumer-facing software companies where they let the data scientists do the financials.<a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section></div></main> <!-- /main -->
@@ -729,7 +729,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="ot">[^1]: </span>As usual, I confess I don't understand what frequentists actually do. But I gather that setting an alpha level is justified by comparing the utility of type 1 and type 2 errors. Those utilities only make sense if you think there is some bad thing that results if you act on the basis of a false positive.</span>
 <span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>The tidy division of labour often falls apart at the software level. While conceptually separate activities, they are not practically separate. Each party needs to have some code-based representation of the model that they can work on. All of those representations need to stay in sync: if the modeler decides to change something, the inference person, and the decision-making person also need to update their code. It gets worse as the project goes on longer. Just as the final touches are put on the decision-making algorithm, the data engineering team reports some of the data was wrong, and the modelers needs to rethink some of their decisions. That, in turn, means the underlying function that we are trying to optimize also changes. This unfortunate state of affairs is the normal case. Teams, as a rule, try to continuously iterate and respond to feedback. Data changes as more is collected, or quality concerns are discovered<span class="ot">[^2]</span>. So everyone stays busy keeping their code in sync with everyone else's and the project never quite finishes.</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>The tidy division of labour often falls apart at the software level. While conceptually separate activities, they are not practically separate. Each party needs to have some code-based representation of the model that they can work on. All of those representations need to stay in sync: if the modeler decides to change something, the inference person, and the decision-making person also need to update their code. It gets worse as the project goes on longer. Just as the final touches are put on the decision-making algorithm, the data engineering team reports some of the data was wrong, and the modelers need to rethink some of their decisions. That, in turn, means the underlying function that we are trying to optimize also changes. This unfortunate state of affairs is the normal case. Teams, as a rule, try to continuously iterate and respond to feedback. Data changes as more is collected, or quality concerns are discovered<span class="ot">[^2]</span>. So everyone stays busy keeping their code in sync with everyone else's and the project never quite finishes.</span>
 <span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a><span class="ot">[^2]: </span>Nobody even knows their data is wonky until they start to model it so, rest assured, data quality issues will be discovered with each iteration cycle.</span>
 <span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a></span>
@@ -739,11 +739,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a><span class="ot">[^3]: </span>You can imagine the pain points here: maybe the model was written 30 years ago in Fortran and nobody is brave enough to rewrite it in Stan.</span>
 <span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a><span class="ot">[^4]: </span>You can see an example on the <span class="co">[</span><span class="ot">Stan documentation</span><span class="co">](https://mc-stan.org/docs/stan-users-guide/decision-analysis.html)</span>. It is doable in pure Stan but they also picked an easy problem. The utility of each outcome is quantity that can be calculated as by-product of things you already compute during inference. There are 4 discrete actions to try and they have data on each of them. My decision theory problems are not this easy. If you have a continuous action space, the optimal action may not have been explored in the training data and you are not going to get utilities as a by-product of inference.</span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a><span class="ot">[^4]: </span>You can see an example on the <span class="co">[</span><span class="ot">Stan documentation</span><span class="co">](https://mc-stan.org/docs/stan-users-guide/decision-analysis.html)</span>. It is doable in pure Stan but they also picked an easy problem. The utility of each outcome is a quantity that can be calculated as a by-product of things you already compute during inference. There are 4 discrete actions to try and they have data on each of them. My decision theory problems are not this easy. If you have a continuous action space, the optimal action may not have been explored in the training data and you are not going to get utilities as a by-product of inference.</span>
 <span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a><span class="fu"># Define a model, simulate data, do inference with a few lines of code</span></span>
 <span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a>Our intrepid consumer good change price every day<span class="ot">[^5]</span>.</span>
+<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a>Our intrepid consumer good changes price every day<span class="ot">[^5]</span>.</span>
 <span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a><span class="ot">[^5]: </span>It is one of these consumer-facing software companies where they let the data scientists do the financials.</span>
 <span id="cb13-36"><a href="#cb13-36" aria-hidden="true" tabindex="-1"></a></span>
@@ -785,15 +785,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb13-74"><a href="#cb13-74" aria-hidden="true" tabindex="-1"></a>last_value <span class="op">=</span> prices[<span class="op">-</span><span class="dv">1</span>]</span>
 <span id="cb13-75"><a href="#cb13-75" aria-hidden="true" tabindex="-1"></a>plt.text(</span>
 <span id="cb13-76"><a href="#cb13-76" aria-hidden="true" tabindex="-1"></a>    <span class="dv">99</span>,</span>
-<span id="cb13-77"><a href="#cb13-77" aria-hidden="true" tabindex="-1"></a>    last_value<span class="op">*</span><span class="fl">1.01</span>, <span class="co"># slightly shift up</span></span>
-<span id="cb13-78"><a href="#cb13-78" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f'$</span><span class="sc">{</span><span class="bu">round</span>(last_value,<span class="dv">2</span>)<span class="sc">}</span><span class="ss">'</span>, <span class="co"># round for more lisibility</span></span>
+<span id="cb13-77"><a href="#cb13-77" aria-hidden="true" tabindex="-1"></a>    last_value<span class="op">*</span><span class="fl">1.01</span>,</span>
+<span id="cb13-78"><a href="#cb13-78" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f'$</span><span class="sc">{</span><span class="bu">round</span>(last_value,<span class="dv">2</span>)<span class="sc">}</span><span class="ss">'</span>,</span>
 <span id="cb13-79"><a href="#cb13-79" aria-hidden="true" tabindex="-1"></a>    fontsize<span class="op">=</span><span class="dv">10</span>,</span>
 <span id="cb13-80"><a href="#cb13-80" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb13-81"><a href="#cb13-81" aria-hidden="true" tabindex="-1"></a>first_value <span class="op">=</span> prices[<span class="dv">0</span>]</span>
 <span id="cb13-82"><a href="#cb13-82" aria-hidden="true" tabindex="-1"></a>plt.text(</span>
 <span id="cb13-83"><a href="#cb13-83" aria-hidden="true" tabindex="-1"></a>    <span class="dv">0</span>,</span>
-<span id="cb13-84"><a href="#cb13-84" aria-hidden="true" tabindex="-1"></a>    first_value<span class="op">*</span><span class="fl">0.975</span>, <span class="co"># slightly shift up</span></span>
-<span id="cb13-85"><a href="#cb13-85" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f'$</span><span class="sc">{</span><span class="bu">round</span>(first_value,<span class="dv">2</span>)<span class="sc">}</span><span class="ss">'</span>, <span class="co"># round for more lisibility</span></span>
+<span id="cb13-84"><a href="#cb13-84" aria-hidden="true" tabindex="-1"></a>    first_value<span class="op">*</span><span class="fl">0.975</span>,</span>
+<span id="cb13-85"><a href="#cb13-85" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f'$</span><span class="sc">{</span><span class="bu">round</span>(first_value,<span class="dv">2</span>)<span class="sc">}</span><span class="ss">'</span>,</span>
 <span id="cb13-86"><a href="#cb13-86" aria-hidden="true" tabindex="-1"></a>    fontsize<span class="op">=</span><span class="dv">10</span>,</span>
 <span id="cb13-87"><a href="#cb13-87" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb13-88"><a href="#cb13-88" aria-hidden="true" tabindex="-1"></a>plt.gca().spines[<span class="st">'top'</span>].set_visible(<span class="va">False</span>)</span>
@@ -830,7 +830,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb13-121"><a href="#cb13-121" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> pm.Normal(<span class="st">"sales"</span>, mu<span class="op">=</span>mu, sigma<span class="op">=</span>sigma)</span>
 <span id="cb13-122"><a href="#cb13-122" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb13-123"><a href="#cb13-123" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-124"><a href="#cb13-124" aria-hidden="true" tabindex="-1"></a>We can generate some hypothetical sales data under the assumption that baseline demand is 100 goods per day and the price elasticity is -1.1 At that elasticity, halving price will do a bit more than double sales.</span>
+<span id="cb13-124"><a href="#cb13-124" aria-hidden="true" tabindex="-1"></a>We can generate some hypothetical sales data under the assumption that baseline demand is 100 goods per day and the price elasticity is -1.1. At that elasticity, halving price will do a bit more than double sales.</span>
 <span id="cb13-125"><a href="#cb13-125" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-128"><a href="#cb13-128" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
 <span id="cb13-129"><a href="#cb13-129" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
@@ -859,11 +859,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb13-156"><a href="#cb13-156" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-157"><a href="#cb13-157" aria-hidden="true" tabindex="-1"></a><span class="fu"># Build bespoke optimizers out of model components</span></span>
 <span id="cb13-158"><a href="#cb13-158" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-159"><a href="#cb13-159" aria-hidden="true" tabindex="-1"></a>PyTensor is a peculiar package. It sits somewhere in between a symbolic computing library (like Sympy) and a compiler + autodiff library (like Jax). The neat thing about it is that you represent your model symbolically, as a tree of operations. Take the expression:</span>
+<span id="cb13-159"><a href="#cb13-159" aria-hidden="true" tabindex="-1"></a>PyTensor is a peculiar package. It sits somewhere in between a symbolic computing library (like SymPy) and a compiler + autodiff library (like JAX). The neat thing about it is that you represent your model symbolically, as a tree of operations. Take the expression:</span>
 <span id="cb13-160"><a href="#cb13-160" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-161"><a href="#cb13-161" aria-hidden="true" tabindex="-1"></a>$$(a + b) * (c + d)$$</span>
 <span id="cb13-162"><a href="#cb13-162" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-163"><a href="#cb13-163" aria-hidden="true" tabindex="-1"></a>We can think of it as a tree. The trunk is the final result. The trunk branches in two. Each side represents one side the multiplication. On the left branch, you have the result of the addition $a + b$. The addition is also a branch and has two leaves: $a$ and $b$. When doing these sorts of problems in grade school, you learn to start with the leaves and do the additions. Then you work your way down toward the trunk, by doing the multiplications. PyTensor represents variables and operations with this weird little visual:</span>
+<span id="cb13-163"><a href="#cb13-163" aria-hidden="true" tabindex="-1"></a>We can think of it as a tree. The trunk is the final result. The trunk branches in two. Each side represents one side of the multiplication. On the left branch, you have the result of the addition $a + b$. The addition is also a branch and has two leaves: $a$ and $b$. When doing these sorts of problems in grade school, you learn to start with the leaves and do the additions. Then you work your way down toward the trunk, by doing the multiplications. PyTensor represents variables and operations with this weird little visual:</span>
 <span id="cb13-164"><a href="#cb13-164" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-167"><a href="#cb13-167" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
 <span id="cb13-168"><a href="#cb13-168" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> pt.scalar(<span class="st">'a'</span>)</span>
@@ -890,7 +890,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb13-191"><a href="#cb13-191" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Build a profit function. Right now, we only have a function for demand. But it is no good optimizing for demand though. That's trivia - set price to 0 and the goods will fly off the shelf. To calculate profit, we need to introduce some notion of unit cost.</span>
 <span id="cb13-192"><a href="#cb13-192" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Replace the random variables with posterior information. We only have samples from the posterior so those variables with the ugly <span class="in">`Generator`</span> need to go and vectors of samples need to come.</span>
 <span id="cb13-193"><a href="#cb13-193" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Modify the function so we can take the expectation over posterior samples. We want the expected utility rather than the distribution of possible utilities.</span>
-<span id="cb13-194"><a href="#cb13-194" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Replace the observed price take with some optimizable variable.</span>
+<span id="cb13-194"><a href="#cb13-194" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Replace the observed price with some optimizable variable.</span>
 <span id="cb13-195"><a href="#cb13-195" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-196"><a href="#cb13-196" aria-hidden="true" tabindex="-1"></a>Here's step one: we are adding some operations under the root of the tree to generate a profit function.</span>
 <span id="cb13-197"><a href="#cb13-197" aria-hidden="true" tabindex="-1"></a></span>
@@ -950,7 +950,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb13-261"><a href="#cb13-261" aria-hidden="true" tabindex="-1"></a>objective_fn <span class="op">=</span> pytensor.function([optimizable_x], [objective, objective_grad])</span>
 <span id="cb13-262"><a href="#cb13-262" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb13-263"><a href="#cb13-263" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-264"><a href="#cb13-264" aria-hidden="true" tabindex="-1"></a>I'm happy to admit all the above procedure looks fairly strange. It is deeply unintuitive if you come from the world of numpy computing where everything is either a number or a function. This lets abstract over numbers and functions to operate on sequences of computations. The payoff is that you can simply plug your hard work into the scipy optimizer and it tells you to lower the price, by a couple bucks.</span>
+<span id="cb13-264"><a href="#cb13-264" aria-hidden="true" tabindex="-1"></a>I'm happy to admit all the above procedure looks fairly strange. It is deeply unintuitive if you come from the world of NumPy computing where everything is either a number or a function. This lets abstract over numbers and functions to operate on sequences of computations. The payoff is that you can simply plug your hard work into the SciPy optimizer and it tells you to lower the price, by a couple bucks.</span>
 <span id="cb13-265"><a href="#cb13-265" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-268"><a href="#cb13-268" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
 <span id="cb13-269"><a href="#cb13-269" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
@@ -968,7 +968,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb13-281"><a href="#cb13-281" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-282"><a href="#cb13-282" aria-hidden="true" tabindex="-1"></a><span class="fu"># Write optimizers that are semi-agnostic to the functions they are optimizing</span></span>
 <span id="cb13-283"><a href="#cb13-283" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-284"><a href="#cb13-284" aria-hidden="true" tabindex="-1"></a>The workflow presented above captures the desirata we are after. The person coding up the decision-making algorithm doesn't have to know all the details of how sales are modeled. They just need to know an entry point into the tree (the optimizable price variable) and the endpoint (the sales variable). If the modeling team makes changes in between those two points, our abstraction will automatically pick up on those. Maybe they want to add controls, cross-price elasticities, or transform the price data in unusual ways. The decision-making team retains the capacity to modify the computational tree: adding a cost variable, generating a profit function, flipping the sign of the function and inserting an expectation operation.</span>
+<span id="cb13-284"><a href="#cb13-284" aria-hidden="true" tabindex="-1"></a>The workflow presented above captures the desiderata we are after. The person coding up the decision-making algorithm doesn't have to know all the details of how sales are modeled. They just need to know an entry point into the tree (the optimizable price variable) and the endpoint (the sales variable). If the modeling team makes changes in between those two points, our abstraction will automatically pick up on those. Maybe they want to add controls, cross-price elasticities, or transform the price data in unusual ways. The decision-making team retains the capacity to modify the computational tree: adding a cost variable, generating a profit function, flipping the sign of the function and inserting an expectation operation.</span>
 <span id="cb13-285"><a href="#cb13-285" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-286"><a href="#cb13-286" aria-hidden="true" tabindex="-1"></a>This price elasticity model is fairly simple. You don't need a numerical optimizer to find a solution. It is trivial to duplicate the core logic of the model in two places. However, as models grow in size and complexity, the decision-making team will appreciate not having to keep track of every change or experiment in the core model logic. Meanwhile, they can quickly experiment with the logic that is core to the optimizer. They can experiment with different numerical solvers. When the modeling team finally wraps up their work, the chosen solver is already ready to go. They can also work with business expertise to build custom utility functions or incorporate notions of risk-aversion. Going out of business is a problem you cannot come back from so it is worth prioritizing that over other goals, like doubling profits. The decision-making team can work out the logic and code for risk-averse optimization without knowing exactly where the modeling team will land. Utility and probability are conceptually distinct, and we need our workflows to mirror these distinctions.</span>
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>

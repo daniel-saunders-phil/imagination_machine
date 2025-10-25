@@ -26,3 +26,6 @@ Ideas for forthcoming blog posts:
 - Centered / non-centered reparameterization tricks for 0-1 constrained parameters.
 - Partially centered and non-centered parameterizations
 - Zero-sum transformation
+- Risk-sensitive optimization
+- Bayesian inference of ODEs, especially with the @wrap_jax operator
+- Play around with normalizing flows

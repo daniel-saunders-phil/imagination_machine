@@ -21,7 +21,7 @@ website:
 
 format:
   html:
-    theme: solar
+    theme: united
     css: styles.css
     toc: true
     code-fold: true

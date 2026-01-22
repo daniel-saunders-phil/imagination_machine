@@ -258,26 +258,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">a</td>
-<td>99.998</td>
-<td>0.006</td>
-<td>99.986</td>
-<td>100.009</td>
+<td>99.989</td>
+<td>0.016</td>
+<td>99.962</td>
+<td>100.021</td>
 <td>0.0</td>
 <td>0.0</td>
-<td>5721.0</td>
-<td>3442.0</td>
+<td>5460.0</td>
+<td>3338.0</td>
 <td>1.0</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">b</td>
-<td>-1.101</td>
-<td>0.001</td>
-<td>-1.102</td>
 <td>-1.100</td>
+<td>0.002</td>
+<td>-1.104</td>
+<td>-1.097</td>
 <td>0.0</td>
 <td>0.0</td>
-<td>5691.0</td>
-<td>3299.0</td>
+<td>4772.0</td>
+<td>3272.0</td>
 <td>1.0</td>
 </tr>
 </tbody>
@@ -310,13 +310,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell" data-execution_count="7">
 <div class="cell-output cell-output-stdout">
 <pre><code>normal_rv{"(),()-&gt;()"}.1 [id A] 'sales'
- ├─ RNG(&lt;Generator(PCG64) at 0x206DCC2D2A0&gt;) [id B]
+ ├─ RNG(&lt;Generator(PCG64) at 0x29EDBC35460&gt;) [id B]
  ├─ NoneConst{None} [id C]
  ├─ Identity [id D] 'mu'
  │  └─ Mul [id E]
  │     ├─ ExpandDims{axis=0} [id F]
  │     │  └─ gamma_rv{"(),()-&gt;()"}.1 [id G] 'a'
- │     │     ├─ RNG(&lt;Generator(PCG64) at 0x206DCC2DA80&gt;) [id H]
+ │     │     ├─ RNG(&lt;Generator(PCG64) at 0x29EDBC34580&gt;) [id H]
  │     │     ├─ NoneConst{None} [id C]
  │     │     ├─ Mul [id I]
  │     │     │  ├─ 6.25 [id J]
@@ -328,21 +328,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  │        ├─ x [id P]
  │        └─ ExpandDims{axis=0} [id Q]
  │           └─ normal_rv{"(),()-&gt;()"}.1 [id R] 'b'
- │              ├─ RNG(&lt;Generator(PCG64) at 0x206DCC2E420&gt;) [id S]
+ │              ├─ RNG(&lt;Generator(PCG64) at 0x29EDBC35380&gt;) [id S]
  │              ├─ NoneConst{None} [id C]
  │              ├─ 0 [id T]
  │              └─ 1 [id U]
  └─ ExpandDims{axis=0} [id V]
     └─ halfnormal_rv{"(),()-&gt;()"}.1 [id W] 'sigma'
-       ├─ RNG(&lt;Generator(PCG64) at 0x206DCC2D9A0&gt;) [id X]
+       ├─ RNG(&lt;Generator(PCG64) at 0x29EDBC357E0&gt;) [id X]
        ├─ NoneConst{None} [id C]
        ├─ 0.0 [id Y]
        └─ 1 [id Z]</code></pre>
 </div>
 </div>
-<p>To find the optimal price, we need to do a few things. Each of the things shows off a different way to reuse-while-modifying model components.</p>
+<p>To find the optimal price, we need to do a few things. Each of the things shows off a different way to reuse-while-modifying model components. I should mention, I borrowed heavily from this <a href="https://www.youtube.com/watch?v=boB16AX0OLw">workshop</a> by Ricardo Vieira and Jesse Grabowski<a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a>.</p>
 <ol type="1">
-<li>Build a profit function. Right now, we only have a function for demand. But it is no good optimizing for demand though. That’s trivia - set price to 0 and the goods will fly off the shelf. To calculate profit, we need to introduce some notion of unit cost.</li>
+<li>Build a profit function. Right now, we only have a function for demand. But it is no good optimizing for demand though. That’s trivial - set price to 0 and the goods will fly off the shelf. To calculate profit, we need to introduce some notion of unit cost.</li>
 <li>Replace the random variables with posterior information. We only have samples from the posterior so those variables with the ugly <code>Generator</code> need to go and vectors of samples need to come.</li>
 <li>Modify the function so we can take the expectation over posterior samples. We want the expected utility rather than the distribution of possible utilities.</li>
 <li>Replace the observed price with some optimizable variable.</li>
@@ -402,7 +402,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"optimal price: "</span>, res.x[<span class="dv">0</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>optimal price:  3.275488346343822</code></pre>
+<pre><code>optimal price:  3.291507977689139</code></pre>
 </div>
 </div>
 </section>
@@ -425,6 +425,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li id="fn3"><p>You can imagine the pain points here: maybe the model was written 30 years ago in Fortran and nobody is brave enough to rewrite it in Stan.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn4"><p>You can see an example on the <a href="https://mc-stan.org/docs/stan-users-guide/decision-analysis.html">Stan documentation</a>. It is doable in pure Stan but they also picked an easy problem. The utility of each outcome is a quantity that can be calculated as a by-product of things you already compute during inference. There are 4 discrete actions to try and they have data on each of them. My decision theory problems are not this easy. If you have a continuous action space, the optimal action may not have been explored in the training data and you are not going to get utilities as a by-product of inference.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn5"><p>It is one of these consumer-facing software companies where they let the data scientists do the financials.<a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn6"><p>Since originally drafting, I’ve learned of a number of other resources on optimizing with PyMC models. <a href="https://www.youtube.com/watch?si=DzDYJQ4_ItFDT1mt&amp;v=WT7o8QRIiQI&amp;feature=youtu.be">Ravin Kumar</a>, <a href="https://twiecki.io/blog/2019/01/14/supply_chain/">Thomas Wiecki’s and Ravin</a>, <a href="https://www.youtube.com/watch?v=1SjOYFW67rg">Jesse and Ricardo again</a>.<a href="#fnref6" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -885,92 +886,94 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb13-186"><a href="#cb13-186" aria-hidden="true" tabindex="-1"></a>model.sales.dprint()<span class="op">;</span></span>
 <span id="cb13-187"><a href="#cb13-187" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb13-188"><a href="#cb13-188" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-189"><a href="#cb13-189" aria-hidden="true" tabindex="-1"></a>To find the optimal price, we need to do a few things. Each of the things shows off a different way to reuse-while-modifying model components.</span>
+<span id="cb13-189"><a href="#cb13-189" aria-hidden="true" tabindex="-1"></a>To find the optimal price, we need to do a few things. Each of the things shows off a different way to reuse-while-modifying model components. I should mention, I borrowed heavily from this <span class="co">[</span><span class="ot">workshop</span><span class="co">](https://www.youtube.com/watch?v=boB16AX0OLw)</span> by Ricardo Vieira and Jesse Grabowski<span class="ot">[^6]</span>.</span>
 <span id="cb13-190"><a href="#cb13-190" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-191"><a href="#cb13-191" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Build a profit function. Right now, we only have a function for demand. But it is no good optimizing for demand though. That's trivia - set price to 0 and the goods will fly off the shelf. To calculate profit, we need to introduce some notion of unit cost.</span>
-<span id="cb13-192"><a href="#cb13-192" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Replace the random variables with posterior information. We only have samples from the posterior so those variables with the ugly <span class="in">`Generator`</span> need to go and vectors of samples need to come.</span>
-<span id="cb13-193"><a href="#cb13-193" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Modify the function so we can take the expectation over posterior samples. We want the expected utility rather than the distribution of possible utilities.</span>
-<span id="cb13-194"><a href="#cb13-194" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Replace the observed price with some optimizable variable.</span>
-<span id="cb13-195"><a href="#cb13-195" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-196"><a href="#cb13-196" aria-hidden="true" tabindex="-1"></a>Here's step one: we are adding some operations under the root of the tree to generate a profit function.</span>
+<span id="cb13-191"><a href="#cb13-191" aria-hidden="true" tabindex="-1"></a><span class="ot">[^6]: </span>Since originally drafting, I've learned of a number of other resources on optimizing with PyMC models. <span class="co">[</span><span class="ot">Ravin Kumar</span><span class="co">](https://www.youtube.com/watch?si=DzDYJQ4_ItFDT1mt&amp;v=WT7o8QRIiQI&amp;feature=youtu.be)</span>, <span class="co">[</span><span class="ot">Thomas Wiecki's and Ravin </span><span class="co">](https://twiecki.io/blog/2019/01/14/supply_chain/)</span>, <span class="co">[</span><span class="ot">Jesse and Ricardo again</span><span class="co">](https://www.youtube.com/watch?v=1SjOYFW67rg)</span>.</span>
+<span id="cb13-192"><a href="#cb13-192" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-193"><a href="#cb13-193" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Build a profit function. Right now, we only have a function for demand. But it is no good optimizing for demand though. That's trivial - set price to 0 and the goods will fly off the shelf. To calculate profit, we need to introduce some notion of unit cost.</span>
+<span id="cb13-194"><a href="#cb13-194" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Replace the random variables with posterior information. We only have samples from the posterior so those variables with the ugly <span class="in">`Generator`</span> need to go and vectors of samples need to come.</span>
+<span id="cb13-195"><a href="#cb13-195" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Modify the function so we can take the expectation over posterior samples. We want the expected utility rather than the distribution of possible utilities.</span>
+<span id="cb13-196"><a href="#cb13-196" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Replace the observed price with some optimizable variable.</span>
 <span id="cb13-197"><a href="#cb13-197" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-200"><a href="#cb13-200" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb13-201"><a href="#cb13-201" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb13-202"><a href="#cb13-202" aria-hidden="true" tabindex="-1"></a><span class="co"># convert demand function to profit function</span></span>
-<span id="cb13-203"><a href="#cb13-203" aria-hidden="true" tabindex="-1"></a><span class="co"># unit_profit = unit_price - unit_cost</span></span>
-<span id="cb13-204"><a href="#cb13-204" aria-hidden="true" tabindex="-1"></a><span class="co"># total_profit = unit_profit * demand</span></span>
-<span id="cb13-205"><a href="#cb13-205" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-206"><a href="#cb13-206" aria-hidden="true" tabindex="-1"></a><span class="co"># c is the unit_cost</span></span>
-<span id="cb13-207"><a href="#cb13-207" aria-hidden="true" tabindex="-1"></a>c <span class="op">=</span> pt.as_tensor(<span class="fl">0.3</span>)</span>
-<span id="cb13-208"><a href="#cb13-208" aria-hidden="true" tabindex="-1"></a>unit_profit <span class="op">=</span> (model.x <span class="op">-</span> c)</span>
-<span id="cb13-209"><a href="#cb13-209" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-210"><a href="#cb13-210" aria-hidden="true" tabindex="-1"></a><span class="co"># model.mu is the demand</span></span>
-<span id="cb13-211"><a href="#cb13-211" aria-hidden="true" tabindex="-1"></a>objective <span class="op">=</span> unit_profit <span class="op">*</span> model.mu</span>
-<span id="cb13-212"><a href="#cb13-212" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-213"><a href="#cb13-213" aria-hidden="true" tabindex="-1"></a><span class="co"># flip sign for optimization</span></span>
-<span id="cb13-214"><a href="#cb13-214" aria-hidden="true" tabindex="-1"></a>objective <span class="op">=</span> <span class="op">-</span><span class="dv">1</span> <span class="op">*</span> objective</span>
-<span id="cb13-215"><a href="#cb13-215" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-216"><a href="#cb13-216" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-217"><a href="#cb13-217" aria-hidden="true" tabindex="-1"></a>Here's step two: we are replacing all the random variables with posterior samples.</span>
+<span id="cb13-198"><a href="#cb13-198" aria-hidden="true" tabindex="-1"></a>Here's step one: we are adding some operations under the root of the tree to generate a profit function.</span>
+<span id="cb13-199"><a href="#cb13-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-202"><a href="#cb13-202" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb13-203"><a href="#cb13-203" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb13-204"><a href="#cb13-204" aria-hidden="true" tabindex="-1"></a><span class="co"># convert demand function to profit function</span></span>
+<span id="cb13-205"><a href="#cb13-205" aria-hidden="true" tabindex="-1"></a><span class="co"># unit_profit = unit_price - unit_cost</span></span>
+<span id="cb13-206"><a href="#cb13-206" aria-hidden="true" tabindex="-1"></a><span class="co"># total_profit = unit_profit * demand</span></span>
+<span id="cb13-207"><a href="#cb13-207" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-208"><a href="#cb13-208" aria-hidden="true" tabindex="-1"></a><span class="co"># c is the unit_cost</span></span>
+<span id="cb13-209"><a href="#cb13-209" aria-hidden="true" tabindex="-1"></a>c <span class="op">=</span> pt.as_tensor(<span class="fl">0.3</span>)</span>
+<span id="cb13-210"><a href="#cb13-210" aria-hidden="true" tabindex="-1"></a>unit_profit <span class="op">=</span> (model.x <span class="op">-</span> c)</span>
+<span id="cb13-211"><a href="#cb13-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-212"><a href="#cb13-212" aria-hidden="true" tabindex="-1"></a><span class="co"># model.mu is the demand</span></span>
+<span id="cb13-213"><a href="#cb13-213" aria-hidden="true" tabindex="-1"></a>objective <span class="op">=</span> unit_profit <span class="op">*</span> model.mu</span>
+<span id="cb13-214"><a href="#cb13-214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-215"><a href="#cb13-215" aria-hidden="true" tabindex="-1"></a><span class="co"># flip sign for optimization</span></span>
+<span id="cb13-216"><a href="#cb13-216" aria-hidden="true" tabindex="-1"></a>objective <span class="op">=</span> <span class="op">-</span><span class="dv">1</span> <span class="op">*</span> objective</span>
+<span id="cb13-217"><a href="#cb13-217" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb13-218"><a href="#cb13-218" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-221"><a href="#cb13-221" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb13-222"><a href="#cb13-222" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb13-223"><a href="#cb13-223" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pymc <span class="im">import</span> vectorize_over_posterior</span>
-<span id="cb13-224"><a href="#cb13-224" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-225"><a href="#cb13-225" aria-hidden="true" tabindex="-1"></a>objective <span class="op">=</span> vectorize_over_posterior(</span>
-<span id="cb13-226"><a href="#cb13-226" aria-hidden="true" tabindex="-1"></a>    outputs <span class="op">=</span> [objective],</span>
-<span id="cb13-227"><a href="#cb13-227" aria-hidden="true" tabindex="-1"></a>    posterior <span class="op">=</span> trace.posterior,</span>
-<span id="cb13-228"><a href="#cb13-228" aria-hidden="true" tabindex="-1"></a>    input_rvs<span class="op">=</span>[model.a,model.b]</span>
-<span id="cb13-229"><a href="#cb13-229" aria-hidden="true" tabindex="-1"></a>)[<span class="dv">0</span>]</span>
-<span id="cb13-230"><a href="#cb13-230" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-231"><a href="#cb13-231" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-232"><a href="#cb13-232" aria-hidden="true" tabindex="-1"></a>Step three is adding an expectation underneath the profit function. So we have a tree for the *expected* profit now.</span>
+<span id="cb13-219"><a href="#cb13-219" aria-hidden="true" tabindex="-1"></a>Here's step two: we are replacing all the random variables with posterior samples.</span>
+<span id="cb13-220"><a href="#cb13-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-223"><a href="#cb13-223" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb13-224"><a href="#cb13-224" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb13-225"><a href="#cb13-225" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pymc <span class="im">import</span> vectorize_over_posterior</span>
+<span id="cb13-226"><a href="#cb13-226" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-227"><a href="#cb13-227" aria-hidden="true" tabindex="-1"></a>objective <span class="op">=</span> vectorize_over_posterior(</span>
+<span id="cb13-228"><a href="#cb13-228" aria-hidden="true" tabindex="-1"></a>    outputs <span class="op">=</span> [objective],</span>
+<span id="cb13-229"><a href="#cb13-229" aria-hidden="true" tabindex="-1"></a>    posterior <span class="op">=</span> trace.posterior,</span>
+<span id="cb13-230"><a href="#cb13-230" aria-hidden="true" tabindex="-1"></a>    input_rvs<span class="op">=</span>[model.a,model.b]</span>
+<span id="cb13-231"><a href="#cb13-231" aria-hidden="true" tabindex="-1"></a>)[<span class="dv">0</span>]</span>
+<span id="cb13-232"><a href="#cb13-232" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb13-233"><a href="#cb13-233" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-236"><a href="#cb13-236" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb13-237"><a href="#cb13-237" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb13-238"><a href="#cb13-238" aria-hidden="true" tabindex="-1"></a>objective <span class="op">=</span> pt.mean(objective)</span>
-<span id="cb13-239"><a href="#cb13-239" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-240"><a href="#cb13-240" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-241"><a href="#cb13-241" aria-hidden="true" tabindex="-1"></a>In step four, we replace the observed spend data with the optimizable variable.</span>
+<span id="cb13-234"><a href="#cb13-234" aria-hidden="true" tabindex="-1"></a>Step three is adding an expectation underneath the profit function. So we have a tree for the *expected* profit now.</span>
+<span id="cb13-235"><a href="#cb13-235" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-238"><a href="#cb13-238" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb13-239"><a href="#cb13-239" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb13-240"><a href="#cb13-240" aria-hidden="true" tabindex="-1"></a>objective <span class="op">=</span> pt.mean(objective)</span>
+<span id="cb13-241"><a href="#cb13-241" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb13-242"><a href="#cb13-242" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-245"><a href="#cb13-245" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb13-246"><a href="#cb13-246" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb13-247"><a href="#cb13-247" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pytensor.graph <span class="im">import</span> graph_replace</span>
-<span id="cb13-248"><a href="#cb13-248" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-249"><a href="#cb13-249" aria-hidden="true" tabindex="-1"></a>optimizable_x <span class="op">=</span> pt.dvector(<span class="st">'opt_x'</span>)</span>
-<span id="cb13-250"><a href="#cb13-250" aria-hidden="true" tabindex="-1"></a>objective <span class="op">=</span> graph_replace(objective,replace<span class="op">=</span>{model.x:optimizable_x})</span>
-<span id="cb13-251"><a href="#cb13-251" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-252"><a href="#cb13-252" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-253"><a href="#cb13-253" aria-hidden="true" tabindex="-1"></a>Finally, we can do neat things like get the gradients of our new function and compile both of them into efficient C code.</span>
+<span id="cb13-243"><a href="#cb13-243" aria-hidden="true" tabindex="-1"></a>In step four, we replace the observed spend data with the optimizable variable.</span>
+<span id="cb13-244"><a href="#cb13-244" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-247"><a href="#cb13-247" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb13-248"><a href="#cb13-248" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb13-249"><a href="#cb13-249" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pytensor.graph <span class="im">import</span> graph_replace</span>
+<span id="cb13-250"><a href="#cb13-250" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-251"><a href="#cb13-251" aria-hidden="true" tabindex="-1"></a>optimizable_x <span class="op">=</span> pt.dvector(<span class="st">'opt_x'</span>)</span>
+<span id="cb13-252"><a href="#cb13-252" aria-hidden="true" tabindex="-1"></a>objective <span class="op">=</span> graph_replace(objective,replace<span class="op">=</span>{model.x:optimizable_x})</span>
+<span id="cb13-253"><a href="#cb13-253" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb13-254"><a href="#cb13-254" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-257"><a href="#cb13-257" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb13-258"><a href="#cb13-258" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb13-259"><a href="#cb13-259" aria-hidden="true" tabindex="-1"></a><span class="co"># build gradient and objective function</span></span>
-<span id="cb13-260"><a href="#cb13-260" aria-hidden="true" tabindex="-1"></a>objective_grad <span class="op">=</span> pt.grad(objective, wrt<span class="op">=</span>optimizable_x)</span>
-<span id="cb13-261"><a href="#cb13-261" aria-hidden="true" tabindex="-1"></a>objective_fn <span class="op">=</span> pytensor.function([optimizable_x], [objective, objective_grad])</span>
-<span id="cb13-262"><a href="#cb13-262" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-263"><a href="#cb13-263" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-264"><a href="#cb13-264" aria-hidden="true" tabindex="-1"></a>I'm happy to admit all the above procedure looks fairly strange. It is deeply unintuitive if you come from the world of NumPy computing where everything is either a number or a function. This lets abstract over numbers and functions to operate on sequences of computations. The payoff is that you can simply plug your hard work into the SciPy optimizer and it tells you to lower the price, by a couple bucks.</span>
+<span id="cb13-255"><a href="#cb13-255" aria-hidden="true" tabindex="-1"></a>Finally, we can do neat things like get the gradients of our new function and compile both of them into efficient C code.</span>
+<span id="cb13-256"><a href="#cb13-256" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-259"><a href="#cb13-259" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb13-260"><a href="#cb13-260" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb13-261"><a href="#cb13-261" aria-hidden="true" tabindex="-1"></a><span class="co"># build gradient and objective function</span></span>
+<span id="cb13-262"><a href="#cb13-262" aria-hidden="true" tabindex="-1"></a>objective_grad <span class="op">=</span> pt.grad(objective, wrt<span class="op">=</span>optimizable_x)</span>
+<span id="cb13-263"><a href="#cb13-263" aria-hidden="true" tabindex="-1"></a>objective_fn <span class="op">=</span> pytensor.function([optimizable_x], [objective, objective_grad])</span>
+<span id="cb13-264"><a href="#cb13-264" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb13-265"><a href="#cb13-265" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-268"><a href="#cb13-268" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb13-269"><a href="#cb13-269" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb13-270"><a href="#cb13-270" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-271"><a href="#cb13-271" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.optimize <span class="im">import</span> minimize</span>
+<span id="cb13-266"><a href="#cb13-266" aria-hidden="true" tabindex="-1"></a>I'm happy to admit all the above procedure looks fairly strange. It is deeply unintuitive if you come from the world of NumPy computing where everything is either a number or a function. This lets abstract over numbers and functions to operate on sequences of computations. The payoff is that you can simply plug your hard work into the SciPy optimizer and it tells you to lower the price, by a couple bucks.</span>
+<span id="cb13-267"><a href="#cb13-267" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-270"><a href="#cb13-270" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb13-271"><a href="#cb13-271" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
 <span id="cb13-272"><a href="#cb13-272" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-273"><a href="#cb13-273" aria-hidden="true" tabindex="-1"></a>res <span class="op">=</span> minimize(</span>
-<span id="cb13-274"><a href="#cb13-274" aria-hidden="true" tabindex="-1"></a>    objective_fn,</span>
-<span id="cb13-275"><a href="#cb13-275" aria-hidden="true" tabindex="-1"></a>    jac<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb13-276"><a href="#cb13-276" aria-hidden="true" tabindex="-1"></a>    x0 <span class="op">=</span> [<span class="fl">1.00</span>],</span>
-<span id="cb13-277"><a href="#cb13-277" aria-hidden="true" tabindex="-1"></a>    bounds <span class="op">=</span> [(<span class="dv">0</span>, <span class="va">None</span>)]</span>
-<span id="cb13-278"><a href="#cb13-278" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb13-279"><a href="#cb13-279" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"optimal price: "</span>, res.x[<span class="dv">0</span>])</span>
-<span id="cb13-280"><a href="#cb13-280" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-281"><a href="#cb13-281" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-282"><a href="#cb13-282" aria-hidden="true" tabindex="-1"></a><span class="fu"># Write optimizers that are semi-agnostic to the functions they are optimizing</span></span>
+<span id="cb13-273"><a href="#cb13-273" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.optimize <span class="im">import</span> minimize</span>
+<span id="cb13-274"><a href="#cb13-274" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-275"><a href="#cb13-275" aria-hidden="true" tabindex="-1"></a>res <span class="op">=</span> minimize(</span>
+<span id="cb13-276"><a href="#cb13-276" aria-hidden="true" tabindex="-1"></a>    objective_fn,</span>
+<span id="cb13-277"><a href="#cb13-277" aria-hidden="true" tabindex="-1"></a>    jac<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb13-278"><a href="#cb13-278" aria-hidden="true" tabindex="-1"></a>    x0 <span class="op">=</span> [<span class="fl">1.00</span>],</span>
+<span id="cb13-279"><a href="#cb13-279" aria-hidden="true" tabindex="-1"></a>    bounds <span class="op">=</span> [(<span class="dv">0</span>, <span class="va">None</span>)]</span>
+<span id="cb13-280"><a href="#cb13-280" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-281"><a href="#cb13-281" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"optimal price: "</span>, res.x[<span class="dv">0</span>])</span>
+<span id="cb13-282"><a href="#cb13-282" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb13-283"><a href="#cb13-283" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-284"><a href="#cb13-284" aria-hidden="true" tabindex="-1"></a>The workflow presented above captures the desiderata we are after. The person coding up the decision-making algorithm doesn't have to know all the details of how sales are modeled. They just need to know an entry point into the tree (the optimizable price variable) and the endpoint (the sales variable). If the modeling team makes changes in between those two points, our abstraction will automatically pick up on those. Maybe they want to add controls, cross-price elasticities, or transform the price data in unusual ways. The decision-making team retains the capacity to modify the computational tree: adding a cost variable, generating a profit function, flipping the sign of the function and inserting an expectation operation.</span>
+<span id="cb13-284"><a href="#cb13-284" aria-hidden="true" tabindex="-1"></a><span class="fu"># Write optimizers that are semi-agnostic to the functions they are optimizing</span></span>
 <span id="cb13-285"><a href="#cb13-285" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-286"><a href="#cb13-286" aria-hidden="true" tabindex="-1"></a>This price elasticity model is fairly simple. You don't need a numerical optimizer to find a solution. It is trivial to duplicate the core logic of the model in two places. However, as models grow in size and complexity, the decision-making team will appreciate not having to keep track of every change or experiment in the core model logic. Meanwhile, they can quickly experiment with the logic that is core to the optimizer. They can experiment with different numerical solvers. When the modeling team finally wraps up their work, the chosen solver is already ready to go. They can also work with business expertise to build custom utility functions or incorporate notions of risk-aversion. Going out of business is a problem you cannot come back from so it is worth prioritizing that over other goals, like doubling profits. The decision-making team can work out the logic and code for risk-averse optimization without knowing exactly where the modeling team will land. Utility and probability are conceptually distinct, and we need our workflows to mirror these distinctions.</span>
+<span id="cb13-286"><a href="#cb13-286" aria-hidden="true" tabindex="-1"></a>The workflow presented above captures the desiderata we are after. The person coding up the decision-making algorithm doesn't have to know all the details of how sales are modeled. They just need to know an entry point into the tree (the optimizable price variable) and the endpoint (the sales variable). If the modeling team makes changes in between those two points, our abstraction will automatically pick up on those. Maybe they want to add controls, cross-price elasticities, or transform the price data in unusual ways. The decision-making team retains the capacity to modify the computational tree: adding a cost variable, generating a profit function, flipping the sign of the function and inserting an expectation operation.</span>
+<span id="cb13-287"><a href="#cb13-287" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-288"><a href="#cb13-288" aria-hidden="true" tabindex="-1"></a>This price elasticity model is fairly simple. You don't need a numerical optimizer to find a solution. It is trivial to duplicate the core logic of the model in two places. However, as models grow in size and complexity, the decision-making team will appreciate not having to keep track of every change or experiment in the core model logic. Meanwhile, they can quickly experiment with the logic that is core to the optimizer. They can experiment with different numerical solvers. When the modeling team finally wraps up their work, the chosen solver is already ready to go. They can also work with business expertise to build custom utility functions or incorporate notions of risk-aversion. Going out of business is a problem you cannot come back from so it is worth prioritizing that over other goals, like doubling profits. The decision-making team can work out the logic and code for risk-averse optimization without knowing exactly where the modeling team will land. Utility and probability are conceptually distinct, and we need our workflows to mirror these distinctions.</span>
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

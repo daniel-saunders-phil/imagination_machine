@@ -172,7 +172,9 @@ The PyMC model is also a PyTensor tree. It looks hideous, but I don't make the r
 model.sales.dprint();
 ```
 
-To find the optimal price, we need to do a few things. Each of the things shows off a different way to reuse-while-modifying model components. I should mention, I borrowed heavily from this [workshop](https://www.youtube.com/watch?v=boB16AX0OLw) by Ricardo Vieira and Jesse Grabowski.
+To find the optimal price, we need to do a few things. Each of the things shows off a different way to reuse-while-modifying model components. I should mention, I borrowed heavily from this [workshop](https://www.youtube.com/watch?v=boB16AX0OLw) by Ricardo Vieira and Jesse Grabowski[^6].
+
+[^6]: Since originally drafting, I've learned of a number of other resources on optimizing with PyMC models. [Ravin Kumar](https://www.youtube.com/watch?si=DzDYJQ4_ItFDT1mt&v=WT7o8QRIiQI&feature=youtu.be), [Thomas Wiecki and Ravin ](https://twiecki.io/blog/2019/01/14/supply_chain/), [Jesse and Ricardo again](https://www.youtube.com/watch?v=1SjOYFW67rg).
 
 1. Build a profit function. Right now, we only have a function for demand. But it is no good optimizing for demand though. That's trivial - set price to 0 and the goods will fly off the shelf. To calculate profit, we need to introduce some notion of unit cost.
 2. Replace the random variables with posterior information. We only have samples from the posterior so those variables with the ugly `Generator` need to go and vectors of samples need to come.

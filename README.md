@@ -1,6 +1,8 @@
 To maintain the website, make sure you are always on the `main` branch, never `gh-pages` branch.
 
-Edit your blog posts as `.qmd` files in the `posts` directory. You can ignore the `_site` and `_freeze`
+Edit your blog posts as `.qmd` files in the `posts` directory. You can ignore the `_site` and `_freeze`.
+
+Be sure to have an environment activate with blog post dependencies and `nbclient`, `nbformat`, etc
 
 You can locally preview the website with:
 

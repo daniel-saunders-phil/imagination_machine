@@ -19,15 +19,14 @@ quarto publish gh-pages
 Ideas for forthcoming blog posts:
 
 - Multi-modality in MMMs
-- four way correlations in multi-channel MMMs
 - Penalized complexity as a framework for MMMs
 - - Saturation priors that reduce to linear regressions in the absence of information
 - - Adstock that reduces to linear regression in the absence of information
 - Marginal effects for interpreting co-efficients
 - When exchangeability fails
+- Can I put a hierarchy on that?
 - Centered / non-centered reparameterization tricks for 0-1 constrained parameters.
 - Partially centered and non-centered parameterizations
 - Zero-sum transformation
 - Risk-sensitive optimization
 - Bayesian inference of ODEs, especially with the @wrap_jax operator
-- Play around with normalizing flows

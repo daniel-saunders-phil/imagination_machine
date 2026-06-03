@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/am-i-allowed-a-hierarchy/am-i-allowed-a-hierarchy.html",
       "/posts/a-bayesian-decision-theory-workflow/index.html",
       "/posts/a-positive-constrained-non-centered-prior-that-sparks-joy/index.html",
       "/posts/how-to-sample-an-mmm-as-fast-as-possible/index.html",

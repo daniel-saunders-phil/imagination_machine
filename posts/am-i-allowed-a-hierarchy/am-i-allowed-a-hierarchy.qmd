@@ -1,0 +1,222 @@
+---
+title: "Am I Allowed a Hierarchy?"
+author: Daniel Saunders
+jupyter: python3
+date: 2026-05-04
+toc: true
+description: "What hierarchical models assume about yourself and the world"
+execute:
+  echo: false
+format:
+  html:
+    code-fold: true
+image: image.png
+---
+
+Let's start with a little conceptual puzzle. Bayesian models are often motivated by the idea that our goal is to represent the data-generating process. What in the data-generating process does a hierarchical model represent? Could I poke and prod the world to find out whether my parameters should be pooled, unpooled, or partially pooled? To put the puzzle more sharply - is there any way the world could be that makes a hierarchical model the wrong choice?
+
+The puzzle brings out a tension between two strands of thinking about Bayesian models. In many areas of scientific modeling, each piece of math aims to represent a piece of the world. In a Bayesian model, a piece of math might represent the world *and/or* our beliefs about it. The two types of representations run together, often without a clean separation. Hierarchical models are like that. Hierarchical models are sometimes described and justified as expressing the assumption that some set of parameters is *similar* (a worldly assumption) to one another[^2] and sometimes described as expressing symmetries within our beliefs[^1].
+
+[^1]: To pick the most belief-heavy way you can talk about these models, here's some [philosophers](https://www.lesswrong.com/posts/auSfqhbMKEvzt4unG/chance-is-in-the-map-not-the-territory) employing the engine of hierarchical models to argue we don't even need to believe in objective chance processes at all. When you say "the dice have a 1/6 chance of showing 5", you are expressing a certain kind of symmetry in the structure of your beliefs.
+
+The answer to our question takes us through foundational and mysterious territory: exchangeability and De Finnetti's representation theorem. I'll spoil the ending a little bit. There are very few ways the world can be that make hierarchical models the wrong choice. You can put hierarchies on nearly whatever you want and the world cannot stop you. There are a few exceptions. But those are special cases and the correct choice is actually more obvious there than it is in the general modeling situation. Hierarchical models are the default.
+
+You might already be a fan of hierarchical models and need no convincing that they are *allowed*. Even so, I think walking through these foundations is illuminating about how we justify assumptions about our own beliefs. One surprising bit of Bayesian modeling is that eliciting your own beliefs is often very difficult. There is no material world you can point to and say "this should look like that". Beliefs are often unformed until we start to ask about them and the more we ask of them, the more they can shift. So developing intuition on the foundations can make introspection more automatic and reliable.
+
+[^2]: Gelman [reports](https://statmodeling.stat.columbia.edu/2022/11/24/understanding-exchangeability-in-statistical-modeling-a-thanksgiving-themed-post/) that, historically, people have had exactly these anxieties about hierarchical models. People treated shrinkage estimators (a cousin of hierarchies) as a substantial assumption that requires lengthy argument.
+
+# Exchangeability and the foundations of hierarchical models
+
+Where do hierarchical models come from? On one story[^3], any time you believe your parameters are *exchangeable*, your prior on those parameters is a hierarchical one. That's the concise version. I have to confess I've spent the better part of 5 years building Bayesian models and found that principle a tad too abstract to be helpful. How do I know when a set of parameters is not exchangeable? If some set of variables is not exchangeable, what's the harm in pretending like they are? Some unpacking is in order.
+
+[^3]: The [other story](https://efron.ckirby.su.domains/other/Article1977.pdf) is that hierarchical models are a kind of shrinkage estimator and we justify them because, as estimators, they have good properties. It's a powerful argument and if you like thinking about estimators, have at it. But I'm not going to explore it here. It's a kind of non-representational argument because it doesn't make you ask "how do I represent my beliefs with a model" so it sidesteps the whole puzzle I'm interested in. An accessible and modern piece of writing on shrinkage estimators is [here](https://haines-lab.com/post/how-to-estimate-a-mean-and-what-it-means-for-science/)
+
+## What is exchangeability?
+
+It means the joint distribution of a sequence of random variables does not change under permutations of that sequence. If the sequence represents a temporal order, you can change the order of events and get the same distribution. If the sequence represents categories (like the 50 United States), you can change the labels on the states and get the same distribution. Or, concretely, if you are drawing red and blue marbles out of an urn, then these two quantities are equal:
+
+$$P([R, B, R]) = P([B, R, R])$$
+
+When you know a sequence is exchangeable, you can just count up the number of reds and use that to determine the probability of that sequence.
+
+There is a similar notion that all stats people already know - independent and identically distributed (**iid**). If a sequence of urn draws is iid, you can also just count the reds and ignore the order. iid is a stronger property - every iid process is exchangeable.
+
+You can have a sequence that is exchangeable but not iid. Consider drawing from an urn without replacement. Each time you take a draw out of the urn, the probability of drawing that colour again decreases. So independence is out. However, the joint probability of any sequence only depends on the number of reds and blues in the sequence. Take the case where the urn has three reds and two blues. It is still true that $P([R, B, R]) = P([B, R, R])$. The left side of the equation is $\frac{3}{5} \frac{2}{4} \frac{2}{3} = \frac{1}{5}$. The right side is $\frac{2}{5} \frac{3}{4} \frac{2}{3} = \frac{1}{5}$. You can verify this works for any sequence by inspecting the tree.
+
+```{python}
+from graphviz import Digraph
+dot = Digraph(format="png")
+
+names = [
+    ' 0', # root
+    'R11', # row 1
+    'B11', # row 1
+    'R21', # row 2
+    'B21', # row 2
+    'R22', # row 2
+    'B22', # row 2
+    'R31', # row 3
+    'B31', # row 3
+    'R32', # row 3
+    'B32', # row 3
+    'R33', # row 3
+    'B33', # row 3
+    'R34', # row 3
+    'B34', # row 3
+]
+
+for i in range(15):
+    dot.node(name=names[i],label=names[i][0],penwidth='0')
+
+dot.attr('edge',arrowhead='none')
+dot.edge(' 0','R11','3/5')
+dot.edge(' 0','B11','2/5')
+dot.edge('R11','R21','2/4')
+dot.edge('R11','B21','2/4')
+dot.edge('B11','R22','3/4')
+dot.edge('B11','B22','1/4')
+dot.edge('R21','R31','1/3')
+dot.edge('R21','B31','2/3')
+dot.edge('B21','R32','2/3')
+dot.edge('B21','B32','1/3')
+dot.edge('R22','R33','2/3')
+dot.edge('R22','B33','1/3')
+dot.edge('B22','R34','2/3')
+dot.edge('B22','B34','1/3')
+dot
+```
+
+This mechanism produces exchangeable sequences because it is symmetrical. When you are on the left side of the tree, the probability of drawing a red is reduced everywhere (because you drew a red initially). But the right side of the tree exactly offsets that. The result is that the order does not matter to joint probabilities. It only matters if you are a few draws in and want to know the conditional probability of the next draw.
+
+Finally, not every random process is exchangeable. Here is one that is independent but not identically distributed. Consider the case where I make three draws from three different urns, each with different counts of red and blue balls.
+
+| | urn1 | urn2 | urn3 |
+|----|------|------|------|
+| Red | 1 | 1 | 1 |
+| Blue | 1 | 2 | 3 |
+
+In this case, $P([R, B, R])$ is larger than $P([B, R, R])$. This mechanism doesn't preserve the kind of symmetry necessary to make a process exchangeable.
+
+So we've seen that there is a middle ground between iid processes and processes that vary unsystematically. When it comes to statistical modeling, exchangeability is a lightweight assumption. Unlike iid, you don't need to assume anything about dependence or independence between variables in a sequence. They might be independent but that is just a special case of exchangeability. On the other hand, a sequence of variables might not be exchangeable at all because the distribution changes in some asymmetrical way. But to know that, you already have to know a fair bit about your problem. If you know a lot about your problem, then you already have resources to make a better model.
+
+## From exchangeability to hierarchical modeling: de Finnetti's Theorem
+
+The notion of exchangeability tells us the class of random variables out of which we can construct hierarchies. But how does that process work? The engine is de Finnetti's theorem. The theorem is best illustrated through a lovely statistical engine: Polya's Urn.
+
+Suppose, as before, you have an urn that starts with two reds and one blue. When you draw a ball, you return it to the urn and then add another ball of that same color. This is drawing without replacement but in reverse. We can visualize the first three draws.
+
+```{python}
+dot = Digraph(format="png")
+
+names = [
+    ' 0', # root
+    'R11', # row 1
+    'B11', # row 1
+    'R21', # row 2
+    'B21', # row 2
+    'R22', # row 2
+    'B22', # row 2
+    'R31', # row 3
+    'B31', # row 3
+    'R32', # row 3
+    'B32', # row 3
+    'R33', # row 3
+    'B33', # row 3
+    'R34', # row 3
+    'B34', # row 3
+]
+
+for i in range(15):
+    dot.node(name=names[i],label=names[i][0],penwidth='0')
+
+dot.attr('edge',arrowhead='none')
+dot.edge(' 0','R11','2/3')
+dot.edge(' 0','B11','1/3')
+dot.edge('R11','R21','3/4')
+dot.edge('R11','B21','1/4')
+dot.edge('B11','R22','2/4')
+dot.edge('B11','B22','2/4')
+dot.edge('R21','R31','4/5')
+dot.edge('R21','B31','1/5')
+dot.edge('B21','R32','3/5')
+dot.edge('B21','B32','2/5')
+dot.edge('R22','R33','3/5')
+dot.edge('R22','B33','2/5')
+dot.edge('B22','R34','2/5')
+dot.edge('B22','B34','3/5')
+dot
+```
+
+Notice that it has the same kind of left-right symmetry that drawing without replacement had. This process is exchangeable. One key difference between Polya's urn and sampling without replacement is this new process is also infinite. If I take balls out, eventually, I run out. But if I keep putting balls in, Polya's urn keeps giving. De Finnetti's representation theorem only applies to *infinite* exchangeable processes.
+
+The theorem states that any exchangeable sequence of random variables can be represented in terms of a hierarchical model. The theorem implies that we can build a formula for the marginal probability of drawing red at any part of the sequence for Polya's urn. The hierarchical model turns out to be:
+
+$$\theta \sim \text{Beta}(2,1)$$
+$$X_{i} \mid \theta \sim \text{Bernoulli}(\theta)$$
+
+If you trace your finger along any path in the tree, you can get conditional probabilities for the new draw, conditioning on the previous one. That's how we typically think about Polya's urn, as a recursive apparatus which captures interesting dependencies between draws. But if you average over the paths, it turns out there is something very simple operating behind the scenes - a Beta-Binomial distribution. The beta distribution is a $(2, 1)$ because you start with 2 reds and 1 blue. The fewer balls you start with, the more influential the initial draw can be, so the beta distribution flattens out to reflect the high variance in the underlying probability[^6]. If you start with a lot of balls, then Polya's urn will be more stable and remain around its initial probability for red.
+
+[^6]: A beta(1, 1) is a flat distribution between 0 and 1. It's got the most variance of beta you can build with the integers.
+
+It's also notable that, although very simple, this is a hierarchical model. There is an underlying, shared property and each particular random variable depends, somewhat, on that property. What's powerful is that De Finnetti's theorem holds for any infinite exchangeable sequence of random variables. It doesn't have to be Polya's urn. If you have an exchangeable process, there must exist a hierarchical model to describe it. This is your license to build.
+
+So far, we've been talking about physical processes and the properties they exhibit. But everything we've said applies equally to beliefs. If beliefs can be represented as random variables, then they can be exchangeable, independent, identically distribution, and so on. If I have two beliefs with the same random variable, they are identically distributed. If changing one belief would change another, then that is dependence.
+
+If you buy this final sleight of hand, then you have the whole Bayesian hierarchical modeling apparatus. If you have an exchangeable sequence of beliefs, then those beliefs are structured like a hierarchical model.
+
+# Exchangeability in practice
+
+Suppose I sit down with an election expert. We want to figure out the proportion of house seats that will be won by Democrats in each state in the 2026 US election. I ask them to draw a picture of their prior belief about the proportion of seats Democrats will win. Some kind of bell curve'd beta distribution. Imagine they draw the same curve for every state.
+
+This exercise tells me that their prior beliefs are identically distributed across each state. But knowing that still leaves out all the information about the dependencies in their beliefs. They could have one parameter in mind, shared by every state. Or, 50 independent parameters. Or, 50 parameters with some kind of partial dependence.
+
+What is ambiguous from the pictures alone is the expert's updating strategy. If an angel comes to the expert and tells them that democrats will win 100% of seats in Washington, they ought to update their beliefs. But they have lattitude in how they do so. If every state has an independent parameter, then only their prior for Washington needs to change. If the states share one parameter, then their updated belief should be that the Dems will win every seat, everywhere. Finally, they could pick any updating strategy in between the two extremes, increasing their credence in democrats winning each state, but perhaps only by a little bit. The angel knows something they don't and updating across states is a way of respecting the evidence. I hope you find it obvious that the extremes are a bit implausible as updating strategies and some kind of moderate update is the logical thing to do.
+
+One surprising takeaway is beliefs contain within themselves implications about how they would change in response to new evidence[^4]. Knowing all of someone's marginal distributions is not enough to know what they believe. We also need the dependence structure.
+
+Frankly, it is hard enough to elicit someone's marginal beliefs. Eliciting some esoteric, counterfactual thing like an updating strategy on the basis of hypothetical evidence is a rare gift. If you are only given the marginal priors, the most responsible thing to do is a hierarchical model. It assumes the least about what is left implicit. Full independence and full dependence are just special cases of a hierarchical model[^5].
+
+A wide range of updating strategies are plausible in the case of the angel and the election expert. The angel's insider information might imply a large shift toward democrats or a small one. The mechanics depend on the prior we place over cross-state variance. Tight priors imply large updates. On what basis could we pick this prior? This is the place where hierarchical models look most worldy - they can be used to represent facts about the world. These facts are unmeasured common factors that influence units of analysis. Many factors could push the democrats into a victorious position across states: high inflation, the administrations fruitless and expensive foreign wars, high-profile violence against protestors, etc. But we don't know how big those factors will turn out to be or how uniformly they will affect different states. Our election expert has beliefs about these things. And when they get the news from the angel, we can observe those beliefs in action via the chosen updating strategy.
+
+[^4]: Those [philosophers](https://www.lesswrong.com/posts/auSfqhbMKEvzt4unG/chance-is-in-the-map-not-the-territory) referenced earlier bring out this point nicely.
+
+[^5]: Because the variance can fall to 0 to represent full dependence or rise to infinity to represent full independence.
+
+## When exchangeability is not available
+
+I've made the case that exchangeability is a lightweight assumption and is generally safe, more safe than iid. But not every sequence of variables is exchangeable nor is every prior. What do those cases look like and what do you do?
+
+The story where our election expert draws identical pictures for each state is a bit implausible. If you really study elections, you'll have strong opinion about each particular state. Between Washington, Oregon, and California, our expert might draw betas with means around 0.9, 0.8, and 0.7, respectively. This straightforwardly violates exchangeability. Exchangeability is a weird assumption because the less you know about a problem, the more it is justified. Heaven forbid we learn about the world and are forced to put our wonderful hierarchical models back on the shelf!
+
+What to do in this case depends largely on why our expert believes those priors. Consider two versions of the story:
+
+**Just because**. Ever withholding, they don't offer much of an explanation. Instead, they pull out the annoying Bayesian card and say "Look this is simply what I believe." In this case, we can decompose their belief into a latent exchangeable part plus some state specific effects. Across their beliefs, there is some national democratic-lean and their beliefs about each state is informed by it. That's the part we can make hierarchical. So the model[^8] that describes their prior can simply be:
+
+$$\mu \sim \text{Beta}(\mu = 0.7,\nu = 2)$$
+$$\nu \sim \text{Exp}(\text{scale} = 2)$$
+$$\theta_{s} \sim \text{Beta}(\mu = \mu,\nu = \nu)$$
+$$p_{s} = \begin{cases}
+\theta & \text{if } s = \text{CA} \\
+\theta + 0.1 & \text{if } s = \text{OR} \\
+\theta + 0.2 & \text{if } s = \text{WA}
+\end{cases}$$
+
+[^8]: This model is bad, of course. We should parametrize it in terms of logits. But this formulation is quite obvious about what it is up to.
+
+**Because of predictors**. More likely, the election expert has real reasons. They can point to the previous election as a starting place for their prediction about each state. This is familiar territory: regression with predictor variables. In that case, we also get a hierarchical intercept which represents the exchangeable part plus a mechanism to get the prior year's information in there.
+
+There is a bit of a general principle we can pull out here about why hierarchical models are so widely applicable. If you didn't know last elections results, you couldn't include it in the model. Your model would be weaker but not in a way you can do anything about. So a hierarchical model is the right choice. If you do know a lot of stuff about the problem, you can decompose your knowledge into the exchangeable and non-exchangeable parts. In that case, the hierarchical model takes a smaller role but it is more obvious what you should do anyway.
+
+# Odds and ends
+
+## Free choice in constructing hierarchical models
+
+The representation theorem tells us that exchangeability implies a hierarchical structure. But it doesn't uniquely specify a prior on the hyperparameters. This is a free choice. The distribution family and the parameter values represent different assumptions about the updating strategy. These choices can be informed by worldly knowledge (how similar do you expect this group of parameters to be, how uniform are the common causes that effect each individual) or by more general statistical principles (how much regularization do you want? Do you want to pick a distribution via max entropy?). The field is huge at this point and I just want to locate us rather than survey.
+
+## Covariance models
+
+There is a family of distributions that is non-exchangeable in a deep way - not the kind that you can circumvent using little decomposition tricks. Temporal autoregression, spatial covariance models and graph-structured covariance models all create sequences of variables which are dependent but not exchangeable. In these cases, the order really does matter and that's what they are trying to represent.
+
+## Ends
+
+In the cases where variables are exchangeable, hierarchies are natural and safe. Where variables are not exchangeable, then you can usually find parts of our model that are. Decomposition tricks let you make the most of your information. As you learn more and more about your problem (by adding predictors, for example), then the hierarchical bit can take a progressively smaller role. Regressions are a nice case. If hierarchies get part of their motivation from unmeasured common causes, then as you measure more causes, the hierarchy does less work.

@@ -2,7 +2,7 @@
 title: "Am I Allowed a Hierarchy?"
 author: Daniel Saunders
 jupyter: python3
-date: 2026-05-04
+date: 2026-06-03
 toc: true
 description: "What hierarchical models assume about yourself and the world"
 execute:
@@ -101,7 +101,9 @@ So we've seen that there is a middle ground between iid processes and processes 
 
 ## From exchangeability to hierarchical modeling: de Finnetti's Theorem
 
-The notion of exchangeability tells us the class of random variables out of which we can construct hierarchies. But how does that process work? The engine is de Finnetti's theorem. The theorem is best illustrated through a lovely statistical engine: Polya's Urn.
+The notion of exchangeability tells us the class of random variables out of which we can construct hierarchies. But how does that process work? The engine is de Finnetti's theorem. The theorem is best illustrated through a lovely statistical engine: Polya's Urn[^9].
+
+[^9]: People write lovingly about these Urns. For love and commentary about the love of others, see [Rafe Meager's blog](https://rottenandgood.substack.com/p/tormented-by-an-urn)
 
 Suppose, as before, you have an urn that starts with two reds and one blue. When you draw a ball, you return it to the urn and then add another ball of that same color. This is drawing without replacement but in reverse. We can visualize the first three draws.
 

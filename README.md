@@ -22,9 +22,9 @@ Ideas for forthcoming blog posts:
 - Penalized complexity as a framework for MMMs
 - - Saturation priors that reduce to linear regressions in the absence of information
 - - Adstock that reduces to linear regression in the absence of information
+- Automatic prior elicitation
 - Marginal effects for interpreting co-efficients
-- When exchangeability fails
-- Can I put a hierarchy on that?
+- When exchangeability fails (a tour of stochastic processes that are not exchangeable)
 - Centered / non-centered reparameterization tricks for 0-1 constrained parameters.
 - Partially centered and non-centered parameterizations
 - Zero-sum transformation

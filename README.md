@@ -16,6 +16,13 @@ You can publish the website with:
 quarto publish gh-pages
 ```
 
+If you are having trouble clearing the cache, you should explicitly render the site locally before publishing.
+
+```bash
+quarto render
+quarto publish gh-pages
+```
+
 Ideas for forthcoming blog posts:
 
 - Multi-modality in MMMs

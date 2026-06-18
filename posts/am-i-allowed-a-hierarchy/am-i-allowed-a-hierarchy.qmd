@@ -43,47 +43,145 @@ There is a similar notion that all stats people already know - independent and i
 
 You can have a sequence that is exchangeable but not iid. Consider drawing from an urn without replacement. Each time you take a draw out of the urn, the probability of drawing that colour again decreases. So independence is out. However, the joint probability of any sequence only depends on the number of reds and blues in the sequence. Take the case where the urn has three reds and two blues. It is still true that $P([R, B, R]) = P([B, R, R])$. The left side of the equation is $\frac{3}{5} \frac{2}{4} \frac{2}{3} = \frac{1}{5}$. The right side is $\frac{2}{5} \frac{3}{4} \frac{2}{3} = \frac{1}{5}$. You can verify this works for any sequence by inspecting the tree.
 
-```{python}
-from graphviz import Digraph
-dot = Digraph(format="png")
+```{ojs}
+chart = {
+  const treeData = {
+    name: "root", label: "", color: "#999",
+    children: [
+      {
+        name: "R11", label: "R", color: "#e05252",
+        prob: 3/5, edgeLabel: "3/5",
+        children: [
+          {
+            name: "R21", label: "R", color: "#e05252",
+            prob: 2/4, edgeLabel: "2/4",
+            children: [
+              { name: "R31", label: "R", color: "#e05252", prob: 1/3, edgeLabel: "1/3" },
+              { name: "B31", label: "B", color: "#4f8ef7", prob: 2/3, edgeLabel: "2/3" }
+            ]
+          },
+          {
+            name: "B21", label: "B", color: "#4f8ef7",
+            prob: 2/4, edgeLabel: "2/4",
+            children: [
+              { name: "R32", label: "R", color: "#e05252", prob: 2/3, edgeLabel: "2/3" },
+              { name: "B32", label: "B", color: "#4f8ef7", prob: 1/3, edgeLabel: "1/3" }
+            ]
+          }
+        ]
+      },
+      {
+        name: "B11", label: "B", color: "#4f8ef7",
+        prob: 2/5, edgeLabel: "2/5",
+        children: [
+          {
+            name: "R22", label: "R", color: "#e05252",
+            prob: 3/4, edgeLabel: "3/4",
+            children: [
+              { name: "R33", label: "R", color: "#e05252", prob: 2/3, edgeLabel: "2/3" },
+              { name: "B33", label: "B", color: "#4f8ef7", prob: 1/3, edgeLabel: "1/3" }
+            ]
+          },
+          {
+            name: "B22", label: "B", color: "#4f8ef7",
+            prob: 1/4, edgeLabel: "1/4",
+            children: [
+              { name: "R34", label: "R", color: "#e05252", prob: 1, edgeLabel: "1" },
+              { name: "B34", label: "B", color: "#4f8ef7", prob: 0, edgeLabel: "0" }
+            ]
+          }
+        ]
+      }
+    ]
+  };
 
-names = [
-    ' 0', # root
-    'R11', # row 1
-    'B11', # row 1
-    'R21', # row 2
-    'B21', # row 2
-    'R22', # row 2
-    'B22', # row 2
-    'R31', # row 3
-    'B31', # row 3
-    'R32', # row 3
-    'B32', # row 3
-    'R33', # row 3
-    'B33', # row 3
-    'R34', # row 3
-    'B34', # row 3
-]
+  const width = 700, height = 300;
+  const margin = { top: 30, right: 20, bottom: 20, left: 20 };
+  const innerW = width - margin.left - margin.right;
+  const innerH = height - margin.top - margin.bottom;
 
-for i in range(15):
-    dot.node(name=names[i],label=names[i][0],penwidth='0')
+  const root = d3.hierarchy(treeData);
+  d3.tree().size([innerW, innerH])(root);
 
-dot.attr('edge',arrowhead='none')
-dot.edge(' 0','R11','3/5')
-dot.edge(' 0','B11','2/5')
-dot.edge('R11','R21','2/4')
-dot.edge('R11','B21','2/4')
-dot.edge('B11','R22','3/4')
-dot.edge('B11','B22','1/4')
-dot.edge('R21','R31','1/3')
-dot.edge('R21','B31','2/3')
-dot.edge('B21','R32','2/3')
-dot.edge('B21','B32','1/3')
-dot.edge('R22','R33','2/3')
-dot.edge('R22','B33','1/3')
-dot.edge('B22','R34','2/3')
-dot.edge('B22','B34','1/3')
-dot
+  const svg = d3.create("svg")
+    .attr("viewBox", [0, 0, width, height])
+    .attr("width", "100%")
+    .style("font-family", "system-ui, sans-serif");
+
+  const g = svg.append("g")
+    .attr("transform", `translate(${margin.left},${margin.top})`);
+
+  // Edges
+  g.selectAll(".link")
+    .data(root.links())
+    .join("line")
+    .attr("x1", d => d.source.x)
+    .attr("y1", d => d.source.y)
+    .attr("x2", d => d.target.x)
+    .attr("y2", d => d.target.y)
+    .attr("stroke", "#bbb")
+    .attr("stroke-width", 1.5);
+
+  // Edge labels
+  g.selectAll(".edge-label")
+    .data(root.links())
+    .join("text")
+    .attr("x", d => (d.source.x + d.target.x) / 2)
+    .attr("y", d => (d.source.y + d.target.y) / 2 - 5)
+    .attr("text-anchor", "middle")
+    .attr("font-size", 11)
+    .attr("fill", "#666")
+    .text(d => d.target.data.edgeLabel);
+
+  // Nodes
+  const nodes = g.selectAll(".node")
+    .data(root.descendants())
+    .join("g")
+    .attr("transform", d => `translate(${d.x},${d.y})`);
+
+  nodes.append("circle")
+    .attr("r", 13)
+    .attr("fill", d => d.data.color)
+    .attr("stroke", "white")
+    .attr("stroke-width", 2);
+
+  // Animated orb
+  const orb = g.append("circle")
+    .attr("r", 8)
+    .attr("fill", "#f0c040")
+    .attr("stroke", "#333")
+    .attr("stroke-width", 1.5)
+    .attr("cx", root.x)
+    .attr("cy", root.y);
+
+  function chooseNext(node) {
+    if (!node.children || !node.children.length) return null;
+    let r = Math.random(), sum = 0;
+    for (const child of node.children) {
+      sum += child.data.prob;
+      if (r <= sum) return child;
+    }
+    return node.children.at(-1);
+  }
+
+  async function walk(current) {
+    if (!current.children || !current.children.length) {
+      await new Promise(res => setTimeout(res, 800));
+      orb.attr("cx", root.x).attr("cy", root.y);
+      await new Promise(res => setTimeout(res, 400));
+      return walk(root);
+    }
+    const next = chooseNext(current);
+    await orb.transition().duration(700)
+      .attr("cx", next.x)
+      .attr("cy", next.y)
+      .end();
+    return walk(next);
+  }
+
+  walk(root);
+  return svg.node();
+}
 ```
 
 This mechanism produces exchangeable sequences because it is symmetrical. When you are on the left side of the tree, the probability of drawing a red is reduced everywhere (because you drew a red initially). But the right side of the tree exactly offsets that. The result is that the order does not matter to joint probabilities. It only matters if you are a few draws in and want to know the conditional probability of the next draw.
@@ -107,46 +205,141 @@ The notion of exchangeability tells us the class of random variables out of whic
 
 Suppose, as before, you have an urn that starts with two reds and one blue. When you draw a ball, you return it to the urn and then add another ball of that same color. This is drawing without replacement but in reverse. We can visualize the first three draws.
 
-```{python}
-dot = Digraph(format="png")
+```{ojs}
+chart2 = {
+  const treeData = {
+    name: "root", label: "", color: "#999",
+    children: [
+      {
+        name: "R11", label: "R", color: "#e05252",
+        prob: 2/3, edgeLabel: "2/3",
+        children: [
+          {
+            name: "R21", label: "R", color: "#e05252",
+            prob: 3/4, edgeLabel: "3/4",
+            children: [
+              { name: "R31", label: "R", color: "#e05252", prob: 4/5, edgeLabel: "4/5" },
+              { name: "B31", label: "B", color: "#4f8ef7", prob: 1/5, edgeLabel: "1/5" }
+            ]
+          },
+          {
+            name: "B21", label: "B", color: "#4f8ef7",
+            prob: 1/4, edgeLabel: "1/4",
+            children: [
+              { name: "R32", label: "R", color: "#e05252", prob: 3/5, edgeLabel: "3/5" },
+              { name: "B32", label: "B", color: "#4f8ef7", prob: 2/5, edgeLabel: "2/5" }
+            ]
+          }
+        ]
+      },
+      {
+        name: "B11", label: "B", color: "#4f8ef7",
+        prob: 1/3, edgeLabel: "1/3",
+        children: [
+          {
+            name: "R22", label: "R", color: "#e05252",
+            prob: 2/4, edgeLabel: "2/4",
+            children: [
+              { name: "R33", label: "R", color: "#e05252", prob: 3/5, edgeLabel: "3/5" },
+              { name: "B33", label: "B", color: "#4f8ef7", prob: 2/5, edgeLabel: "2/5" }
+            ]
+          },
+          {
+            name: "B22", label: "B", color: "#4f8ef7",
+            prob: 2/4, edgeLabel: "2/4",
+            children: [
+              { name: "R34", label: "R", color: "#e05252", prob: 2/5, edgeLabel: "2/5" },
+              { name: "B34", label: "B", color: "#4f8ef7", prob: 3/5, edgeLabel: "3/5" }
+            ]
+          }
+        ]
+      }
+    ]
+  };
 
-names = [
-    ' 0', # root
-    'R11', # row 1
-    'B11', # row 1
-    'R21', # row 2
-    'B21', # row 2
-    'R22', # row 2
-    'B22', # row 2
-    'R31', # row 3
-    'B31', # row 3
-    'R32', # row 3
-    'B32', # row 3
-    'R33', # row 3
-    'B33', # row 3
-    'R34', # row 3
-    'B34', # row 3
-]
+  const width = 700, height = 300;
+  const margin = { top: 30, right: 20, bottom: 20, left: 20 };
+  const innerW = width - margin.left - margin.right;
+  const innerH = height - margin.top - margin.bottom;
 
-for i in range(15):
-    dot.node(name=names[i],label=names[i][0],penwidth='0')
+  const root = d3.hierarchy(treeData);
+  d3.tree().size([innerW, innerH])(root);
 
-dot.attr('edge',arrowhead='none')
-dot.edge(' 0','R11','2/3')
-dot.edge(' 0','B11','1/3')
-dot.edge('R11','R21','3/4')
-dot.edge('R11','B21','1/4')
-dot.edge('B11','R22','2/4')
-dot.edge('B11','B22','2/4')
-dot.edge('R21','R31','4/5')
-dot.edge('R21','B31','1/5')
-dot.edge('B21','R32','3/5')
-dot.edge('B21','B32','2/5')
-dot.edge('R22','R33','3/5')
-dot.edge('R22','B33','2/5')
-dot.edge('B22','R34','2/5')
-dot.edge('B22','B34','3/5')
-dot
+  const svg = d3.create("svg")
+    .attr("viewBox", [0, 0, width, height])
+    .attr("width", "100%")
+    .style("font-family", "system-ui, sans-serif");
+
+  const g = svg.append("g")
+    .attr("transform", `translate(${margin.left},${margin.top})`);
+
+  g.selectAll(".link")
+    .data(root.links())
+    .join("line")
+    .attr("x1", d => d.source.x)
+    .attr("y1", d => d.source.y)
+    .attr("x2", d => d.target.x)
+    .attr("y2", d => d.target.y)
+    .attr("stroke", "#bbb")
+    .attr("stroke-width", 1.5);
+
+  g.selectAll(".edge-label")
+    .data(root.links())
+    .join("text")
+    .attr("x", d => (d.source.x + d.target.x) / 2)
+    .attr("y", d => (d.source.y + d.target.y) / 2 - 5)
+    .attr("text-anchor", "middle")
+    .attr("font-size", 11)
+    .attr("fill", "#666")
+    .text(d => d.target.data.edgeLabel);
+
+  const nodes = g.selectAll(".node")
+    .data(root.descendants())
+    .join("g")
+    .attr("transform", d => `translate(${d.x},${d.y})`);
+
+  nodes.append("circle")
+    .attr("r", 13)
+    .attr("fill", d => d.data.color)
+    .attr("stroke", "white")
+    .attr("stroke-width", 2);
+
+  const orb = g.append("circle")
+    .attr("r", 8)
+    .attr("fill", "#f0c040")
+    .attr("stroke", "#333")
+    .attr("stroke-width", 1.5)
+    .attr("cx", root.x)
+    .attr("cy", root.y);
+
+  function chooseNext(node) {
+    if (!node.children || !node.children.length) return null;
+    let r = Math.random(), sum = 0;
+    for (const child of node.children) {
+      sum += child.data.prob;
+      if (r <= sum) return child;
+    }
+    return node.children.at(-1);
+  }
+
+  async function walk(current) {
+    if (!current.children || !current.children.length) {
+      await new Promise(res => setTimeout(res, 800));
+      orb.attr("cx", root.x).attr("cy", root.y);
+      await new Promise(res => setTimeout(res, 400));
+      return walk(root);
+    }
+    const next = chooseNext(current);
+    await orb.transition().duration(700)
+      .attr("cx", next.x)
+      .attr("cy", next.y)
+      .end();
+    return walk(next);
+  }
+
+  walk(root);
+  return svg.node();
+}
 ```
 
 Notice that it has the same kind of left-right symmetry that drawing without replacement had. This process is exchangeable. One key difference between Polya's urn and sampling without replacement is this new process is also infinite. If I take balls out, eventually, I run out. But if I keep putting balls in, Polya's urn keeps giving. De Finetti's representation theorem only applies to *infinite* exchangeable processes.

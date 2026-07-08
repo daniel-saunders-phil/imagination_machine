@@ -1,5 +1,4 @@
 ---
-title: "About"
 image: headshot.jpg
 about:
   template: jolla
@@ -14,9 +13,9 @@ about:
 ---
 
 I'm a principal data scientist at PyMC Labs, a consulting firm that specializes in
-building Bayesian models to handle business problems. The firm grew out of the 
-open source project, [PyMC](https://www.pymc.io/welcome.html), a truly 
-wonderful piece of software. 
+building Bayesian models to handle business problems. The firm grew out of the
+open source project, [PyMC](https://www.pymc.io/welcome.html), a truly
+wonderful piece of software.
 
 In the recent past, I was a PhD student at the University of British Columbia in the
 philosophy program. I worked on topics in evolutionary game theory, philosophy of science,

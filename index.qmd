@@ -1,12 +1,169 @@
 ---
-title: "Imagination Machine"
 listing:
   contents: "posts/*/*.qmd"
   sort: "date desc"
   type: default
-  categories: true
+  categories: false
   sort-ui: false
   filter-ui: false
 page-layout: full
 title-block-banner: true
---- 
+---
+
+```{ojs}
+//| echo: false
+data = FileAttachment("assets/graph_data.json").json()
+```
+
+```{ojs}
+//| echo: false
+{
+  // ── Sizing ───────────────────────────────────────────────────────────
+  const HEIGHT = Math.floor(window.innerHeight * 0.66);
+  const PAD    = Math.min(60, width * 0.07);
+  const RED    = "#E95420";  // United theme primary
+
+  // Coordinate projection: initial_pos lives in ~[-1.1, 1.1]
+  const xSc = d3.scaleLinear().domain([-1.2, 1.2]).range([PAD, width - PAD]);
+  const ySc = d3.scaleLinear().domain([-1.2, 1.2]).range([HEIGHT - PAD, PAD]);
+
+  // Edge appearance encodings
+  const colorInterp = d3.interpolateRgb("#a0a0a0", RED);
+  const opacSc  = d3.scaleLinear().domain([0, 1]).range([0.07, 1.0]);
+  const widthSc = d3.scaleLinear().domain([0, 1]).range([0.3, 4.0]);
+
+  // Mutable node positions — seeded from precomputed spring layout,
+  // then updated in place by the force simulation in phase 3
+  const pos = {};
+  for (const [k, [x, y]] of Object.entries(data.initial_pos)) {
+    pos[+k] = { x: xSc(x), y: ySc(y) };
+  }
+
+  // Force-simulation node objects (positions kept in sync with pos)
+  const simNodes = d3.range(9).map(i => ({
+    id: i, x: pos[i].x, y: pos[i].y, vx: 0, vy: 0
+  }));
+
+  // ── SVG — no background, inherits page colour ─────────────────────────
+  const svg = d3.create("svg")
+    .attr("width",  "100%")
+    .attr("height", HEIGHT)
+    .style("display", "block");
+
+  // Edge layer
+  const lines = svg.append("g")
+    .selectAll("line")
+    .data(data.edges)
+    .join("line")
+      .attr("x1", d => pos[d[0]].x).attr("y1", d => pos[d[0]].y)
+      .attr("x2", d => pos[d[1]].x).attr("y2", d => pos[d[1]].y)
+      .attr("stroke",         "#a0a0a0")
+      .attr("stroke-opacity", 0.07)
+      .attr("stroke-width",   0.3)
+      .attr("stroke-linecap", "round");
+
+  // Node layer (rendered above edges)
+  const circles = svg.append("g")
+    .selectAll("circle")
+    .data(d3.range(9))
+    .join("circle")
+      .attr("cx", d => pos[d].x).attr("cy", d => pos[d].y)
+      .attr("r",  7)
+      .attr("fill",   RED)
+      .attr("stroke", "none");
+
+  // ── Force simulation (stopped until phase 3) ──────────────────────────
+  const sim = d3.forceSimulation(simNodes)
+    .force("charge",  d3.forceManyBody().strength(-200))
+    .force("center",  d3.forceCenter(width / 2, HEIGHT / 2))
+    .force("collide", d3.forceCollide(22))
+    .stop();
+
+  function onTick() {
+    simNodes.forEach(n => { pos[n.id].x = n.x; pos[n.id].y = n.y; });
+    lines
+      .attr("x1", d => pos[d[0]].x).attr("y1", d => pos[d[0]].y)
+      .attr("x2", d => pos[d[1]].x).attr("y2", d => pos[d[1]].y);
+    circles
+      .attr("cx", d => pos[d].x).attr("cy", d => pos[d].y);
+  }
+
+  // ── Phase 1 · leapfrog trajectory (200 ms/step × 23 steps ≈ 4 s) ─────
+  async function phaseLeapfrog(s) {
+    for (let t = 0; t < 23 && alive; t++) {
+      const w = data.subpositions[s][t];
+      lines.transition("edge").duration(185).ease(d3.easeSinInOut)
+        .attr("stroke",         (_, i) => colorInterp(w[i]))
+        .attr("stroke-opacity", (_, i) => opacSc(w[i]))
+        .attr("stroke-width",   (_, i) => widthSc(w[i]));
+      await Promises.delay(200);
+    }
+  }
+
+  // ── Phase 2 · binomial snap (300 ms transition, 1 s hold) ────────────
+  async function phaseSnap(s) {
+    const b = data.edge_samples[s];
+    lines.transition("edge").duration(300).ease(d3.easeCubicOut)
+      .attr("stroke",         (_, i) => b[i] ? RED    : "#a0a0a0")
+      .attr("stroke-opacity", (_, i) => b[i] ? 1.0    : 0.05)
+      .attr("stroke-width",   (_, i) => b[i] ? 2.5    : 0.2);
+    await Promises.delay(1000);
+  }
+
+  // ── Phase 3 · force rearrangement (2.5 s) ──────────────────────────────
+  async function phaseRearrange(s) {
+    const b = data.edge_samples[s];
+    const activeLinks = data.edges
+      .filter((_, i) => b[i])
+      .map(e => ({ source: e[0], target: e[1] }));
+
+    // Seed simulation from current positions; zero velocity
+    simNodes.forEach(n => {
+      n.x = pos[n.id].x; n.y = pos[n.id].y;
+      n.vx = 0; n.vy = 0;
+    });
+
+    sim
+      .alphaDecay(0.005)
+      .velocityDecay(0.6)
+      .force("link", d3.forceLink(activeLinks)
+        .id(d => d.id)
+        .distance(90)
+        .strength(0.5))
+      .force("wall", () => {
+        const margin = 40;
+        for (const n of simNodes) {
+          // Left wall
+          if (n.x < PAD + margin) n.vx += (PAD + margin - n.x) * 0.02;
+          // Right wall
+          if (n.x > width - PAD - margin) n.vx -= (n.x - (width - PAD - margin)) * 0.02;
+          // Top wall
+          if (n.y < PAD + margin) n.vy += (PAD + margin - n.y) * 0.02;
+          // Bottom wall
+          if (n.y > HEIGHT - PAD - margin) n.vy -= (n.y - (HEIGHT - PAD - margin)) * 0.02;}})
+      .on("tick", onTick)
+      .alpha(0.4)
+      .restart();
+
+    await Promises.delay(2500);
+    sim.stop();
+  }
+
+  // ── Main loop ─────────────────────────────────────────────────────────
+  let alive = true;
+  invalidation.then(() => { alive = false; sim.stop(); });
+
+  (async () => {
+    while (alive) {
+      for (let s = 0; s < 25 && alive; s++) {
+        await phaseLeapfrog(s);
+        await phaseSnap(s);
+        await phaseRearrange(s);
+        if (alive) await Promises.delay(1000);  // 1 s before next trajectory
+      }
+    }
+  })();
+
+  return svg.node();
+}
+```

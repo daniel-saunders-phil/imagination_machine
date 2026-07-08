@@ -19,7 +19,7 @@ data = FileAttachment("assets/graph_data.json").json()
 //| echo: false
 {
   // ── Sizing ───────────────────────────────────────────────────────────
-  const HEIGHT = Math.floor(window.innerHeight * 0.66);
+  const HEIGHT = Math.floor(window.innerHeight * 0.45);
   const PAD    = Math.min(60, width * 0.07);
   const RED    = "#E95420";  // United theme primary
 

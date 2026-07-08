@@ -88,7 +88,7 @@ data = FileAttachment("assets/graph_data.json").json()
       .attr("cx", d => pos[d].x).attr("cy", d => pos[d].y);
   }
 
-  // ── Phase 1 · leapfrog trajectory (200 ms/step × 23 steps ≈ 4 s) ─────
+  // ── Phase 1 · leapfrog trajectory (100 ms/step × 46 steps ≈ 4 s) ─────
   async function phaseLeapfrog(s) {
     for (let t = 0; t < 23 && alive; t++) {
       const w = data.subpositions[s][t];
@@ -96,7 +96,7 @@ data = FileAttachment("assets/graph_data.json").json()
         .attr("stroke",         (_, i) => colorInterp(w[i]))
         .attr("stroke-opacity", (_, i) => opacSc(w[i]))
         .attr("stroke-width",   (_, i) => widthSc(w[i]));
-      await Promises.delay(200);
+      await Promises.delay(100);
     }
   }
 
@@ -159,7 +159,7 @@ data = FileAttachment("assets/graph_data.json").json()
         await phaseLeapfrog(s);
         await phaseSnap(s);
         await phaseRearrange(s);
-        if (alive) await Promises.delay(1000);  // 1 s before next trajectory
+        if (alive) await Promises.delay(250);  // 0.25 s before next trajectory
       }
     }
   })();

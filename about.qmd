@@ -22,3 +22,153 @@ philosophy program. I worked on topics in evolutionary game theory, philosophy o
 and cultural evolution. You can find my published work [here](https://scholar.google.ca/citations?user=GD912IAAAAAJ&hl=en&oi=sra).
 
 I occasionally blog about related topics on this website.
+
+```{ojs}
+//| echo: false
+csv = FileAttachment("assets/transition_matrix.csv").csv()
+```
+
+```{ojs}
+//| echo: false
+{
+  const N = csv.columns.length;
+  const hdrs = csv.columns;
+
+  // Build 81x81 matrix from CSV
+  const matrix = [];
+  for (let i = 0; i < csv.length; i++) {
+    const row = [];
+    for (let j = 0; j < N; j++) {
+      row.push(+csv[i][`column_${j}`]);
+    }
+    matrix.push(row);
+  }
+
+  // Normalize row to sum to 1
+  const probs = matrix.map(row => {
+    const s = d3.sum(row);
+    return s > 0 ? row.map(v => v / s) : row;
+  });
+
+  // Precompute adjacency
+  const adjFrom = probs.map(row =>
+    row.map((v, j) => v > 0 ? j : -1).filter(j => j >= 0)
+  );
+
+  // Layout: same grid formula as transition-matrix.py
+  const pos = {};
+  let acc = 0;
+  for (let R = 0; R < 3; R++) {
+    for (let C = 0; C < 3; C++) {
+      for (let mr = 0; mr < 3; mr++) {
+        for (let mc = 0; mc < 3; mc++) {
+          pos[acc] = { x: C * 3 + mc, y: 8 - R * 3 - mr };
+          acc++;
+        }
+      }
+    }
+  }
+
+  // Coordinate mapping
+  const PAD = 40;
+  const SIZE = width - 2 * PAD;
+  const HEIGHT = SIZE + 2 * PAD;
+  const xSc = d3.scaleLinear().domain([0, 8]).range([PAD, PAD + SIZE]);
+  const ySc = d3.scaleLinear().domain([0, 8]).range([PAD + SIZE, PAD]);
+  const color = "#E95420";
+
+  // SVG
+  const svg = d3.create("svg")
+    .attr("width", width)
+    .attr("height", HEIGHT)
+    .style("display", "block")
+    .style("margin", "0 auto");
+
+  // Edge layer
+  const allEdges = [];
+  for (let i = 0; i < N; i++) {
+    for (let j = 0; j < N; j++) {
+      if (probs[i][j] > 0) allEdges.push({ source: i, target: j });
+    }
+  }
+
+  const lines = svg.append("g")
+    .selectAll("line").data(allEdges).join("line")
+    .attr("x1", d => xSc(pos[d.source].x))
+    .attr("y1", d => ySc(pos[d.source].y))
+    .attr("x2", d => xSc(pos[d.target].x))
+    .attr("y2", d => ySc(pos[d.target].y))
+    .attr("stroke", "#a0a0a0")
+    .attr("stroke-opacity", 0)
+    .attr("stroke-width", 0.3)
+    .attr("stroke-linecap", "round");
+
+  // Node layer
+  const circles = svg.append("g")
+    .selectAll("circle").data(d3.range(N)).join("circle")
+    .attr("cx", d => xSc(pos[d].x))
+    .attr("cy", d => ySc(pos[d].y))
+    .attr("r", 12)
+    .attr("fill", "#a0a0a0")
+    .attr("fill-opacity", 0)
+    .attr("stroke", "none");
+
+  // Helpers
+  function sample(p) {
+    const r = Math.random();
+    let cum = 0;
+    for (let i = 0; i < p.length; i++) { cum += p[i]; if (r <= cum) return i; }
+    return p.length - 1;
+  }
+
+  // Animation state
+  let current = 0;
+  const visited = new Set();
+  visited.add(current);
+  let alive = true;
+  invalidation.then(() => { alive = false; });
+
+  function update(transition = false) {
+    const pSet = new Set(adjFrom[current]);
+    const active = new Set([...visited, ...pSet]);
+
+    const t = transition ? circles.transition().duration(400).ease(d3.easeCubicOut) : circles;
+    const l = transition ? lines.transition().duration(400).ease(d3.easeCubicOut) : lines;
+
+    // Edges
+    l.attr("stroke-opacity", (_, i) => {
+      const e = allEdges[i];
+      if (e.source === current) return active.has(e.target) ? 0.6 : 0;
+      if (visited.has(e.source) && visited.has(e.target)) return 0.25;
+      return 0;
+    })
+    .attr("stroke-width", (_, i) => {
+      const e = allEdges[i];
+      return e.source === current ? 2.5 : 1.2;
+    });
+
+    // Nodes
+    t.attr("fill", d => d === current ? color :
+                         (pSet.has(d) || visited.has(d)) ? d3.interpolateRgb("#a0a0a0", color)(0.65) :
+                         "#a0a0a0")
+      .attr("fill-opacity", d => d === current ? 1.0 :
+                                 (pSet.has(d) || visited.has(d)) ? 0.5 : 0)
+      .attr("r", d => d === current ? 22 : (pSet.has(d) || visited.has(d)) ? 16 : 12);
+  }
+
+  update();
+
+  // Main loop
+  (async () => {
+    while (alive) {
+      await Promises.delay(1000); // Wait at current node
+      const next = sample(probs[current]);
+      current = next;
+      visited.add(current);
+      update(true); // Transition to the next state
+    }
+  })();
+
+  return svg.node();
+}
+```

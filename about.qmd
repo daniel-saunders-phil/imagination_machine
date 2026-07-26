@@ -1,40 +1,125 @@
 ---
-image: headshot.jpg
-about:
-  template: jolla
-  links:
-    - icon: house-door
-      text: Website
-      href: https://danielsaundersphilosophy.wordpress.com/research/
-    - icon: github
-      text: Github
-      href: https://github.com/daniel-saunders-phil
-
+title: "Daniel Saunders"
+format:
+  html:
+    toc: false
+    echo: false
+    keep-md: true
 ---
 
-I'm a principal data scientist at PyMC Labs, a consulting firm that specializes in
-building Bayesian models to handle business problems. The firm grew out of the
-open source project, [PyMC](https://www.pymc.io/welcome.html), a truly
-wonderful piece of software.
+<style>
+/* 1. THE CANVAS: Creates a square container that stays centered on the page */
+.scaffold-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  aspect-ratio: 1 / 1;
+}
 
-In the recent past, I was a PhD student at the University of British Columbia in the
-philosophy program. I worked on topics in evolutionary game theory, philosophy of science,
-and cultural evolution. You can find my published work [here](https://scholar.google.ca/citations?user=GD912IAAAAAJ&hl=en&oi=sra).
+/* 2. BACKGROUND LAYER: Pushes the animation behind everything else */
+#animation-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
 
-I occasionally blog about related topics on this website.
+/* 3. FOREGROUND LAYER: Creates a 3x3 invisible grid over the animation */
+.content-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  z-index: 2;
+  pointer-events: none; /* Let clicks pass through the empty parts of the grid */
+}
+
+/* 4. GRID ITEMS: Common styling for the text blocks */
+.grid-item {
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 1rem; /* Reduced padding to give text more room */
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+/* Ensure the inner text flows naturally and doesn't get treated as flex items */
+.grid-item > div {
+  width: 100%;
+}
+
+/* 5. POSITIONING: Maps each piece of info to a specific cell in the 3x3 grid */
+.headshot-item {
+  grid-column: 2;
+  grid-row: 1;
+  align-items: center;
+  text-align: center;
+}
+
+.work-item {
+  grid-column: 1;
+  grid-row: 2;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.bio-item {
+  grid-column: 3;
+  grid-row: 2;
+  align-items: flex-end;
+  text-align: left;
+}
+
+.blog-item {
+  grid-column: 2;
+  grid-row: 3;
+  align-items: left;
+  text-align: left;
+}
+
+/* 6. AESTHETICS: Styling for the photo, headers, and links */
+.headshot-img {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #E95420;
+  margin-bottom: 0.5rem;
+}
+
+.grid-item h3 {
+  margin-top: 0;
+  color: #E95420;
+  font-size: 1.2rem;
+}
+
+.grid-item a {
+  color: #E95420;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.grid-item a:hover {
+  text-decoration: underline;
+}
+</style>
 
 ```{ojs}
 //| echo: false
 csv = FileAttachment("assets/transition_matrix.csv").csv()
-```
 
-```{ojs}
-//| echo: false
-{
+render_scaffold = {
   const N = csv.columns.length;
-  const hdrs = csv.columns;
 
-  // Build 81x81 matrix from CSV
   const matrix = [];
   for (let i = 0; i < csv.length; i++) {
     const row = [];
@@ -44,47 +129,38 @@ csv = FileAttachment("assets/transition_matrix.csv").csv()
     matrix.push(row);
   }
 
-  // Normalize row to sum to 1
   const probs = matrix.map(row => {
     const s = d3.sum(row);
     return s > 0 ? row.map(v => v / s) : row;
   });
 
-  // Precompute adjacency
   const adjFrom = probs.map(row =>
     row.map((v, j) => v > 0 ? j : -1).filter(j => j >= 0)
   );
 
-  // Layout: same grid formula as transition-matrix.py
   const pos = {};
-  let acc = 0;
-  for (let R = 0; R < 3; R++) {
-    for (let C = 0; C < 3; C++) {
+  const starts = [[0, 8], [6, 8], [3, 5], [0, 2], [6, 2]];
+  starts.forEach(([c, r], i) => {
+    const offset = i * 9;
+    for (let mc = 0; mc < 3; mc++) {
       for (let mr = 0; mr < 3; mr++) {
-        for (let mc = 0; mc < 3; mc++) {
-          pos[acc] = { x: C * 3 + mc, y: 8 - R * 3 - mr };
-          acc++;
-        }
+        pos[offset + mc + mr * 3] = { x: c + mc, y: r - mr };
       }
     }
-  }
+  });
 
-  // Coordinate mapping
-  const PAD = 40;
-  const SIZE = width - 2 * PAD;
-  const HEIGHT = SIZE + 2 * PAD;
-  const xSc = d3.scaleLinear().domain([0, 8]).range([PAD, PAD + SIZE]);
-  const ySc = d3.scaleLinear().domain([0, 8]).range([PAD + SIZE, PAD]);
-  const color = "#E95420";
-
-  // SVG
   const svg = d3.create("svg")
+    .attr("viewBox", "0 0 900 900")
     .attr("width", width)
-    .attr("height", HEIGHT)
+    .attr("height", width)
     .style("display", "block")
     .style("margin", "0 auto");
 
-  // Edge layer
+  const PAD = 100;
+  const xSc = d3.scaleLinear().domain([0, 8]).range([PAD, 900 - PAD]);
+  const ySc = d3.scaleLinear().domain([0, 8]).range([900 - PAD, PAD]);
+  const color = "#E95420";
+
   const allEdges = [];
   for (let i = 0; i < N; i++) {
     for (let j = 0; j < N; j++) {
@@ -92,25 +168,26 @@ csv = FileAttachment("assets/transition_matrix.csv").csv()
     }
   }
 
+  // Edge layer - baseline visibility
   const lines = svg.append("g")
     .selectAll("line").data(allEdges).join("line")
     .attr("x1", d => xSc(pos[d.source].x))
     .attr("y1", d => ySc(pos[d.source].y))
     .attr("x2", d => xSc(pos[d.target].x))
     .attr("y2", d => ySc(pos[d.target].y))
-    .attr("stroke", "#a0a0a0")
-    .attr("stroke-opacity", 0)
-    .attr("stroke-width", 0.3)
+    .attr("stroke", "#e0e0e0")
+    .attr("stroke-opacity", 0.15)
+    .attr("stroke-width", 1)
     .attr("stroke-linecap", "round");
 
-  // Node layer
+  // Node layer - baseline visibility
   const circles = svg.append("g")
     .selectAll("circle").data(d3.range(N)).join("circle")
     .attr("cx", d => xSc(pos[d].x))
     .attr("cy", d => ySc(pos[d].y))
-    .attr("r", 12)
-    .attr("fill", "#a0a0a0")
-    .attr("fill-opacity", 0)
+    .attr("r", 8)
+    .attr("fill", "#e0e0e0")
+    .attr("fill-opacity", 0.3)
     .attr("stroke", "none");
 
   // Helpers
@@ -123,52 +200,86 @@ csv = FileAttachment("assets/transition_matrix.csv").csv()
 
   // Animation state
   let current = 0;
-  const visited = new Set();
-  visited.add(current);
   let alive = true;
   invalidation.then(() => { alive = false; });
 
   function update(transition = false) {
-    const pSet = new Set(adjFrom[current]);
-    const active = new Set([...visited, ...pSet]);
+    const neighbors = new Set(adjFrom[current]);
 
     const t = transition ? circles.transition().duration(400).ease(d3.easeCubicOut) : circles;
     const l = transition ? lines.transition().duration(400).ease(d3.easeCubicOut) : lines;
 
-    // Edges
     l.attr("stroke-opacity", (_, i) => {
       const e = allEdges[i];
-      if (e.source === current) return active.has(e.target) ? 0.6 : 0;
-      if (visited.has(e.source) && visited.has(e.target)) return 0.25;
-      return 0;
+      // Spotlight edges leaving current node
+      return e.source === current ? 0.6 : 0.15;
     })
     .attr("stroke-width", (_, i) => {
       const e = allEdges[i];
-      return e.source === current ? 2.5 : 1.2;
+      return e.source === current ? 3 : 1;
+    })
+    .attr("stroke", (_, i) => {
+      const e = allEdges[i];
+      return e.source === current ? color : "#e0e0e0";
     });
 
-    // Nodes
     t.attr("fill", d => d === current ? color :
-                         (pSet.has(d) || visited.has(d)) ? d3.interpolateRgb("#a0a0a0", color)(0.65) :
-                         "#a0a0a0")
+                         neighbors.has(d) ? d3.interpolateRgb("#e0e0e0", color)(0.5) :
+                         "#e0e0e0")
       .attr("fill-opacity", d => d === current ? 1.0 :
-                                 (pSet.has(d) || visited.has(d)) ? 0.5 : 0)
-      .attr("r", d => d === current ? 22 : (pSet.has(d) || visited.has(d)) ? 16 : 12);
+                                 neighbors.has(d) ? 0.6 : 0.3)
+      .attr("r", d => d === current ? 20 : neighbors.has(d) ? 14 : 8);
   }
 
   update();
 
-  // Main loop
   (async () => {
     while (alive) {
-      await Promises.delay(1000); // Wait at current node
+      await Promises.delay(1200);
       const next = sample(probs[current]);
       current = next;
-      visited.add(current);
-      update(true); // Transition to the next state
+      update(true);
     }
   })();
 
   return svg.node();
 }
+
+d3.select("#animation-background").append(() => render_scaffold);
+```
+
+```{=html}
+<div class="scaffold-wrapper">
+
+  <div id="animation-background"></div>
+
+  <div class="content-overlay">
+
+    <div class="grid-item headshot-item">
+      <img src="headshot.jpg" class="headshot-img">
+    </div>
+
+    <div class="grid-item work-item">
+      <div>
+        Data scientist at <a href="https://www.pymc-labs.io/">PyMC Labs</a>. I build Bayesian models in the consumer goods industry, supporting decision making around marketing, pricing, and promotions.
+      </div>
+    </div>
+
+    <div class="grid-item bio-item">
+      <div>
+        PhD from UBC. Complex adaptive systems and cultural evolution.
+        <a href="https://scholar.google.ca/citations?user=GD912IAAAAAJ">Publications</a>.
+      </div>
+    </div>
+
+    <div class="grid-item blog-item">
+      <div>
+        I use this blog to write through topics I find tricky or important. 
+        Some favourites: <a href="posts/a-bayesian-decision-theory-workflow/">building optimizers on top of PyMC</a>, 
+        and <a href="posts/geometric-intuition-mmm/">geometric intuition for media mix models</a>.
+      </div>
+    </div>
+
+  </div>
+</div>
 ```

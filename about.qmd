@@ -199,7 +199,7 @@ render_scaffold = {
   }
 
   // Animation state
-  let current = 0;
+  let current = 22;
   let alive = true;
   invalidation.then(() => { alive = false; });
 
@@ -274,8 +274,8 @@ d3.select("#animation-background").append(() => render_scaffold);
 
     <div class="grid-item blog-item">
       <div>
-        I use this blog to write through topics I find tricky or important. 
-        Some favourites: <a href="posts/a-bayesian-decision-theory-workflow/">building optimizers on top of PyMC</a>, 
+        I use this blog to write through topics I find tricky or important.
+        Some favourites: <a href="posts/a-bayesian-decision-theory-workflow/">building optimizers on top of PyMC</a>,
         and <a href="posts/geometric-intuition-mmm/">geometric intuition for media mix models</a>.
       </div>
     </div>

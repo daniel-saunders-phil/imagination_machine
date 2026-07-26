@@ -234,12 +234,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="data-cleaning" class="level1">
 <h1>Data cleaning</h1>
-<div class="cell" data-execution_count="3">
+<div id="8d42a561" class="cell" data-execution_count="3">
 <div class="cell-output cell-output-display" data-execution_count="3">
 <pre><code>((21, 16), (21, 16), (21, 16))</code></pre>
 </div>
 </div>
-<div class="cell" data-outputid="bb54b889-c220-41fc-cc14-ec5b43f91563" data-execution_count="4">
+<div id="ea7e8823" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;,&quot;height&quot;:378}}" data-outputid="bb54b889-c220-41fc-cc14-ec5b43f91563" data-execution_count="4">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -258,7 +258,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="prior-simulation">Prior simulation</h2>
 <p>When working with Bayesian methods, we have to select priors. I used a strategy known as <em>weakly regularizing priors</em>. The goal is to pick out priors that penalize really extreme effects but still allow for enough uncertainty that the data can drive the ultimate analysis. To calibrate the priors before including the data, I sample from my prior distributions and plots 50 lines at a time to give me a sense of what plausible relationships might look like.</p>
 <p>Below is the priors I ended up using. For the slopes, I assumed a normal distribution centered around 0 with a standard deviation of 0.3. For the intercepts, I assumed a normal distribution centered around 0 with a standard deviation of 3.</p>
-<div class="cell" data-outputid="eccba072-f4a9-4064-bc76-0b165e1f5e91" data-execution_count="5">
+<div id="0d759790" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;,&quot;height&quot;:378}}" data-outputid="eccba072-f4a9-4064-bc76-0b165e1f5e91" data-execution_count="5">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -269,7 +269,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>Later, we’ll find that my results depart from those found by Ventura in a couple of places. I suspect that is partly due to the influence of the priors. So I want to spend a bit longer justifying mine.</p>
 <p>Many people are skeptical of the use of priors in statistics. Isn’t it cheating to build assumptions into the model, rather than letting the data do the work? The trouble with prior skepticism is that all analyzes use priors, it’s just that Bayesian analysis uses them explicitly. Other modeling techniques will often tacitly assume flat priors on the possible intercept and slopes. Let me show you what the models look like with much flatter priors.</p>
-<div class="cell" data-outputid="67905f90-5a50-4d16-9400-0f232fdb3119" data-execution_count="6">
+<div id="e73d67d8" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;,&quot;height&quot;:378}}" data-outputid="67905f90-5a50-4d16-9400-0f232fdb3119" data-execution_count="6">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -283,17 +283,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="sampling" class="level2">
 <h2 class="anchored" data-anchor-id="sampling">Sampling</h2>
 <p>This code fits 16 logistic regressions, one for each topic.</p>
-<div class="cell" data-outputid="3bc025b6-3da6-4e05-e27e-c39eb22ec52d" data-execution_count="8">
+<div id="00ebbd58" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;,&quot;height&quot;:279}}" data-outputid="3bc025b6-3da6-4e05-e27e-c39eb22ec52d" data-execution_count="8">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Partial_pooling_ventura_blog_files/figure-html/cell-9-output-1.png" width="912" height="357" class="figure-img"></p>
+<p><img src="Partial_pooling_ventura_blog_files/figure-html/cell-9-output-1.png" width="913" height="357" class="figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>These plots provide a check on whether the computational estimation strategy was effective. There is little to discuss here, except the good sign that nothing blew up during sampling.</p>
-<div class="cell" data-outputid="61b12f36-cdb1-485e-d0b5-ab53a15e3547" data-execution_count="9">
+<div id="a192a5f8" class="cell" data-outputid="61b12f36-cdb1-485e-d0b5-ab53a15e3547" data-execution_count="9">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -308,12 +308,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="posterior-predictive-checking" class="level2">
 <h2 class="anchored" data-anchor-id="posterior-predictive-checking">Posterior predictive checking</h2>
 <p>These numbers are hard to interpret just as numbers. Let’s extract predictions from what the estimated models and compare them against the observed data.</p>
-<div class="cell" data-outputid="336fa884-09f0-4f22-93e5-c24ce6cdf207" data-execution_count="10">
+<div id="31f927e0" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;,&quot;height&quot;:37}}" data-outputid="336fa884-09f0-4f22-93e5-c24ce6cdf207" data-execution_count="10">
 <div class="cell-output cell-output-stderr">
 <pre><code>Sampling: [y]</code></pre>
 </div>
 </div>
-<div class="cell" data-outputid="6b02e48b-8fef-4232-cf7b-53762b9e231e" data-execution_count="11">
+<div id="d02a5510" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;,&quot;height&quot;:596}}" data-outputid="6b02e48b-8fef-4232-cf7b-53762b9e231e" data-execution_count="11">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -326,7 +326,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>One good check is whether the model captures a few plausible intuitive stories. For example, topic 11 is on row 3, column 4. It experiences huge growth in formal methods. This is decision theory. So it makes good sense that nearly half of papers published in this area are in the business of building models. (The other half are likely papers reflecting on the methodology or concepts of decision theory.)</p>
 <p>One thing to notice is that uncertainty at the beginning of the period tends to be pretty large. This makes sense because we have very little data for the beginning of each period. Some of these topics only have a handful of papers published in them in the year 2000. So it’s like the sample size is very small for the beginning. But it tends to grow in the later years so the estimate clamps down.</p>
 <p>The high beginning uncertainty is also a reason why splitting the community into 16 topics might introduce some artifacts into the statistical analysis. In the year 2000, each subtopic was not as clearly distinguished as they were in, say, 2010. The common narrative is that philosophy of science sorta splintered into many sub-specialties at the end of the very end of the 20th century and then these subdisciplines consolidated during the early 2000s. So we should also expect more overlap in causal selective forces for the early years, something not reflected in this analysis. Instead, we get big initial uncertainty because each subtopic is not well-established yet.</p>
-<div class="cell" data-outputid="a3c5a898-b263-4bd5-c6f7-495f17613079" data-execution_count="12">
+<div id="39165831" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;,&quot;height&quot;:601}}" data-outputid="a3c5a898-b263-4bd5-c6f7-495f17613079" data-execution_count="12">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -344,7 +344,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="prior-simulation-1" class="level2">
 <h2 class="anchored" data-anchor-id="prior-simulation-1">Prior simulation</h2>
 <p>Again I conduct a prior simulation. This time is tricker though because I have priors representing the overall population effects and the those priors shape the subsequent topic effects. So we want to get a prior simulation that allows for a wide range of possible population-topic relationships plus the old goal of giving each topic a range of plausible effects.</p>
-<div class="cell" data-outputid="0974fc6a-bf00-44b1-e356-7b3adb3fae05" data-execution_count="13">
+<div id="57ddd095" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;,&quot;height&quot;:596}}" data-outputid="0974fc6a-bf00-44b1-e356-7b3adb3fae05" data-execution_count="13">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -357,7 +357,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="sampling-1" class="level2">
 <h2 class="anchored" data-anchor-id="sampling-1">Sampling</h2>
 <p>Let’s compare the slopes estimated with multi-level models with those estimated by 16 independent models.</p>
-<div class="cell" data-outputid="31cdba07-752f-482a-885e-7c10e42cba69" data-execution_count="15">
+<div id="f92b5c71" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;,&quot;height&quot;:516}}" data-outputid="31cdba07-752f-482a-885e-7c10e42cba69" data-execution_count="15">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -369,7 +369,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>One thing to notice is that the level of uncertainty has shrunk across the board. In basically every place, the blue line (multi-level / partial pooling) is shorter than the orange line (no pooling). This is because multi-level models can use more information to inform the estimate in each topic. Information is pooled across topics to form better expectations about each individual topic. It’s like we’ve increased our sample size but we never had to collect new data. We just had to use it more efficiently.</p>
 <p>A second thing to notice is that that several topics either switched from a negative to positive slope or they moved closer to positivity. This suggests that the multi-level model is detecting even stronger selection for formal methods than the previous analysis is. Why would this be? I suspect it largely depends on the interaction effect between intercepts and slopes. When the intercept starts really low, we are more likely to estimate a positive slope. When the intercept starts higher up, we are more likely to estimate a neutral or negative slope. The multi-level model now starts most intercepts fairly low. Here’s a comparison of the two estimates by intercept. The blue lines tend to be more starkly negative for topics 2, 8 and 12, allowing their slopes to head toward positivity.</p>
 <p>I plot the intercept comparisons below.</p>
-<div class="cell" data-outputid="207f27cb-1af8-4c64-d825-8c5a869d8b9e" data-execution_count="16">
+<div id="2616df92" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;,&quot;height&quot;:516}}" data-outputid="207f27cb-1af8-4c64-d825-8c5a869d8b9e" data-execution_count="16">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -382,12 +382,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="posterior-predictive-checking-1" class="level2">
 <h2 class="anchored" data-anchor-id="posterior-predictive-checking-1">Posterior predictive checking</h2>
 <p>Let’s look at the prediction plots now and see what changed once we introduced partial pooling.</p>
-<div class="cell" data-outputid="496f409e-1167-40bf-f35c-942c797116e4" data-execution_count="17">
+<div id="d6ce9d38" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;,&quot;height&quot;:37}}" data-outputid="496f409e-1167-40bf-f35c-942c797116e4" data-execution_count="17">
 <div class="cell-output cell-output-stderr">
 <pre><code>Sampling: [y]</code></pre>
 </div>
 </div>
-<div class="cell" data-outputid="7b42f1dd-9b66-4572-fcea-a59a855f8cc2" data-execution_count="18">
+<div id="5330a432" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;,&quot;height&quot;:596}}" data-outputid="7b42f1dd-9b66-4572-fcea-a59a855f8cc2" data-execution_count="18">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -397,7 +397,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <p>One thing to notice that there is less initial uncertainty in many of these plots. This highlights on the advantages of multi-level models - less uncertainty in the intercepts means more plausible estimates of the slope.</p>
-<div class="cell" data-outputid="ad774b6d-cdb6-4cd5-afd6-664e148e6677" data-execution_count="19">
+<div id="d662628c" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;,&quot;height&quot;:601}}" data-outputid="ad774b6d-cdb6-4cd5-afd6-664e148e6677" data-execution_count="19">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -408,7 +408,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>There are small divergences in the trend lines. I’ll zoom in one difference in the last section.</p>
 <p>Finally, we have the trend line for the entire population of studies. It is subtly but confidently positive, suggesting an overall tendency to select for formal methods in philosophy of science over the last several years. The observed trends are plotted and faded behind it.</p>
-<div class="cell" data-outputid="4abe95f9-d128-4893-bfdc-08f81353a077" data-execution_count="20">
+<div id="6f002b9d" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;,&quot;height&quot;:384}}" data-outputid="4abe95f9-d128-4893-bfdc-08f81353a077" data-execution_count="20">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -424,12 +424,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="comparing-partial-pooling-and-unpooled-analysis" class="level1">
 <h1>Comparing partial pooling and unpooled analysis</h1>
 <p>I want to provide one more illustration of why multi-level models are really helpful in this context. This time, we’ll zoom in one one particular topic and study how the two different modeling strategies handle it. Consider topic 8 (metaphysics). When I first estimated this cluster with the unpooled model, the slope was solidly negative. The mean was -0.054 and the edges of the credibility interval were also mostly negative. But when we estimated the partially pooled model, the slope switched to -0.018 and the credibility interval that includes negative and positive values. Meanwhile, the intercept moved around too, from -3.3 to -3.8. The plot below illustrates what these look like along side the data.</p>
-<div class="cell" data-outputid="eda22feb-3365-4790-f274-c175c327fc84" data-execution_count="21">
+<div id="8b906acb" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;,&quot;height&quot;:453}}" data-outputid="eda22feb-3365-4790-f274-c175c327fc84" data-execution_count="21">
 <div class="cell-output cell-output-stdout">
-<pre><code>old intercept: -3.3359438741692773
-new intercept: -3.8316841345127477
-old slope: -0.05288047916138816
-new slope: -0.018499767337215922</code></pre>
+<pre><code>old intercept: -3.324313502157089
+new intercept: -3.8276769081422755
+old slope: -0.05345855321859659
+new slope: -0.018260930784229266</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <div>

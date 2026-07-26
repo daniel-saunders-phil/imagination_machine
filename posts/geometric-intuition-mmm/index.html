@@ -254,7 +254,7 @@ window.Quarto = {
 <li><span class="math inline">\(c = 0.8\)</span></li>
 </ul>
 <p>If I didn’t know those parameters values but I searched a 2D grid of parameter values and assessed the log-likelihood at each point for the simulated dataset shown below, I would end up with a likelihood surface. Likelihood surfaces are nice to study because they play a controlling role in the inferences regardless of whether the MMM is Bayesian or not.</p>
-<div class="cell" data-execution_count="2">
+<div id="6c3cc6c2" class="cell" data-execution_count="2">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -266,7 +266,7 @@ window.Quarto = {
 <p>For the tanh function, the likelihood surface is banana-shaped. There is a region of approximately equal likelihood defined by combinations of <span class="math inline">\(b\)</span> and <span class="math inline">\(c\)</span> values. If your marketing channel is very effective at acquiring customers but saturates quickly, that explains the data. But if the marketing channel saturates slowly and is more expensive, that model also does a pretty good job.</p>
 <p>The equivalence between pairs of parameter values is really not so bad on this particular example. The peak of the likelihood surface is very close to the true parameter values. We are in the good case though. We have plenty of data. It is nicely distributed between the high and low parts of the saturation curve. In other examples (we’ll explore in the next section), the equivalence can make it really difficult to discover the true parameter values of some channels.</p>
 <p>The correlations between parameters are not limited to this parameterization of the tanh function. All of them will have this structure because the saturation point and the customer acquisition cost always interact. The resulting surface may not be banana-shaped and it may not parameterized in terms customer acquisition costs. But the lessons we learn in this post will apply no matter the choice of curve. Here is, for example, the Michaelis-Menten curve:</p>
-<div class="cell" data-execution_count="3">
+<div id="7f3cc410" class="cell" data-execution_count="3">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -280,7 +280,7 @@ window.Quarto = {
 <section id="its-not-about-how-much-data-you-have-but-how-that-data-is-distributed-across-the-saturation-curve." class="level1">
 <h1>It’s not about how much data you have but how that data is distributed across the saturation curve.</h1>
 <p>Let’s suppose that your marketing department has been consistently and historically under-spending on a certain channel. At some point, popular wisdom took hold and the no one thinks cable tv ads are very effective. So the marketing team throws a few bucks toward cable each year and otherwise focuses on digital. Your observed data and resulting likelihood surface would look like:</p>
-<div class="cell" data-execution_count="4">
+<div id="6828cbd8" class="cell" data-execution_count="4">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -290,7 +290,7 @@ window.Quarto = {
 </div>
 </div>
 <p>It’s the same basic banana-shape but a lot stretching to the right. This indicates that the data is not terribly informative for the parameter value of the saturation point. How could it be? If you have never spent close to the saturation point, you will never find out when diminishing returns kicks in. This data can indicate a window of parameters that are plausible but it will never, in practice, converge to a single point. Below, I’ve highlighted a region of the surface where the value is within 1.5 logs of the global max.</p>
-<div class="cell" data-execution_count="5">
+<div id="0973ec24" class="cell" data-execution_count="5">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -305,7 +305,7 @@ window.Quarto = {
 <li>MMMs cannot confidently recommend things you have never tried. A marketing department might be curious whether they should spend more on cable. Given the evidence at hand, it is hard to say. The saturation point might be quite close to our current spending level (0.4) but it also might be very far away. At the very least, the parameter estimates we’d obtain would indicate that it is at least worth it to try to spend more. MMMs should be pitched as systematic summaries of the knowledge your company has acquired rather than as prophetic orbs.</li>
 </ol>
 <p>Similar lessons apply for channels that the marketing team has historically overspent on.</p>
-<div class="cell" data-execution_count="6">
+<div id="ebd43bf0" class="cell" data-execution_count="6">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -324,7 +324,7 @@ window.Quarto = {
 <p>While our data cannot distinguish between some parameter values, our powerful minds can. Some of these parameter values are obviously implausible. Customers aren’t free. You cannot regularly persuade more than one person to buy something with a single impression. The folk wisdom of business suggests that marketing drives 5%-20% of sales. The saturation point cannot be larger than the entire potential customer base of your product. Statements like this allow us to slowly narrow the range of parameter values. Customer acquisition parameters can only go so low. Saturation points can only go so high.</p>
 <p>We’d like to encode that information into the model. But we want to be as gentle as possible. The data should still do the talking. It’s just that a little bit of extra info can go a long way.</p>
 <p>Consider the case of the customer acquisition cost. An appropriate prior might be the inverse Gamma distribution.</p>
-<div class="cell" data-execution_count="7">
+<div id="bd460771" class="cell" data-execution_count="7">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -335,7 +335,7 @@ window.Quarto = {
 </div>
 <p>This prior trims off the super low acquisition costs and allows you to pick a best guess. But it has a nice long tail so it is consistent the scenario where the marketing channels are very ineffective. If the data drives the estimates up there, the model will listen.</p>
 <p>Here is what the log likelihood surface looks like if we add the prior. The region of near equivalence begins to become more symmetrical. The peak of the surface moves away from the super low, implausible parameter values. In this way, priors serve as guardrails - in the absence of data-driven information, the prior can control the behaviour of the model. However, the prior clearly isn’t overpowering the data. The structure of the likelihood surface is almost exactly as it was before we added the prior.</p>
-<div class="cell" data-execution_count="8">
+<div id="99a15ad2" class="cell" data-execution_count="8">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">

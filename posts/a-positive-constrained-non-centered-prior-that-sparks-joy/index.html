@@ -8,7 +8,7 @@
 
 <meta name="author" content="Daniel Saunders">
 <meta name="dcterms.date" content="2025-08-14">
-<meta name="description" content="They make sampling an MMM so much more delightful.">
+<meta name="description" content="Make sampling your MMM a delight.">
 
 <title>A positive constrained hierarchical prior that sparks joy – Imagination Machine</title>
 <style>
@@ -64,7 +64,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../../site_libs/quarto-nav/headroom.min.js"></script>
 <script src="../../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
@@ -108,9 +108,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+
 
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
@@ -208,7 +208,7 @@ window.Quarto = {
 
 <div>
   <div class="description">
-    They make sampling an MMM so much more delightful.
+    Make sampling your MMM a delight.
   </div>
 </div>
 
@@ -241,11 +241,11 @@ window.Quarto = {
 <section id="they-can-funnel-just-like-hierarchical-normals" class="level2">
 <h2 class="anchored" data-anchor-id="they-can-funnel-just-like-hierarchical-normals">1. They can funnel just like hierarchical normals</h2>
 <p>Here’s a simple case. If you have a variance parameter inside some group-level parameter, the prior geometry will be a funnel. It is the same mechanism that generates the funnel shape in normal priors. Sampling will be very inefficient and biased.</p>
-<div class="cell" data-execution_count="2">
+<div id="b0e73e41" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pm.Model() <span class="im">as</span> m0:</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    sigma <span class="op">=</span> pm.Gamma(<span class="st">'sigma'</span>,mu<span class="op">=</span><span class="fl">1.0</span>,sigma<span class="op">=</span><span class="fl">1.0</span>)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    phi <span class="op">=</span> pm.LogNormal(<span class="st">'phi'</span>,mu<span class="op">=</span><span class="fl">1.0</span>,sigma<span class="op">=</span>sigma)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>compiled_model <span class="op">=</span> nutpie.compile_pymc_model(m0)</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>t0 <span class="op">=</span> nutpie.sample(</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    compiled_model,</span>
@@ -256,11 +256,11 @@ window.Quarto = {
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    seed<span class="op">=</span>seed,</span>
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div class="cell" data-execution_count="3">
+<div id="535a57a3" class="cell" data-execution_count="3">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/cell-4-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="index_files/figure-html/cell-4-output-1.png" width="630" height="441" class="figure-img"></p>
 </figure>
 </div>
 </div>
@@ -269,19 +269,19 @@ window.Quarto = {
 <section id="parameterizing-in-log-space-makes-it-hard-to-control-the-mean-and-variance-of-your-distribution" class="level2">
 <h2 class="anchored" data-anchor-id="parameterizing-in-log-space-makes-it-hard-to-control-the-mean-and-variance-of-your-distribution">2. Parameterizing in log space makes it hard to control the mean and variance of your distribution</h2>
 <p>One strategy is to just work in log space. There, you can build a normal model that is unconstrained. This gives you access to familiar reparameterization techniques like non-centering. Then you exponential transform everything to enforce the positivity constraint. Divergences are virtually eliminated.</p>
-<div class="cell" data-execution_count="4">
+<div id="d7be865f" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>mu <span class="op">=</span> <span class="dv">1</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pm.Model() <span class="im">as</span> m1:</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    sigma <span class="op">=</span> pm.Gamma(<span class="st">'sigma'</span>,mu<span class="op">=</span><span class="dv">1</span>,sigma<span class="op">=</span><span class="dv">1</span>)</span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># non-centered trick</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    log_phi_z <span class="op">=</span> pm.Normal(<span class="st">"phi_offset"</span>,mu<span class="op">=</span><span class="dv">0</span>,sigma<span class="op">=</span><span class="dv">1</span>) </span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    log_phi_z <span class="op">=</span> pm.Normal(<span class="st">"phi_offset"</span>,mu<span class="op">=</span><span class="dv">0</span>,sigma<span class="op">=</span><span class="dv">1</span>)</span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    log_phi <span class="op">=</span> mu <span class="op">+</span> log_phi_z <span class="op">*</span> sigma</span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># make it positive</span></span>
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    phi <span class="op">=</span> pm.Deterministic(<span class="st">"phi"</span>,pm.math.exp(log_phi))</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>compiled_model <span class="op">=</span> nutpie.compile_pymc_model(m1)</span>
 <span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>t1 <span class="op">=</span> nutpie.sample(</span>
 <span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    compiled_model,</span>
@@ -292,18 +292,18 @@ window.Quarto = {
 <span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    seed<span class="op">=</span>seed,</span>
 <span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div class="cell" data-execution_count="5">
+<div id="ebd78c1f" class="cell" data-execution_count="5">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/cell-6-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="index_files/figure-html/cell-6-output-1.png" width="630" height="441" class="figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>The problem is that we quickly lose control over the mean and variance. The exponential transform introduces a very long tail behaviour which blows the distribution up. Check out that mean and standard deviation:</p>
-<div class="cell" data-execution_count="6">
-<div class="cell-output cell-output-display" data-execution_count="42">
+<div id="01b9b3b7" class="cell" data-execution_count="6">
+<div class="cell-output cell-output-display" data-execution_count="6">
 <div>
 
 
@@ -320,10 +320,10 @@ window.Quarto = {
 <tbody>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">phi</th>
-<td>31.774</td>
-<td>502.444</td>
+<td>199.234</td>
+<td>5570.079</td>
 <td>0.0</td>
-<td>15.74</td>
+<td>18.352</td>
 </tr>
 </tbody>
 </table>
@@ -344,11 +344,11 @@ window.Quarto = {
 <p><span class="math display">\[\mu = \ln(\frac{\mu_{X}^2}{\sqrt{\mu_{X}^2 + \sigma_{X}^2}})\]</span></p>
 <p><span class="math display">\[\sigma^2 = \ln(1 + \frac{\sigma_{X}^2}{\mu_{X}^2})\]</span></p>
 <p>If we put these formulae inside a pymc model, we can make the appropriate correction for every combination of hyperparameters. Then we can pass the corrected parameters to a standard non-centered normal distribution and exponentiate the result. It is the best of both worlds - control over the mean and variance while also getting to toggle between centered and non-centered. Here’s a class, in the style of the <a href="https://www.pymc.io/projects/extras/en/stable/generated/pymc_extras.prior.Prior.html">Prior class</a>, that implements this approach.</p>
-<div class="cell" data-execution_count="7">
+<div id="3109f2a9" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pytensor.tensor <span class="im">import</span> TensorVariable</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pymc_extras.prior <span class="im">import</span> create_dim_handler</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> LogNormalExp: </span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> LogNormalExp:</span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, dims: <span class="bu">tuple</span> <span class="op">|</span> <span class="va">None</span> <span class="op">=</span> <span class="va">None</span>, centered: <span class="bu">bool</span> <span class="op">=</span> <span class="va">True</span>, <span class="op">**</span>parameters):</span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.parameters <span class="op">=</span> parameters</span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.dims <span class="op">=</span> dims</span>
@@ -360,8 +360,8 @@ window.Quarto = {
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>        child_name <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>name<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>param<span class="sc">}</span><span class="ss">"</span></span>
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.dim_handler(value.create_variable(child_name), value.dims)</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> create_variable(<span class="va">self</span>, name: <span class="bu">str</span>) <span class="op">-&gt;</span> TensorVariable: </span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> create_variable(<span class="va">self</span>, name: <span class="bu">str</span>) <span class="op">-&gt;</span> TensorVariable:</span>
 <span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.dim_handler <span class="op">=</span> create_dim_handler(<span class="va">self</span>.dims)</span>
 <span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>        parameters <span class="op">=</span> {</span>
 <span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>            param: <span class="va">self</span>._create_parameter(param, value, name)</span>
@@ -377,25 +377,25 @@ window.Quarto = {
 <span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="va">self</span>.centered:</span>
 <span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>            log_phi <span class="op">=</span> pm.Normal(</span>
-<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>                name<span class="op">+</span> <span class="st">"_log"</span>, </span>
-<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>                mu<span class="op">=</span>mu_log, </span>
-<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>                sigma<span class="op">=</span>sigma_log, </span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>                name<span class="op">+</span> <span class="st">"_log"</span>,</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>                mu<span class="op">=</span>mu_log,</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>                sigma<span class="op">=</span>sigma_log,</span>
 <span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>                dims<span class="op">=</span><span class="va">self</span>.dims</span>
 <span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>            )</span>
 <span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
 <span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>            log_phi_z <span class="op">=</span> pm.Normal(</span>
-<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>                name <span class="op">+</span> <span class="st">"_log"</span> <span class="op">+</span> <span class="st">"_offset"</span>, </span>
-<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>                mu<span class="op">=</span><span class="dv">0</span>, </span>
-<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>                sigma<span class="op">=</span><span class="dv">1</span>, </span>
-<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>                dims<span class="op">=</span><span class="va">self</span>.dims) </span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>                name <span class="op">+</span> <span class="st">"_log"</span> <span class="op">+</span> <span class="st">"_offset"</span>,</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>                mu<span class="op">=</span><span class="dv">0</span>,</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>                sigma<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>                dims<span class="op">=</span><span class="va">self</span>.dims)</span>
 <span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>            log_phi <span class="op">=</span> mu_log <span class="op">+</span> log_phi_z <span class="op">*</span> sigma_log</span>
 <span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>        phi <span class="op">=</span> pm.math.exp(log_phi)</span>
 <span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>        phi <span class="op">=</span> pm.Deterministic(name, phi, dims<span class="op">=</span><span class="va">self</span>.dims)</span>
-<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> phi</span>
-<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> to_dict(<span class="va">self</span>):</span>
 <span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""</span></span>
 <span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a><span class="co">        """</span></span>
@@ -434,7 +434,7 @@ window.Quarto = {
 <section id="benefits-of-the-class-over-alternatives" class="level1">
 <h1>Benefits of the class over alternatives</h1>
 <p>I just want to explore one more approach that doesn’t work because it makes it vivid just how effective the class above really is. You might be tempted to take the desired mean and standard, push them through the formulae, and then build your hyperparameters around the desired values. Suppose you want a hierarchical model where group-level parameters have a mean of 1.5 and a standard deviation of 0.5. One option is:</p>
-<div class="cell" data-execution_count="8">
+<div id="2c972be1" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>desired_mean <span class="op">=</span> <span class="fl">1.5</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>desired_std <span class="op">=</span> <span class="fl">0.5</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -442,11 +442,11 @@ window.Quarto = {
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>sigma_log <span class="op">=</span> np.sqrt(np.log(<span class="dv">1</span> <span class="op">+</span> (desired_std<span class="op">**</span><span class="dv">2</span> <span class="op">/</span> desired_mean<span class="op">**</span><span class="dv">2</span>)))</span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>mu_log, sigma_log</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="44">
+<div class="cell-output cell-output-display" data-execution_count="8">
 <pre><code>(np.float64(0.3527848502792511), np.float64(0.32459284597450133))</code></pre>
 </div>
 </div>
-<div class="cell" data-execution_count="9">
+<div id="4e40666d" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>coords <span class="op">=</span>{</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"groups"</span>: np.arange(<span class="dv">4</span>)</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>}</span>
@@ -454,7 +454,7 @@ window.Quarto = {
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pm.Model(coords<span class="op">=</span>coords) <span class="im">as</span> model_standard:</span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    mu <span class="op">=</span> pm.Gamma(<span class="st">"mu"</span>, mu<span class="op">=</span>mu_log, sigma<span class="op">=</span><span class="fl">0.25</span>)</span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    sigma <span class="op">=</span> pm.Gamma(<span class="st">"sigma"</span>, mu<span class="op">=</span>sigma_log, sigma<span class="op">=</span><span class="fl">0.25</span>)</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    log_phi <span class="op">=</span> pm.Normal(<span class="st">"log_phi"</span>, mu<span class="op">=</span>mu, sigma<span class="op">=</span>sigma, dims<span class="op">=</span><span class="st">"groups"</span>)</span>
 <span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    phi <span class="op">=</span> pm.Deterministic(<span class="st">"phi"</span>, pt.exp(log_phi))</span>
 <span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
@@ -473,14 +473,14 @@ window.Quarto = {
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/cell-10-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="index_files/figure-html/cell-10-output-2.png" width="1217" height="942" class="figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>You’ll notice that the means of these the prior samples are slightly above the desired value (1.5). Meanwhile, if we look at the summary, you’ll notice that the standard deviations are much higher than the desired value. This arises because we’ve only been able to partially apply the transformation we need. We took the expected value of the hyperparameters and ensured those work out. But we have no guarantee that values further away from the expected value will map to the correct place in log space. So we get an inflation of the variances.</p>
-<div class="cell" data-execution_count="10">
-<div class="cell-output cell-output-display" data-execution_count="46">
+<div id="6a08bb07" class="cell" data-execution_count="10">
+<div class="cell-output cell-output-display" data-execution_count="10">
 <div>
 
 
@@ -530,7 +530,7 @@ window.Quarto = {
 </div>
 </div>
 <p>By contrast, if we use the internal transformation, we apply the same transform to every value of the hyperparameters, expected or not. You’ll notice that the standard deviation and mean adhere very closely to our desired values.</p>
-<div class="cell" data-execution_count="11">
+<div id="aa9dd528" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>coords <span class="op">=</span>{</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"groups"</span>: np.arange(<span class="dv">4</span>)</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>}</span>
@@ -554,13 +554,13 @@ window.Quarto = {
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/cell-12-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="index_files/figure-html/cell-12-output-2.png" width="1217" height="942" class="figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
-<div class="cell" data-execution_count="12">
-<div class="cell-output cell-output-display" data-execution_count="48">
+<div id="d757edda" class="cell" data-execution_count="12">
+<div class="cell-output cell-output-display" data-execution_count="12">
 <div>
 
 
@@ -616,7 +616,7 @@ window.Quarto = {
 <p>In the current (or forthcoming, depending on when you are reading this), hierarchical model in <a href="https://www.pymc-marketing.io/en/stable/notebooks/mmm/mmm_multidimensional_example.html">pymc-marketing examples</a>, we use the naive exponentiated non-centered normal distribution to solve that problem.</p>
 <p>The example looks pretty clean because I worked really hard on it<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. But it was quite difficult to fit. One problem with the long-tailedness of the naive approach is that it introduces a sort of multi-modal behaviour. If you have consistent marketing over time and you move beta up, the average sales over time goes up. But average sales over time is what the intercept is supposed to represent. So your model will be overparameterized with respect to the average sales over time. Sometimes you can solve this sort of problem by partially fixing each of those parameters. Maybe you know average sales should be 1000 and a media channel contributes, at most, 200 daily sales. This sort of prior information can break the interaction between the two parameters. But it requires you to have a fair bit of control over the parameters. In the long-tailed case, you don’t have much control over them because your prior ensures you will explore some unusual beta values. When the sampler jumps into the beta heavens, the curvature of the parameter space can shift abruptly for all parameters, HMC’s step size will not be tuned for this rough patch, and it will register as a divergence.</p>
 <p>Let’s redo the model from the examples and you can see how smooth this prior can be. Here’s what sampling looks like with the new prior.</p>
-<div class="cell" data-execution_count="14">
+<div id="04727017" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>beta_prior_log_normal_exp <span class="op">=</span> LogNormalExp(</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    mu<span class="op">=</span>Prior(<span class="st">"Gamma"</span>, mu<span class="op">=</span><span class="fl">0.25</span>, sigma<span class="op">=</span><span class="fl">0.10</span>, dims<span class="op">=</span>(<span class="st">"channel"</span>)),</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    sigma<span class="op">=</span>Prior(<span class="st">"Exponential"</span>, scale<span class="op">=</span><span class="fl">0.10</span>, dims<span class="op">=</span>(<span class="st">"channel"</span>)),</span>
@@ -723,7 +723,7 @@ window.Quarto = {
         Finished Chains:
         <span id="active-chains">6</span>
     </p>
-    <p>Sampling for 32 seconds</p>
+    <p>Sampling for 41 seconds</p>
     <p>
         Estimated Time to Completion:
         <span id="eta">now</span>
@@ -749,8 +749,8 @@ window.Quarto = {
                         </progress>
                     </td>
                     <td>2000</td>
-                    <td>2</td>
-                    <td>0.22</td>
+                    <td>1</td>
+                    <td>0.21</td>
                     <td>31</td>
                 </tr>
             
@@ -760,9 +760,9 @@ window.Quarto = {
                         </progress>
                     </td>
                     <td>2000</td>
-                    <td>0</td>
-                    <td>0.24</td>
-                    <td>31</td>
+                    <td>1</td>
+                    <td>0.25</td>
+                    <td>15</td>
                 </tr>
             
                 <tr>
@@ -773,7 +773,7 @@ window.Quarto = {
                     <td>2000</td>
                     <td>0</td>
                     <td>0.22</td>
-                    <td>31</td>
+                    <td>15</td>
                 </tr>
             
                 <tr>
@@ -784,7 +784,7 @@ window.Quarto = {
                     <td>2000</td>
                     <td>0</td>
                     <td>0.23</td>
-                    <td>47</td>
+                    <td>31</td>
                 </tr>
             
                 <tr>
@@ -795,7 +795,7 @@ window.Quarto = {
                     <td>2000</td>
                     <td>0</td>
                     <td>0.21</td>
-                    <td>63</td>
+                    <td>31</td>
                 </tr>
             
                 <tr>
@@ -805,8 +805,8 @@ window.Quarto = {
                     </td>
                     <td>2000</td>
                     <td>0</td>
-                    <td>0.22</td>
-                    <td>63</td>
+                    <td>0.21</td>
+                    <td>15</td>
                 </tr>
             
             
@@ -816,7 +816,7 @@ window.Quarto = {
 </div>
 </div>
 <p>Here’s the old priors for comparison. They are clearly worse - more divergences, smaller step sizes, longer sampling times. The multi-modality doesn’t go away entirely. It is just a part of the parameter space in MMMs after all. But you start out on better footing when using the new prior and ticking up the target accept will remove those final divergences.</p>
-<div class="cell" data-execution_count="15">
+<div id="139962b4" class="cell" data-execution_count="15">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>beta_prior <span class="op">=</span> Prior(</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Normal"</span>,</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    mu<span class="op">=</span>Prior(<span class="st">"Normal"</span>, mu<span class="op">=-</span><span class="fl">1.5</span>, sigma<span class="op">=</span><span class="fl">0.5</span>, dims<span class="op">=</span>(<span class="st">"channel"</span>)),</span>
@@ -925,7 +925,7 @@ window.Quarto = {
         Finished Chains:
         <span id="active-chains">6</span>
     </p>
-    <p>Sampling for 36 seconds</p>
+    <p>Sampling for a minute</p>
     <p>
         Estimated Time to Completion:
         <span id="eta">now</span>
@@ -951,9 +951,9 @@ window.Quarto = {
                         </progress>
                     </td>
                     <td>2000</td>
-                    <td>7</td>
-                    <td>0.21</td>
-                    <td>63</td>
+                    <td>6</td>
+                    <td>0.22</td>
+                    <td>15</td>
                 </tr>
             
                 <tr>
@@ -963,29 +963,7 @@ window.Quarto = {
                     </td>
                     <td>2000</td>
                     <td>1</td>
-                    <td>0.17</td>
-                    <td>31</td>
-                </tr>
-            
-                <tr>
-                    <td class="progress-cell">
-                        <progress max="2000" value="2000">
-                        </progress>
-                    </td>
-                    <td>2000</td>
-                    <td>1</td>
-                    <td>0.20</td>
-                    <td>63</td>
-                </tr>
-            
-                <tr>
-                    <td class="progress-cell">
-                        <progress max="2000" value="2000">
-                        </progress>
-                    </td>
-                    <td>2000</td>
-                    <td>3</td>
-                    <td>0.21</td>
+                    <td>0.18</td>
                     <td>31</td>
                 </tr>
             
@@ -996,7 +974,29 @@ window.Quarto = {
                     </td>
                     <td>2000</td>
                     <td>4</td>
-                    <td>0.20</td>
+                    <td>0.17</td>
+                    <td>31</td>
+                </tr>
+            
+                <tr>
+                    <td class="progress-cell">
+                        <progress max="2000" value="2000">
+                        </progress>
+                    </td>
+                    <td>2000</td>
+                    <td>1</td>
+                    <td>0.19</td>
+                    <td>31</td>
+                </tr>
+            
+                <tr>
+                    <td class="progress-cell">
+                        <progress max="2000" value="2000">
+                        </progress>
+                    </td>
+                    <td>2000</td>
+                    <td>2</td>
+                    <td>0.21</td>
                     <td>15</td>
                 </tr>
             
@@ -1006,9 +1006,9 @@ window.Quarto = {
                         </progress>
                     </td>
                     <td>2000</td>
-                    <td>63</td>
-                    <td>0.17</td>
-                    <td>31</td>
+                    <td>0</td>
+                    <td>0.20</td>
+                    <td>47</td>
                 </tr>
             
             

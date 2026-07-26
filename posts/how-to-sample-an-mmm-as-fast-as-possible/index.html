@@ -237,7 +237,7 @@ window.Quarto = {
 <section id="dude-wheres-my-samples" class="level1">
 <h1>Dude, where’s my samples?</h1>
 <p>You have a healthy quantity and distribution of data for a single channel. You’ll model the behaviour of the channel with a Michaelis-Menten function. Here is what the data looks like and the corresponding likelihood surface over the two primary parameters. A blue dot marks the true location of the parameters.</p>
-<div class="cell" data-execution_count="1">
+<div id="7b6531e1" class="cell" data-execution_count="1">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -248,7 +248,7 @@ window.Quarto = {
 </div>
 </div>
 <p>Here’s a simple Bayesian model to estimate those parameters. I’m putting uniform priors over our main parameters to exaggerate the problem. Today, inference will be driven entirely by the shape of the likelihood surface<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>.</p>
-<div class="cell" data-execution_count="2">
+<div id="f291c64a" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pm.Model() <span class="im">as</span> m0:</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    b <span class="op">=</span> pm.Uniform(<span class="st">'saturation_point'</span>,lower<span class="op">=</span><span class="dv">0</span>,upper<span class="op">=</span><span class="dv">2</span>)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    c <span class="op">=</span> pm.Uniform(<span class="st">"efficiency"</span>,lower<span class="op">=</span><span class="fl">0.01</span>,upper<span class="op">=</span><span class="dv">4</span>)</span>
@@ -259,13 +259,13 @@ window.Quarto = {
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>compiled_model <span class="op">=</span> nutpie.compile_pymc_model(m0)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>If you ask an HMC algorithm for 10,000 draws from the posterior, the effective sample size diagnostic tells you only about 20% of them are any good.</p>
-<div class="cell" data-execution_count="3">
+<div id="96206dc7" class="cell" data-execution_count="3">
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Effective Sample Size (ESS) Statistics:
 =====================================
-Efficiency ESS:        2,031 / 10,000
-Saturation Point ESS:  2,066 / 10,000</code></pre>
+Efficiency ESS:        2,410 / 10,000
+Saturation Point ESS:  2,423 / 10,000</code></pre>
 </div>
 </div>
 <p>Effective sample size depends on the amount of auto-correlation between samples. In the ideal Markov Chain Monte Carlo, the location of the first sample has no impact on the probable locations for the second parameter. In practice, MCMC algorithms tend to have an easier time sampling neighboring locations over distant ones. MCMC tuning aims to minimize that tendency. ESS, then, is what it says on the label-how many samples do you have, effectively, after discounting your samples by the amount of autocorrelation? If you wouldn’t trust a survey with 30 respondents, then you shouldn’t trust a chain with 30 effective samples.</p>
@@ -311,14 +311,14 @@ Saturation Point ESS:  2,066 / 10,000</code></pre>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="hmc_on_correlation_mvnormal.gif" class="img-fluid figure-img"></p>
-<figcaption>HMC on a correlated distribution with only a diagonal mass matrix adaption.</figcaption>
+<figcaption>HMC on a correlated distribution with only a diagonal mass matrix adaption. Notice that the trajectories tend to spiral around in tight bundles and stay in the upper right quadrant.</figcaption>
 </figure>
 </div>
 <p>By default, in most probabilistic programming libraries<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>, the mass matrix adaptation only tries to adjust for scale differences, not for covariances. In other words, it will adjust the diagonal entries of the mass matrix and leave the off-diagonal as zeros. But if you change the settings, you can get a <em>dense</em> mass matrix adjustment where the mass matrix includes off-diagonal entries to capture correlation. It samples this distribution beautifully.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="hmc_on_correlated_mvnormal_dense_mass_matrix.gif" class="img-fluid figure-img"></p>
-<figcaption>A correlated distribution with a dense mass matrix adaption.</figcaption>
+<figcaption>A correlated distribution with a dense mass matrix adaption. Notice that the trajectories move easily across the diagonal. Notice also that the initial trajectory also tends to have diagonal-directed momentum so it tends to avoid bouncing off the tails of the distribution.</figcaption>
 </figure>
 </div>
 <blockquote class="blockquote">
@@ -329,13 +329,13 @@ Saturation Point ESS:  2,066 / 10,000</code></pre>
 <section id="dude-heres-your-samples" class="level1">
 <h1>Dude, here’s your samples</h1>
 <p>Here’s the story so far: MMMs have a correlated posterior by default. HMC doesn’t adapt for that by default. So we should expect sampling to be a bit rough. But if we turn on a dense adaptation, we now get to keep every sample.</p>
-<div class="cell" data-execution_count="4">
+<div id="faf8ae87" class="cell" data-execution_count="4">
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Effective Sample Size (ESS) Statistics:
 =====================================
-Efficiency ESS:        10,474 / 10,000
-Saturation Point ESS:  10,369 / 10,000</code></pre>
+Efficiency ESS:        10,734 / 10,000
+Saturation Point ESS:  10,902 / 10,000</code></pre>
 </div>
 </div>
 <p>Comically, it tells us we have more effective samples than we asked for. It arises because our draws our anti-correlated and, <a href="https://mc-stan.org/docs/reference-manual/analysis.html#definition-of-effective-sample-size">I’m told</a>, that is not a problem.</p>

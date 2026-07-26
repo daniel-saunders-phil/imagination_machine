@@ -41,6 +41,42 @@ format:
   pointer-events: none; /* Let clicks pass through the empty parts of the grid */
 }
 
+/* MOBILE RESPONSIVENESS: Switch to a vertical stack on narrow screens */
+@media (max-width: 768px) {
+  .scaffold-wrapper {
+    aspect-ratio: auto;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  #animation-background {
+    display: none; /* Turn off animation on mobile */
+  }
+
+  .content-overlay {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    width: 100%;
+    padding: 1rem; /* Tighter padding for mobile */
+    gap: 1.5rem;
+  }
+
+  .grid-item {
+    padding: 0;
+    text-align: center !important;
+    align-items: center !important;
+    width: 100%;
+  }
+
+  .headshot-img {
+    width: 120px;
+    height: 120px;
+  }
+}
+
 /* 4. GRID ITEMS: Common styling for the text blocks */
 .grid-item {
   pointer-events: auto;
@@ -168,7 +204,7 @@ render_scaffold = {
     }
   }
 
-  // Edge layer - baseline visibility
+  // 1. Edge layer - baseline visibility
   const lines = svg.append("g")
     .selectAll("line").data(allEdges).join("line")
     .attr("x1", d => xSc(pos[d.source].x))
@@ -180,7 +216,17 @@ render_scaffold = {
     .attr("stroke-width", 1)
     .attr("stroke-linecap", "round");
 
-  // Node layer - baseline visibility
+  // 2. Backing layer - Opaque circles to hide lines behind nodes
+  const backing = svg.append("g")
+    .selectAll("circle").data(d3.range(N)).join("circle")
+    .attr("cx", d => xSc(pos[d].x))
+    .attr("cy", d => ySc(pos[d].y))
+    .attr("r", 8)
+    .attr("fill", "white") // Match page background
+    .attr("fill-opacity", 1.0)
+    .attr("stroke", "none");
+
+  // 3. Node layer - The visible colored nodes
   const circles = svg.append("g")
     .selectAll("circle").data(d3.range(N)).join("circle")
     .attr("cx", d => xSc(pos[d].x))
@@ -208,6 +254,7 @@ render_scaffold = {
 
     const t = transition ? circles.transition().duration(400).ease(d3.easeCubicOut) : circles;
     const l = transition ? lines.transition().duration(400).ease(d3.easeCubicOut) : lines;
+    const b = transition ? backing.transition().duration(400).ease(d3.easeCubicOut) : backing;
 
     l.attr("stroke-opacity", (_, i) => {
       const e = allEdges[i];
@@ -229,6 +276,9 @@ render_scaffold = {
       .attr("fill-opacity", d => d === current ? 1.0 :
                                  neighbors.has(d) ? 0.6 : 0.3)
       .attr("r", d => d === current ? 20 : neighbors.has(d) ? 14 : 8);
+
+    // Update backing radii to match the nodes exactly
+    b.attr("r", d => d === current ? 20 : neighbors.has(d) ? 14 : 8);
   }
 
   update();

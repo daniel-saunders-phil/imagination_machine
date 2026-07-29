@@ -245,6 +245,7 @@ render_scaffold = {
   }
 
   // Animation state
+  let previous = -1;
   let current = 22;
   let alive = true;
   invalidation.then(() => { alive = false; });
@@ -286,7 +287,12 @@ render_scaffold = {
   (async () => {
     while (alive) {
       await Promises.delay(1200);
-      const next = sample(probs[current]);
+      // filter out the previous node, renormalize the rest
+      const raw = probs[current].map((p, j) => j === previous ? 0 : p);
+      const total = d3.sum(raw);
+      const conditional = raw.map(p => p / total);
+      const next = sample(conditional);
+      previous = current;
       current = next;
       update(true);
     }

@@ -1,0 +1,26 @@
+[workspace]
+authors = ["daniel-saunders-phil <dsaunders406@gmail.com>"]
+channels = ["conda-forge"]
+name = "imagination_machine"
+platforms = ["win-64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+pymc = ">=6.2.0,<7"
+arviz = ">=1.2.0,<2"
+nutpie = ">=0.16.11,<0.17"
+nbclient = ">=0.11.0,<0.12"
+nbconvert = ">=7.17.1,<8"
+networkx = ">=3.6.1,<4"
+pymc-marketing = ">=0.18.2,<0.19"
+ipykernel = ">=7.3.0,<8"
+python = ">=3.12,<3.13"
+# special version of mkl, blas are necessary to get pymc 6 working with zed.
+mkl = "2024.2.2"
+blas = { version = "=2.132", build = "*mkl" }
+libblas = { version = "=3.9.0", build = "*mkl" }
+libcblas = { version = "=3.9.0", build = "*mkl" }
+liblapack = { version = "=3.9.0", build = "*mkl" }
+liblapacke = { version = "=3.9.0", build = "*mkl" }

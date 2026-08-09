@@ -16,3 +16,6 @@
 *.epub
 
 **/*.quarto_ipynb
+# pixi environments
+.pixi/*
+!.pixi/config.toml

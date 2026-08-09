@@ -1,0 +1,13 @@
+# environment.yml
+name: imagination-machine
+channels:
+  - conda-forge
+dependencies:
+  - pymc>=6.0.0
+  - arviz>=1.0.0
+  - nutpie
+  - nbclient
+  - nbconvert
+  - networkx
+  - ipykernel
+  - pymc-marketing

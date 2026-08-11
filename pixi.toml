@@ -18,9 +18,11 @@ pymc-marketing = ">=0.18.2,<0.19"
 ipykernel = ">=7.3.0,<8"
 python = ">=3.12,<3.13"
 # special version of mkl, blas are necessary to get pymc 6 working with zed.
-mkl = "2024.2.2"
+mkl = "=2024.2.2"
 blas = { version = "=2.132", build = "*mkl" }
 libblas = { version = "=3.9.0", build = "*mkl" }
 libcblas = { version = "=3.9.0", build = "*mkl" }
 liblapack = { version = "=3.9.0", build = "*mkl" }
 liblapacke = { version = "=3.9.0", build = "*mkl" }
+ipywidgets = ">=8.1.8,<9"
+polars = ">=1.43.2,<2"
